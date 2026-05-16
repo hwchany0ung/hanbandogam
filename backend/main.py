@@ -63,6 +63,11 @@ SHARE_SPECIES_PHOTOS = {
     "단풍잎돼지풀":"/assets/photos/단풍잎돼지풀.png","미국쑥부쟁이":"/assets/photos/미국쑥부쟁이.png",
     "양미역취":"/assets/photos/양미역취.png","가시박":"/assets/photos/가시박.png",
     "따오기":"/assets/photos/따오기.jpg","수달":"/assets/photos/수달.png",
+    # 신규종 + 시연용 (위키피디아 실사진)
+    "산딸기":"/assets/photos/산딸기.jpg","마삭줄":"/assets/photos/마삭줄.jpg",
+    "매미꽃":"/assets/photos/매미꽃.jpg","한라솜다리":"/assets/photos/한라솜다리.jpg",
+    "분홍바늘꽃":"/assets/photos/분홍바늘꽃.jpg","노랑갈퀴":"/assets/photos/노랑갈퀴.jpg",
+    "가시복분자딸기":"/assets/photos/가시복분자딸기.jpg",
 }
 
 SHARE_RARITY_KR = {
