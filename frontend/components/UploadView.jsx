@@ -57,7 +57,7 @@ function UploadView({ onUpload, onDemoCapture, collectionCount, missionCompleted
       </div>
 
       {/* 조리개 */}
-      <div className="flex flex-col items-center relative" style={{zIndex:2}}>
+      <div className="home-scan-zone flex flex-col items-center relative" style={{zIndex:2}}>
         <div
           onClick={() => inputRef.current.click()}
           onDragOver={e=>{e.preventDefault();setDragging(true);}}
@@ -79,38 +79,40 @@ function UploadView({ onUpload, onDemoCapture, collectionCount, missionCompleted
         </div>
       </div>
 
-      {/* 일일 미션 */}
-      <div className="home-mission-wrap relative" style={{zIndex:2}}>
-        <div className="home-mission-card rounded-xl" style={{
-          background: missionCompleted ? "rgba(22,163,74,0.07)" : "var(--surface)",
-          border: "1px solid " + (missionCompleted ? "rgba(22,163,74,0.35)" : "var(--gold-bd)"),
-          boxShadow: "0 4px 12px rgba(45,30,10,0.06)",
-          transition: "all 0.4s"
-        }}>
-          <div style={{display:"flex",alignItems:"center",gap:"6px"}}>
-            <div className="home-mission-label" style={{color:missionCompleted?"var(--native)":"var(--gold)"}}>
-              {missionCompleted ? "MISSION COMPLETE" : "TODAY'S MISSION"}
+      <div className="home-bottom-stack relative" style={{zIndex:2}}>
+        {/* 일일 미션 */}
+        <div className="home-mission-wrap">
+          <div className="home-mission-card rounded-xl" style={{
+            background: missionCompleted ? "rgba(22,163,74,0.07)" : "var(--surface)",
+            border: "1px solid " + (missionCompleted ? "rgba(22,163,74,0.35)" : "var(--gold-bd)"),
+            boxShadow: "0 4px 12px rgba(45,30,10,0.06)",
+            transition: "all 0.4s"
+          }}>
+            <div style={{display:"flex",alignItems:"center",gap:"6px"}}>
+              <div className="home-mission-label" style={{color:missionCompleted?"var(--native)":"var(--gold)"}}>
+                {missionCompleted ? "MISSION COMPLETE" : "TODAY'S MISSION"}
+              </div>
             </div>
+            <div className="home-mission-text">
+              "{DAILY_MISSIONS[new Date().getDate() % DAILY_MISSIONS.length]}"
+            </div>
+            {missionCompleted
+              ? <div className="home-mission-helper" style={{color:"var(--native)"}}><Icon name="BadgeCheck" size={14} /> 오늘의 미션을 완료했어요!</div>
+              : <div className="home-mission-helper" style={{color:"var(--ink-3)"}}><Icon name="Camera" size={13} /> 위 촬영 버튼을 눌러 미션을 달성해보세요</div>
+            }
           </div>
-          <div className="home-mission-text">
-            "{DAILY_MISSIONS[new Date().getDate() % DAILY_MISSIONS.length]}"
-          </div>
-          {missionCompleted
-            ? <div className="home-mission-helper" style={{color:"var(--native)"}}><Icon name="BadgeCheck" size={14} /> 오늘의 미션을 완료했어요!</div>
-            : <div className="home-mission-helper" style={{color:"var(--ink-3)"}}><Icon name="Camera" size={13} /> 위 촬영 버튼을 눌러 미션을 달성해보세요</div>
-          }
         </div>
-      </div>
 
-      {/* 버튼 */}
-      <div className="home-primary-wrap flex flex-col gap-3 relative" style={{zIndex:2}}>
-        <button
-          onClick={() => onDemoCapture ? onDemoCapture() : inputRef.current.click()}
-          className="btn-shine home-primary-button w-full rounded-xl flex items-center justify-center gap-3"
-          style={{background:"linear-gradient(135deg,var(--ink-1),#2C261B)"}}
-        >
-          <Icon name="Camera" size={18} strokeWidth={2.3} /> <span>카메라로 촬영</span>
-        </button>
+        {/* 버튼 */}
+        <div className="home-primary-wrap flex flex-col gap-3">
+          <button
+            onClick={() => onDemoCapture ? onDemoCapture() : inputRef.current.click()}
+            className="btn-shine home-primary-button w-full rounded-xl flex items-center justify-center gap-3"
+            style={{background:"linear-gradient(135deg,var(--ink-1),#2C261B)"}}
+          >
+            <Icon name="Camera" size={18} strokeWidth={2.3} /> <span>카메라로 촬영</span>
+          </button>
+        </div>
       </div>
 
       <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={e=>handleFile(e.target.files[0])}/>

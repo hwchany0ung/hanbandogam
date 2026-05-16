@@ -28,52 +28,52 @@ function CollectionView({ onBack }) {
 
   return (
     <div className="flex flex-col flex-1 overflow-hidden" style={{background:"var(--paper)"}}>
-      {/* 헤더 */}
-      <div className="px-5 pt-12 pb-3">
-        <div style={{fontFamily:"'Black Han Sans',sans-serif",fontSize:"28px",letterSpacing:"3px",color:"var(--ink-1)"}}>내 도감</div>
-        <div style={{fontSize:"12px",color:"var(--ink-2)",marginTop:"4px"}}>발견한 한국 토종 생물 수집</div>
-      </div>
+      <div className="flex-1 overflow-y-auto px-4 pb-4">
+        {/* 헤더 */}
+        <div className="pt-3 pb-3">
+          <div style={{fontFamily:"'Black Han Sans',sans-serif",fontSize:"28px",letterSpacing:"3px",color:"var(--ink-1)"}}>내 도감</div>
+          <div style={{fontSize:"12px",color:"var(--ink-2)",marginTop:"4px"}}>발견한 한국 토종 생물 수집</div>
+        </div>
 
-      {/* 수집 현황 카드 */}
-      <div className="mx-4 mb-3 px-5 py-4 rounded-xl" style={{background:"var(--surface)",border:"1px solid var(--gold-bd)",boxShadow:"0 4px 14px rgba(45,30,10,0.06)"}}>
-        <div style={{display:"flex",alignItems:"center",gap:"8px",flexWrap:"wrap"}}>
-          <div style={{fontFamily:"'Black Han Sans',sans-serif",fontSize:"30px",letterSpacing:"1px",color:"var(--ink-1)",lineHeight:1}}>
-            {items.length}<span style={{fontSize:"16px",color:"var(--ink-3)",fontFamily:"'Noto Sans KR',sans-serif",fontWeight:"500",letterSpacing:"0"}}>종 수집!</span>
+        {/* 수집 현황 카드 */}
+        <div className="mb-3 px-5 py-4 rounded-xl" style={{background:"var(--surface)",border:"1px solid var(--gold-bd)",boxShadow:"0 4px 14px rgba(45,30,10,0.06)"}}>
+          <div style={{display:"flex",alignItems:"center",gap:"8px",flexWrap:"wrap"}}>
+            <div style={{fontFamily:"'Black Han Sans',sans-serif",fontSize:"30px",letterSpacing:"1px",color:"var(--ink-1)",lineHeight:1}}>
+              {items.length}<span style={{fontSize:"16px",color:"var(--ink-3)",fontFamily:"'Noto Sans KR',sans-serif",fontWeight:"500",letterSpacing:"0"}}>종 수집!</span>
+            </div>
+            {topPct && (
+              <div style={{display:"inline-flex",alignItems:"center",padding:"4px 12px",borderRadius:"20px",background:"linear-gradient(135deg,rgba(184,144,47,0.12),rgba(184,144,47,0.18))",border:"1px solid var(--gold-bd)"}}>
+                <span style={{fontFamily:"'Space Mono',monospace",fontSize:"11px",color:"var(--gold)",fontWeight:"700"}}>전국민중 상위 {topPct}%</span>
+              </div>
+            )}
           </div>
           {topPct && (
-            <div style={{display:"inline-flex",alignItems:"center",padding:"4px 12px",borderRadius:"20px",background:"linear-gradient(135deg,rgba(184,144,47,0.12),rgba(184,144,47,0.18))",border:"1px solid var(--gold-bd)"}}>
-              <span style={{fontFamily:"'Space Mono',monospace",fontSize:"11px",color:"var(--gold)",fontWeight:"700"}}>전국민중 상위 {topPct}%</span>
+            <div style={{fontSize:"10px",color:"var(--ink-3)",marginTop:"7px",lineHeight:"1.5"}}>
+              {moreNeeded}종 더 수집하면 상위 {+(topPct*0.6).toFixed(1)}%까지 올라갈 수 있어요
             </div>
           )}
+          {!topPct && (
+            <div style={{fontSize:"10px",color:"var(--ink-3)",marginTop:"7px"}}>첫 번째 생물을 촬영해서 수집을 시작해보세요</div>
+          )}
         </div>
-        {topPct && (
-          <div style={{fontSize:"10px",color:"var(--ink-3)",marginTop:"7px",lineHeight:"1.5"}}>
-            {moreNeeded}종 더 수집하면 상위 {+(topPct*0.6).toFixed(1)}%까지 올라갈 수 있어요
-          </div>
-        )}
-        {!topPct && (
-          <div style={{fontSize:"10px",color:"var(--ink-3)",marginTop:"7px"}}>첫 번째 생물을 촬영해서 수집을 시작해보세요</div>
-        )}
-      </div>
 
-      {/* 희귀도 진행 */}
-      <div className="px-4 mb-3 flex flex-col gap-1.5">
-        {["L","E","R","U","C"].map(r=>{
-          var rc=RARITY_CONFIG[r], cnt=rarCount[r]||0, tot=rarTotal[r];
-          return (
-            <div key={r} className="flex items-center gap-2">
-              <div style={{fontFamily:"'Space Mono',monospace",fontSize:"10px",width:"12px",textAlign:"center",fontWeight:"700",color:rc.color}}>{r}</div>
-              <div style={{flex:1,height:"5px",background:"rgba(45,30,10,0.06)",borderRadius:"3px",overflow:"hidden"}}>
-                <div style={{height:"100%",borderRadius:"3px",background:rc.color,width:(cnt/tot*100)+"%"}}/>
+        {/* 희귀도 진행 */}
+        <div className="mb-3 flex flex-col gap-1.5">
+          {["L","E","R","U","C"].map(r=>{
+            var rc=RARITY_CONFIG[r], cnt=rarCount[r]||0, tot=rarTotal[r];
+            return (
+              <div key={r} className="flex items-center gap-2">
+                <div style={{fontFamily:"'Space Mono',monospace",fontSize:"10px",width:"12px",textAlign:"center",fontWeight:"700",color:rc.color}}>{r}</div>
+                <div style={{flex:1,height:"5px",background:"rgba(45,30,10,0.06)",borderRadius:"3px",overflow:"hidden"}}>
+                  <div style={{height:"100%",borderRadius:"3px",background:rc.color,width:(cnt/tot*100)+"%"}}/>
+                </div>
+                <div style={{fontFamily:"'Space Mono',monospace",fontSize:"9px",color:rc.color,width:"28px",textAlign:"right",fontWeight:"600"}}>{cnt}종</div>
               </div>
-              <div style={{fontFamily:"'Space Mono',monospace",fontSize:"9px",color:rc.color,width:"28px",textAlign:"right",fontWeight:"600"}}>{cnt}종</div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
 
-      {/* 본문 */}
-      <div className="flex-1 overflow-y-auto px-4 pb-4">
+        {/* 본문 */}
         {loading ? (
           <div className="flex justify-center items-center h-32" style={{color:"var(--ink-3)"}}>불러오는 중…</div>
         ) : items.length === 0 ? (
