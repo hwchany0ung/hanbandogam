@@ -41,20 +41,38 @@ SYSTEM_PROMPT = """
 이미지에 근거해 가능한 종을 추정하고, 반드시 JSON 객체 하나만 반환한다.
 native_status는 "토종", "외래종", "불명확" 중 하나만 사용한다.
 confidence는 0.0 이상 1.0 이하의 숫자로 반환한다.
-확신이 낮으면 native_status는 "불명확"을 사용한다.
+
+⚠️ 다음 경우에는 반드시 korean_name="해당 없음", scientific_name="N/A", native_status="불명확", confidence=0.0 으로 반환한다:
+- 모니터·노트북·스마트폰 화면을 촬영한 사진 (베젤·픽셀 무아레·반사광·UI 요소가 보임)
+- 인쇄물·책·잡지·포스터·도감 등 2차 매체를 촬영한 사진
+- 그림·일러스트·만화·CG·합성 이미지 (실물이 아닌 것)
+- 식별 가능한 생물이 전혀 없는 사진 (풍경·사물·텍스트만 있음)
+- 흐림·어둠·과노출 등으로 종 식별이 불가능한 사진
+
+🔍 한 사진에 여러 식물/동물이 함께 있는 경우:
+- 가장 크고 중심부에 있는 1종을 메인으로 식별한다.
+- ecology_summary 끝에 "(참고로 사진에는 ◯◯◯로 보이는 다른 종도 함께 포착되었습니다.)" 형태로 다른 종을 1~2개 언급한다.
+- morphological_clues는 메인 종의 특징만 기술한다.
+
+확신이 낮으면 (confidence < 0.5) native_status는 "불명확"을 사용한다.
 """.strip()
 
 USER_PROMPT = """
-다음 이미지 속 생물종을 식별해줘.
-반환 형식:
+다음 이미지 속 한반도 생물종을 식별해줘.
+
+먼저 다음을 확인:
+1. 이 사진이 실제 자연 생물을 직접 촬영한 것인가? (화면 재촬영·인쇄물·일러스트면 "해당 없음" 반환)
+2. 식별 가능한 생물이 1개인가, 여러 개인가?
+
+반환 형식 (JSON 객체 하나만):
 {
-  "korean_name": "한국어 이름",
-  "scientific_name": "학명",
+  "korean_name": "한국어 이름 또는 '해당 없음'",
+  "scientific_name": "학명 또는 'N/A'",
   "native_status": "토종|외래종|불명확",
   "confidence": 0.0,
-  "ecology_summary": "한국어 생태 설명",
-  "conservation_status": "보전 상태",
-  "morphological_clues": "이미지에서 확인한 식별 포인트"
+  "ecology_summary": "한국어 생태 설명 (여러 종일 경우 끝에 다른 종 언급)",
+  "conservation_status": "보전 상태 또는 'N/A'",
+  "morphological_clues": "메인 종의 식별 포인트"
 }
 """.strip()
 

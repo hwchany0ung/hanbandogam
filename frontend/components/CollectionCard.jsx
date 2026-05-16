@@ -69,21 +69,45 @@ var STORY_MAP = {
 
 var FALLBACK = "/assets/illustrations/fallback.svg";
 
-// 도감에 없는 새 종은 자동으로 등급 색상 + 첫 글자 일러스트 생성
+// 도감에 없는 새 종은 자동으로 수묵화풍 식물 일러스트 생성
 var RARITY_HEX    = { L:"#C99227", E:"#8B5CF6", R:"#2563EB", U:"#16A34A", C:"#6B7280" };
 var RARITY_BG_HEX = { L:"#FBF3DC", E:"#F3EDFE", R:"#E8F0FE", U:"#E7F5EC", C:"#EFF1F4" };
 
 function generateIllustration(name, rarity) {
   var color = RARITY_HEX[rarity] || RARITY_HEX.C;
   var bg    = RARITY_BG_HEX[rarity] || RARITY_BG_HEX.C;
-  var first = (name || "?").charAt(0);
+  // 종명 해시로 좌우 변이 (같은 종은 항상 같은 모양)
+  var seed = 0;
+  for (var i = 0; i < (name||"").length; i++) seed = (seed * 31 + name.charCodeAt(i)) % 1000;
+  var leafFlip = (seed % 2 === 0) ? 1 : -1;
+  var flowerY  = 14 + (seed % 5);
   var svg =
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">' +
       '<rect width="100" height="100" fill="' + bg + '"/>' +
-      '<circle cx="50" cy="46" r="30" fill="' + color + '" opacity="0.16"/>' +
-      '<circle cx="50" cy="46" r="22" fill="' + color + '" opacity="0.12"/>' +
-      '<text x="50" y="60" text-anchor="middle" font-family="Noto Serif KR, serif" font-size="38" font-weight="900" fill="' + color + '">' + first + '</text>' +
-      '<text x="50" y="88" text-anchor="middle" font-family="sans-serif" font-size="7" fill="#9C907E">' + (name||"") + '</text>' +
+      // 한지 텍스처 점
+      '<circle cx="22" cy="25" r="0.8" fill="#C8BDA8" opacity="0.35"/>' +
+      '<circle cx="78" cy="35" r="0.8" fill="#C8BDA8" opacity="0.35"/>' +
+      '<circle cx="30" cy="78" r="0.8" fill="#C8BDA8" opacity="0.3"/>' +
+      '<circle cx="72" cy="68" r="0.8" fill="#C8BDA8" opacity="0.3"/>' +
+      // 줄기 (수묵 느낌)
+      '<path d="M50 90 Q 50 70 ' + (48 + leafFlip) + ' 50 Q ' + (47 + leafFlip*2) + ' 32 50 ' + (flowerY + 4) + '" stroke="#5C5345" stroke-width="1.3" fill="none" opacity="0.55" stroke-linecap="round"/>' +
+      // 아래 잎
+      '<path d="M50 72 Q ' + (35 - leafFlip*3) + ' 68 ' + (28 - leafFlip*3) + ' 58 Q 42 64 50 70 Z" fill="' + color + '" opacity="0.32"/>' +
+      // 중간 왼쪽 잎
+      '<path d="M48 56 Q 26 50 20 34 Q 38 42 49 53 Z" fill="' + color + '" opacity="0.4"/>' +
+      '<path d="M48 56 Q 30 50 22 38" stroke="' + color + '" stroke-width="0.6" fill="none" opacity="0.55"/>' +
+      // 중간 오른쪽 잎
+      '<path d="M50 46 Q 72 40 80 24 Q 60 32 50 44 Z" fill="' + color + '" opacity="0.4"/>' +
+      '<path d="M50 46 Q 70 40 78 26" stroke="' + color + '" stroke-width="0.6" fill="none" opacity="0.55"/>' +
+      // 꽃 (4장 꽃잎)
+      '<circle cx="50" cy="' + flowerY + '" r="5" fill="' + color + '" opacity="0.5"/>' +
+      '<circle cx="44" cy="' + (flowerY-2) + '" r="3.2" fill="' + color + '" opacity="0.72"/>' +
+      '<circle cx="56" cy="' + (flowerY-2) + '" r="3.2" fill="' + color + '" opacity="0.72"/>' +
+      '<circle cx="50" cy="' + (flowerY-6) + '" r="3.2" fill="' + color + '" opacity="0.72"/>' +
+      '<circle cx="50" cy="' + (flowerY+2) + '" r="3.2" fill="' + color + '" opacity="0.72"/>' +
+      '<circle cx="50" cy="' + (flowerY-1) + '" r="1.4" fill="#FAF5E6"/>' +
+      // 종명
+      '<text x="50" y="96" text-anchor="middle" font-family="Noto Serif KR, serif" font-size="5.5" fill="#5C5345" opacity="0.85">' + (name||"") + '</text>' +
     '</svg>';
   return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
 }
