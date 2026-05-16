@@ -1,4 +1,4 @@
-window.DEMO_MODE = true;
+window.DEMO_MODE = false;
 var BASE_URL = "";
 
 // Design Ref: §5.1 — 사용자 식별자 부트스트랩 (URL ?u= > localStorage > 신규 UUID 16자)
