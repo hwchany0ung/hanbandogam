@@ -267,6 +267,26 @@ function ResultCard({ result, imageFile, onSave, onRetry, onCollection, alreadyC
               </div>
             )}
 
+            {/* 국립수목원 표준 이미지 (KNA hit 시) */}
+            {/* Design Ref: kna-image-reference §2.4 M6 — 시각 비교 UI, false positive catch 가치 */}
+            {result.kna_image_url && (
+              <div style={{marginBottom:"14px"}}>
+                <div style={{fontFamily:"'Space Mono',monospace",fontSize:"9px",color:"var(--accent)",letterSpacing:"2px",marginBottom:"6px",fontWeight:"700"}}>
+                  국립수목원 표준 이미지
+                </div>
+                <img
+                  src={result.kna_image_url}
+                  alt={result.korean_name + " 표준 이미지"}
+                  style={{width:"100%",maxHeight:"220px",objectFit:"cover",borderRadius:"8px",border:"1px solid var(--gold-bd)",display:"block"}}
+                  loading="lazy"
+                  onError={(e) => { e.target.parentElement.style.display = "none"; }}
+                />
+                <div style={{fontFamily:"'Space Mono',monospace",fontSize:"8px",color:"var(--ink-3)",marginTop:"4px",letterSpacing:"1px",textAlign:"right"}}>
+                  © 산림청 국립수목원 / data.go.kr
+                </div>
+              </div>
+            )}
+
             {/* 보전 현황 */}
             <div style={{fontSize:"11px",color:"var(--ink-3)",textAlign:"center"}}>{result.conservation_status}</div>
 

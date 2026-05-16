@@ -178,7 +178,9 @@ async def run_identify(
 
     _ = memo
 
-    # 학명 교차검증 (GBIF) — Claude vision 응답에 verification 메타 부착
+    # 학명 교차검증 — KNA 로컬 인덱스 우선 + GBIF 폴백
+    # Design Ref: kna-image-reference §2.1 — Option C Pragmatic Balance
+    # Plan SC: SC-2 정확도 향상, SC-3 KNA 매칭 ≥80%, SC-4 GBIF 폴백 ≥70%
     scientific_name = _get_result_value(result, "scientific_name")
     if scientific_name and scientific_name != "N/A":
         try:
@@ -189,6 +191,8 @@ async def run_identify(
                 verification_matched=verification.get("matched"),
                 verification_confidence=verification.get("confidence"),
                 verification_matched_name=verification.get("matched_name"),
+                # Plan SC: SC-1 카드 표준 이미지 표시용 (frontend M6 가 사용)
+                kna_image_url=verification.get("kna_image_url"),
             )
         except Exception as exc:  # noqa: BLE001
             import logging

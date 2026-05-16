@@ -21,10 +21,13 @@ class IdentifyResult(BaseModel):
     plant_type: Optional[str] = None  # tree | flower | herb | vine | fern | shrub | grass | other
     illustration_url: Optional[str] = None  # 콜드스타트: S3 일러스트 URL
     story: Optional[str] = None              # 콜드스타트: 이야기 텍스트 (DB or Claude Haiku)
-    verification_source: Optional[str] = None        # "GBIF" / "GBIF_FALLBACK:reason"
-    verification_matched: Optional[bool] = None      # GBIF 매칭 성공 여부
-    verification_confidence: Optional[int] = None    # GBIF confidence 0~100
-    verification_matched_name: Optional[str] = None  # GBIF canonical name
+    # Design Ref: kna-image-reference §2.3 — KNA hit 시 "KNA", miss → GBIF 폴백 시 "GBIF"
+    verification_source: Optional[str] = None        # "KNA" / "GBIF" / "GBIF_FALLBACK:reason"
+    verification_matched: Optional[bool] = None      # 매칭 성공 여부 (KNA 또는 GBIF)
+    verification_confidence: Optional[int] = None    # 0~100 (KNA hit 시 100 고정)
+    verification_matched_name: Optional[str] = None  # canonical name
+    # Design Ref: kna-image-reference §2.3 FR-4 — KNA hit 시 정부 공식 표준 이미지 URL
+    kna_image_url: Optional[str] = None              # https://www.nature.go.kr/.../<학명>_1K.JPG
 
 
 class CollectionAddRequest(BaseModel):
