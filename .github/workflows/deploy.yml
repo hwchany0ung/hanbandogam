@@ -1,0 +1,50 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r backend/requirements.txt -r backend/requirements-dev.txt --quiet
+
+      - name: Run pytest
+        run: pytest backend/tests/ -v
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Prepare SSH key
+        run: |
+          echo "${{ secrets.EC2_SSH_KEY }}" > /tmp/hanbando.pem
+          chmod 600 /tmp/hanbando.pem
+
+      - name: Write .env to EC2
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          UPSTAGE_API_KEY: ${{ secrets.UPSTAGE_API_KEY }}
+          DOMAIN: ${{ secrets.DOMAIN }}
+          CORS_ORIGINS: ${{ secrets.CORS_ORIGINS }}
+        run: |
+          printf 'ANTHROPIC_API_KEY=%s\nUPSTAGE_API_KEY=%s\nDOMAIN=%s\nCORS_ORIGINS=%s\nDATABASE_URL=sqlite:///./hanbando.db\nAPP_DEMO_MODE=0\n' \
+            "$ANTHROPIC_API_KEY" "$UPSTAGE_API_KEY" "$DOMAIN" "$CORS_ORIGINS" > /tmp/.env
+          scp -i /tmp/hanbando.pem -o StrictHostKeyChecking=no \
+            /tmp/.env ec2-user@${{ secrets.EC2_HOST }}:/home/ec2-user/hanbando/.env
+
+      - name: Run deploy script
+        run: |
+          ssh -i /tmp/hanbando.pem -o StrictHostKeyChecking=no \
+            ec2-user@${{ secrets.EC2_HOST }} \
+            "bash /home/ec2-user/hanbando/scripts/deploy.sh"
