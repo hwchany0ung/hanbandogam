@@ -27,11 +27,13 @@ function withUid(path) {
 // 도감 데이터 캐시 (탭 전환 가속용)
 var _collectionCache = null;
 var _collectionCacheAt = 0;
+var _inflightCollection = null;  // 동시 호출 dedup (race condition 방지)
 var COLLECTION_CACHE_TTL_MS = 30000;  // 30초
 
 function invalidateCollectionCache() {
   _collectionCache = null;
   _collectionCacheAt = 0;
+  _inflightCollection = null;
 }
 
 // 이미지 프리로드 (브라우저 캐시 워밍업)
@@ -133,14 +135,22 @@ async function getCollection() {
   if (_collectionCache && (Date.now() - _collectionCacheAt) < COLLECTION_CACHE_TTL_MS) {
     return _collectionCache;
   }
-  var res = await fetch(BASE_URL+withUid("/api/collection"));
-  if (!res.ok) throw new Error("목록 조회 실패");
-  var data = await res.json();
-  _collectionCache = data;
-  _collectionCacheAt = Date.now();
-  // 이미지 프리로드 (비동기, 결과 영향 X)
-  try { preloadCollectionImages(data); } catch(_) {}
-  return data;
+  // 동시 호출 dedup: 이미 fetch 중이면 같은 promise 반환
+  if (_inflightCollection) return _inflightCollection;
+  _inflightCollection = (async () => {
+    try {
+      var res = await fetch(BASE_URL+withUid("/api/collection"));
+      if (!res.ok) throw new Error("목록 조회 실패");
+      var data = await res.json();
+      _collectionCache = data;
+      _collectionCacheAt = Date.now();
+      try { preloadCollectionImages(data); } catch(_) {}
+      return data;
+    } finally {
+      _inflightCollection = null;
+    }
+  })();
+  return _inflightCollection;
 }
 
 async function addToCollection(result, imageUrl) {
