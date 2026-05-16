@@ -102,21 +102,3 @@ async function deleteCollectionItem(itemId) {
   if (window.DEMO_MODE) { var i=DEMO_COLLECTION.findIndex(x=>x.id===itemId); if(i!==-1)DEMO_COLLECTION.splice(i,1); return; }
   await fetch(BASE_URL+"/api/collection/"+itemId,{method:"DELETE"});
 }
-
-// ── 포인트 시스템 ─────────────────────────────────────────────
-var RARITY_POINTS = { L:500, E:300, R:150, U:75, C:25 };
-
-function getTotalPoints() {
-  return parseInt(localStorage.getItem("hanbando_pts") || "0", 10);
-}
-
-function addPoints(pts) {
-  var total = getTotalPoints() + pts;
-  localStorage.setItem("hanbando_pts", String(total));
-  return total;
-}
-
-function calcEarnedPoints(rarityKey, isNew) {
-  var base = RARITY_POINTS[rarityKey] || 25;
-  return isNew ? base * 2 : Math.round(base * 0.3);
-}

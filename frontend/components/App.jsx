@@ -59,7 +59,6 @@ function App() {
   var [shutterOn,        setShutterOn]        = React.useState(false);
   var [demoIdx,          setDemoIdx]          = React.useState(0);
   var [missionCompleted, setMissionCompleted] = React.useState(false);
-  var [successResult,    setSuccessResult]    = React.useState(null);
 
   React.useEffect(()=>{
     getCollection().then(list=>setColCount(list.length)).catch(()=>{});
@@ -78,10 +77,6 @@ function App() {
       try {
         await addToCollection(res, "");
         setColCount(function(c){ return c+1; });
-        var rarity = getRarity(res.korean_name);
-        var pts = calcEarnedPoints(rarity, true);
-        var newTotal = addPoints(pts);
-        setSuccessResult({ result: res, earnedPts: pts, isNew: true, totalPts: newTotal });
       } catch(saveErr) {}
     } catch(e) { setErrMsg(e.message); setView("error"); }
   }
@@ -109,10 +104,6 @@ function App() {
     try {
       await addToCollection(capture, capture.image_path || "");
       setColCount(function(c){ return c+1; });
-      var rarity = getRarity(capture.korean_name);
-      var pts = calcEarnedPoints(rarity, true);
-      var newTotal = addPoints(pts);
-      setSuccessResult({ result: capture, earnedPts: pts, isNew: true, totalPts: newTotal });
     } catch(saveErr) {}
   }
 
@@ -167,17 +158,7 @@ function App() {
       {/* 토스트 */}
       <div className={"toast"+(toast?" show":"")}>{toast}</div>
 
-      {/* 성공 팝업 */}
-      {successResult && (
-        <SuccessPopup
-          result={successResult.result}
-          earnedPts={successResult.earnedPts}
-          isNew={successResult.isNew}
-          totalPts={successResult.totalPts}
-          onClose={function(){ setSuccessResult(null); }}
-          onViewCollection={function(){ setSuccessResult(null); setView("collection"); }}
-        />
-      )}
+
     </div>
   );
 }
