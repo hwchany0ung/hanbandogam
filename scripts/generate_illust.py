@@ -22,16 +22,19 @@ ENV_PATH = ROOT / "poc" / ".env"
 
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
-# .env 파일에서 토큰 읽기
+# 토큰 로드: 환경변수 우선 (CI), .env fallback (로컬)
 def load_token() -> str:
+    env_token = os.environ.get("REPLICATE_API_TOKEN", "").strip()
+    if env_token:
+        return env_token
     if not ENV_PATH.exists():
-        print(f"[ERROR] .env not found: {ENV_PATH}")
+        print(f"[ERROR] REPLICATE_API_TOKEN not in env, .env not found: {ENV_PATH}")
         sys.exit(1)
     for line in ENV_PATH.read_text(encoding="utf-8").splitlines():
         line = line.strip()
         if line.startswith("REPLICATE_API_TOKEN="):
             return line.split("=", 1)[1].strip().strip('"').strip("'")
-    print("[ERROR] REPLICATE_API_TOKEN not found in .env")
+    print("[ERROR] REPLICATE_API_TOKEN not found in env or .env")
     sys.exit(1)
 
 

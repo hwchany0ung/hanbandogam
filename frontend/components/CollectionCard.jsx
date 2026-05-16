@@ -192,6 +192,7 @@ function CollectionCard({ item, onDelete }) {
   var [showPhoto,    setShowPhoto]    = React.useState(false);
   var [showDetail,   setShowDetail]   = React.useState(false);
   var [illustErr,    setIllustErr]    = React.useState(false);
+  var [conventionErr,setConventionErr]= React.useState(false);
   var [photoErr,     setPhotoErr]     = React.useState(false);
   var [sharing,      setSharing]      = React.useState(false);
   var modalRef = React.useRef(null);
@@ -200,6 +201,10 @@ function CollectionCard({ item, onDelete }) {
   var rc = RARITY_CONFIG[rarity];
   var nc = NATIVE_CONFIG[item.native_status] || NATIVE_CONFIG["불명확"];
 
+  // 3단계 폴백 체인:
+  //  1) ILLUSTRATION_MAP 에 명시적 매핑이 있으면 → 그 PNG
+  //  2) 없으면 convention 경로 `/assets/illustrations/{name}.png` 시도 (GH Actions가 자동 생성)
+  //  3) 둘 다 실패하면 → 자동생성 SVG (수묵화풍)
   var autoIllust = generateIllustration(item.korean_name, rarity);
   var illustSrc = illustErr ? autoIllust : (ILLUSTRATION_MAP[item.korean_name] || autoIllust);
   var realPhotoSrc = REAL_PHOTO_MAP[item.korean_name] || null;
@@ -269,7 +274,11 @@ function CollectionCard({ item, onDelete }) {
               src={displaySrc}
               alt={item.korean_name}
               style={{width:"100%",height:"100%",objectFit:"contain",padding:"16px",transition:"opacity 0.25s"}}
-              onError={() => showPhoto ? setPhotoErr(true) : setIllustErr(true)}
+              onError={() => {
+                if (showPhoto) { setPhotoErr(true); return; }
+                if (!illustErr) setIllustErr(true);
+                else if (!conventionErr) setConventionErr(true);
+              }}
             />
 
             {/* 희귀도 배지 */}
@@ -368,7 +377,12 @@ function CollectionCard({ item, onDelete }) {
         src={illustSrc}
         alt={item.korean_name}
         style={{width:"100%",height:"100%",objectFit:"cover"}}
-        onError={() => setIllustErr(true)}
+        onError={() => {
+          // ILLUSTRATION_MAP 의 PNG 가 실패 → convention 시도하도록 illustErr=true
+          // convention 도 실패하면 → conventionErr=true → SVG 폴백
+          if (!illustErr) setIllustErr(true);
+          else if (!conventionErr) setConventionErr(true);
+        }}
       />
       {/* 희귀도 배지 */}
       <div style={{position:"absolute",top:"5px",left:"5px",width:"18px",height:"18px",borderRadius:"5px",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Space Mono',monospace",fontSize:"8px",fontWeight:"700",background:rc.bg,border:`1px solid ${rc.bd}`,color:rc.color,backdropFilter:"blur(4px)",zIndex:2}}>
