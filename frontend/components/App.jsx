@@ -22,7 +22,7 @@ var DEMO_CAPTURES = [
     ecology_summary: "한라산 해발 1,500m 이상 정상부에만 자생하는 한국 특산종. '한국의 에델바이스'로 불리며, 별 모양 흰 솜털 포엽이 추위와 강풍을 견디는 고산 생태계의 상징이다. 야생 개체수가 200여 본 이하로 추정되는 초희귀 식물.",
     conservation_status: "CR — 한라산 정상부 한정 200여 본 생존",
     morphological_clues: "별 모양 흰 솜털 포엽, 작은 노란 꽃 머리, 좁고 두꺼운 잎, 전체 은백색 솜털",
-    image_path: "/assets/illustrations/한라솜다리.svg",
+    image_path: "/assets/illustrations/한라솜다리.png",
     memo: "한라산 백록담 능선",
   },
   {
@@ -44,7 +44,7 @@ var DEMO_CAPTURES = [
     ecology_summary: "산불·벌목 후 가장 먼저 자라나는 '개척자 식물'. 분홍색 꽃이 긴 이삭처럼 피며, 한 그루가 한 시즌에 8만 개의 깃털 달린 씨앗을 만들어 바람을 타고 멀리 날아간다. 강원도 산림 복원지의 상징.",
     conservation_status: "VU — 산림 화재·벌목 복원지 의존",
     morphological_clues: "분홍색 꽃 긴 이삭, 좁고 긴 잎 어긋나기, 길게 늘어지는 깃털 씨앗, 7~8월 개화",
-    image_path: "/assets/illustrations/분홍바늘꽃.svg",
+    image_path: "/assets/illustrations/분홍바늘꽃.png",
     memo: "강원도 평창 화재 복원지",
   },
 ];

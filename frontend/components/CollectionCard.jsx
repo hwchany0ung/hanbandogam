@@ -31,7 +31,11 @@ var ILLUSTRATION_MAP = {
   // Replicate flux-schnell 실시간 생성 (신규 발견 종)
   "마삭줄":         "/assets/illustrations/마삭줄.png",
   "산딸기":         "/assets/illustrations/산딸기.png",
-  // SVG (기존 유지)
+  "한라솜다리":     "/assets/illustrations/한라솜다리.png",
+  "분홍바늘꽃":     "/assets/illustrations/분홍바늘꽃.png",
+  "매미꽃":         "/assets/illustrations/매미꽃.png",
+  "진달래":         "/assets/illustrations/진달래.png",
+  // SVG (legacy 동물 — PNG 캐싱 미대상)
   "황소개구리":"/assets/illustrations/황소개구리.svg",
   "왜가리":"/assets/illustrations/왜가리.svg",
   "반달가슴곰":"/assets/illustrations/반달가슴곰.svg","수달":"/assets/illustrations/수달.svg",
@@ -41,8 +45,7 @@ var ILLUSTRATION_MAP = {
   "꽃사슴":"/assets/illustrations/꽃사슴.svg","고라니":"/assets/illustrations/고라니.svg",
   "너구리":"/assets/illustrations/너구리.svg","맹꽁이":"/assets/illustrations/맹꽁이.svg",
   "금개구리":"/assets/illustrations/금개구리.svg","꼬치동자개":"/assets/illustrations/꼬치동자개.svg",
-  "미호종개":"/assets/illustrations/미호종개.svg","분홍바늘꽃":"/assets/illustrations/분홍바늘꽃.svg",
-  "한라솜다리":"/assets/illustrations/한라솜다리.svg",
+  "미호종개":"/assets/illustrations/미호종개.svg",
 };
 
 var RARITY_OWNERSHIP_PCT = { L:"0.3", E:"1.2", R:"4.5", U:"15", C:"40" };

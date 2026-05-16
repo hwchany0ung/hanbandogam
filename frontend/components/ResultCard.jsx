@@ -1,7 +1,11 @@
 function ResultCard({ result, imageFile, onSave, onRetry, onCollection }) {
   var [saving, setSaving] = React.useState(false);
   var [saved,  setSaved]  = React.useState(false);
-  var previewUrl = imageFile ? URL.createObjectURL(imageFile) : (result.image_path || null);
+  var [previewErr, setPreviewErr] = React.useState(false);
+  // 서버에 저장된 image_path(/assets/uploads/<uuid>.jpg)를 우선 사용해 다른 기기에서도 사진이 보이도록 한다
+  var previewUrl = result.image_path || (imageFile ? URL.createObjectURL(imageFile) : null);
+  var fallbackPng = result.korean_name ? "/assets/illustrations/" + encodeURIComponent(result.korean_name) + ".png" : null;
+  var imgSrc = previewErr && fallbackPng ? fallbackPng : previewUrl;
 
   var rarity = getRarity(result.korean_name);
   var rc = RARITY_CONFIG[rarity];
@@ -41,8 +45,13 @@ function ResultCard({ result, imageFile, onSave, onRetry, onCollection }) {
 
           {/* 사진 */}
           <div style={{height:"300px",position:"relative",overflow:"hidden",background:"linear-gradient(145deg,#F4EDDC,#FAF5E6)"}}>
-            {previewUrl
-              ? <img src={previewUrl} alt="업로드" style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}}/>
+            {imgSrc
+              ? <img
+                  src={imgSrc}
+                  alt="업로드"
+                  style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}}
+                  onError={() => { if (!previewErr) setPreviewErr(true); }}
+                />
               : <div className="flex items-center justify-center h-full" style={{color:"var(--U)"}}><Icon name="Sprout" size={48} strokeWidth={1.6} /></div>
             }
             <div className="holo"/>
