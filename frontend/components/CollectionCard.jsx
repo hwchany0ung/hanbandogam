@@ -28,12 +28,9 @@ var ILLUSTRATION_MAP = {
   "돼지풀":         "/assets/illustrations/plant_104_돼지풀.png",
   "미국쑥부쟁이":   "/assets/illustrations/plant_105_미국쑥부쟁이.png",
   "양미역취":       "/assets/illustrations/plant_106_양미역취.png",
-  // Replicate flux-schnell 실시간 생성 (신규 발견 종)
-  "마삭줄":         "/assets/illustrations/마삭줄.png",
-  "산딸기":         "/assets/illustrations/산딸기.png",
+  // Replicate flux-schnell 시연용 종
   "한라솜다리":     "/assets/illustrations/한라솜다리.png",
   "분홍바늘꽃":     "/assets/illustrations/분홍바늘꽃.png",
-  "매미꽃":         "/assets/illustrations/매미꽃.png",
   "진달래":         "/assets/illustrations/진달래.png",
   // SVG (legacy 동물 — PNG 캐싱 미대상)
   "황소개구리":"/assets/illustrations/황소개구리.svg",

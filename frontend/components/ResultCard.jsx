@@ -2,8 +2,11 @@ function ResultCard({ result, imageFile, onSave, onRetry, onCollection }) {
   var [saving, setSaving] = React.useState(false);
   var [saved,  setSaved]  = React.useState(false);
   var [previewErr, setPreviewErr] = React.useState(false);
-  // 서버에 저장된 image_path(/assets/uploads/<uuid>.jpg)를 우선 사용해 다른 기기에서도 사진이 보이도록 한다
-  var previewUrl = result.image_path || (imageFile ? URL.createObjectURL(imageFile) : null);
+  // 우선순위:
+  //  1) result.image_url — 백엔드가 영구 저장한 /assets/uploads/{uuid}.jpg (다른 세션에서도 유효)
+  //  2) imageFile — 사용자가 방금 업로드한 File (blob URL, 현재 세션만)
+  //  3) result.image_path — 데모 캡처의 사전 정의 경로
+  var previewUrl = result.image_url || (imageFile ? URL.createObjectURL(imageFile) : (result.image_path || null));
   var fallbackPng = result.korean_name ? "/assets/illustrations/" + encodeURIComponent(result.korean_name) + ".png" : null;
   var imgSrc = previewErr && fallbackPng ? fallbackPng : previewUrl;
 
@@ -24,7 +27,14 @@ function ResultCard({ result, imageFile, onSave, onRetry, onCollection }) {
   async function handleSave() {
     if (saved || notIdentified) return;
     setSaving(true);
-    try { await addToCollection(result, previewUrl||""); setSaved(true); if (onSave) onSave(); }
+    try {
+      // blob URL 은 다른 세션에서 무효이므로 저장 X
+      // 영구 URL (result.image_url 또는 사전 정의 image_path) 우선
+      var pathToSave = result.image_url || (result.image_path && !result.image_path.startsWith("blob:") ? result.image_path : "");
+      await addToCollection(result, pathToSave);
+      setSaved(true);
+      if (onSave) onSave();
+    }
     catch(e) { alert("저장 실패: "+e.message); }
     finally { setSaving(false); }
   }

@@ -78,11 +78,13 @@ async def identify(
 
     if image_path:
         if hasattr(result, "model_copy"):
-            return result.model_copy(update={"image_path": image_path})
+            return result.model_copy(update={"image_path": image_path, "image_url": image_path})
         if isinstance(result, dict):
             merged = dict(result)
             merged["image_path"] = image_path
+            merged["image_url"] = image_path
             return merged
         setattr(result, "image_path", image_path)
+        setattr(result, "image_url", image_path)
 
     return result

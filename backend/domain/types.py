@@ -17,6 +17,7 @@ class IdentifyResult(BaseModel):
     conservation_status: str
     morphological_clues: str
     image_path: Optional[str] = None
+    image_url: Optional[str] = None  # /assets/uploads/{uuid}.jpg (영구 저장 경로)
 
 
 class CollectionAddRequest(BaseModel):
