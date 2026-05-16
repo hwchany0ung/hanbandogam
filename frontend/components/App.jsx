@@ -11,7 +11,7 @@ var DEMO_CAPTURES = [
     ecology_summary: "한반도 고유의 콩과 야생화로, 황금빛 노란색 나비 모양 꽃이 무리지어 피는 한국 특산종이다. 강원도 산지 능선과 메마른 경사면에서 5~6월에 만날 수 있으며, 자생지가 한정되어 발견하기 쉽지 않다.",
     conservation_status: "VU — 한반도 특산 콩과 식물",
     morphological_clues: "황금색 나비 모양 꽃 5~10송이, 잎 7~10쌍 작은잎, 덩굴손, 5~6월 개화",
-    image_path: "/assets/illustrations/plant_015_노랑갈퀴.png",
+    image_path: "/assets/photos/노랑갈퀴.jpg",
     memo: "강원도 태백산 능선",
   },
   {
@@ -22,7 +22,7 @@ var DEMO_CAPTURES = [
     ecology_summary: "한라산 해발 1,500m 이상 정상부에만 자생하는 한국 특산종. '한국의 에델바이스'로 불리며, 별 모양 흰 솜털 포엽이 추위와 강풍을 견디는 고산 생태계의 상징이다. 야생 개체수가 200여 본 이하로 추정되는 초희귀 식물.",
     conservation_status: "CR — 한라산 정상부 한정 200여 본 생존",
     morphological_clues: "별 모양 흰 솜털 포엽, 작은 노란 꽃 머리, 좁고 두꺼운 잎, 전체 은백색 솜털",
-    image_path: "/assets/illustrations/한라솜다리.png",
+    image_path: "/assets/photos/한라솜다리.jpg",
     memo: "한라산 백록담 능선",
   },
   {
@@ -33,7 +33,7 @@ var DEMO_CAPTURES = [
     ecology_summary: "한국·일본·중국 동부에만 자생하는 야생 산딸기로, 줄기 전체가 붉은 가시털로 빽빽이 덮여 있다. 7~8월에 익는 진홍색 열매는 작은 보석처럼 빛나며, 산지 가장자리·계곡 주변에서 발견된다.",
     conservation_status: "LC — 산지 자생 한국 토종 산딸기",
     morphological_clues: "줄기에 붉은 선모 가시, 잎 뒷면 흰 솜털, 진홍색 작은 둥근 열매, 5장 잎",
-    image_path: "/assets/illustrations/plant_002_가시복분자딸기.png",
+    image_path: "/assets/photos/가시복분자딸기.jpg",
     memo: "강원도 평창 계곡 산지",
   },
   {
@@ -44,7 +44,7 @@ var DEMO_CAPTURES = [
     ecology_summary: "산불·벌목 후 가장 먼저 자라나는 '개척자 식물'. 분홍색 꽃이 긴 이삭처럼 피며, 한 그루가 한 시즌에 8만 개의 깃털 달린 씨앗을 만들어 바람을 타고 멀리 날아간다. 강원도 산림 복원지의 상징.",
     conservation_status: "VU — 산림 화재·벌목 복원지 의존",
     morphological_clues: "분홍색 꽃 긴 이삭, 좁고 긴 잎 어긋나기, 길게 늘어지는 깃털 씨앗, 7~8월 개화",
-    image_path: "/assets/illustrations/분홍바늘꽃.png",
+    image_path: "/assets/photos/분홍바늘꽃.jpg",
     memo: "강원도 평창 화재 복원지",
   },
 ];
