@@ -1,0 +1,24 @@
+[Unit]
+Description=한반도감 FastAPI 서버
+After=network.target
+
+[Service]
+Type=simple
+User=ec2-user
+WorkingDirectory=/home/ec2-user/hanbando
+EnvironmentFile=/home/ec2-user/hanbando/.env
+
+# SQLite race condition 방지 — uvicorn workers 반드시 1로 고정
+ExecStart=/home/ec2-user/hanbando/venv/bin/uvicorn backend.main:app \
+    --host 127.0.0.1 \
+    --port 8000 \
+    --workers 1 \
+    --log-level info
+
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

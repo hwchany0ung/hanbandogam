@@ -1,0 +1,34 @@
+# 한반도감 Caddyfile
+# 배치 위치: /etc/caddy/Caddyfile (EC2)
+# sudo systemctl restart caddy 후 자동 TLS 발급 (~30초)
+#
+# 도메인 보유 시: {$DOMAIN} 환경변수 설정 또는 아래 직접 기입
+# 도메인 미보유 시: 아래 ":80" 블록 사용 (HTTP only, 발표장 데모용)
+
+{$DOMAIN:localhost} {
+    reverse_proxy localhost:8000
+
+    # 요청 크기 제한 (10MB — 이미지 업로드 상한)
+    request_body {
+        max_size 10MB
+    }
+
+    # 기본 rate limit (Caddy rate_limit 플러그인 필요 시 추가)
+    # rate_limit {
+    #     zone dynamic {
+    #         key {remote_host}
+    #         events 60
+    #         window 1m
+    #     }
+    # }
+
+    log {
+        output file /var/log/caddy/hanbando.log
+        format json
+    }
+}
+
+# 도메인 미보유 시 HTTP 폴백 (주석 해제 후 사용)
+# :80 {
+#     reverse_proxy localhost:8000
+# }
