@@ -16,6 +16,7 @@ class IdentifyResult(BaseModel):
     ecology_summary: str
     conservation_status: str
     morphological_clues: str
+    image_path: Optional[str] = None
 
 
 class CollectionAddRequest(BaseModel):

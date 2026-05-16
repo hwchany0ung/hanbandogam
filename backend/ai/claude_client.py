@@ -24,6 +24,7 @@ except ImportError:
             ecology_summary: str
             conservation_status: str
             morphological_clues: str
+            image_path: str | None = None
 
 
 ALLOWED_NATIVE_STATUSES = {"토종", "외래종", "불명확"}

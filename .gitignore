@@ -53,6 +53,10 @@ video/assets/audio/*.mp3
 video/assets/output/*.mp4
 !video/assets/.gitkeep
 
+# 사용자 업로드 사진 (시연·운영 시 동적 생성, 개인정보 가능)
+backend/assets/uploads/*
+!backend/assets/uploads/.gitkeep
+
 # bkit (이미 존재)
 .bkit/runtime/
 .bkit/audit/

@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import uuid
+from pathlib import Path
+
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 
 
@@ -12,6 +15,27 @@ except ImportError:
 router = APIRouter(tags=["identify"])
 
 
+UPLOADS_DIR = Path(__file__).resolve().parent.parent / "assets" / "uploads"
+
+ALLOWED_EXTENSIONS = {
+    "image/jpeg": ".jpg",
+    "image/jpg": ".jpg",
+    "image/png": ".png",
+    "image/webp": ".webp",
+}
+
+MAX_IMAGE_BYTES = 10 * 1024 * 1024
+
+
+def _persist_upload(image_bytes: bytes, media_type: str) -> str:
+    ext = ALLOWED_EXTENSIONS.get((media_type or "").lower(), ".jpg")
+    UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
+    filename = f"{uuid.uuid4().hex}{ext}"
+    target = UPLOADS_DIR / filename
+    target.write_bytes(image_bytes)
+    return f"/assets/uploads/{filename}"
+
+
 @router.post("/api/identify", response_model=IdentifyResult)
 async def identify(
     file: UploadFile = File(...),
@@ -22,10 +46,19 @@ async def identify(
     if not image_bytes:
         raise HTTPException(status_code=400, detail="업로드된 이미지 파일이 비어 있습니다.")
 
+    if len(image_bytes) > MAX_IMAGE_BYTES:
+        raise HTTPException(status_code=413, detail="이미지 용량이 너무 큽니다 (최대 10MB).")
+
     media_type = file.content_type or "image/jpeg"
 
+    image_path: str | None = None
     try:
-        return await run_identify(
+        image_path = _persist_upload(image_bytes, media_type)
+    except OSError:
+        image_path = None
+
+    try:
+        result = await run_identify(
             image_bytes,
             media_type,
             memo,
@@ -42,3 +75,14 @@ async def identify(
             status_code=502,
             detail="이미지 식별 서비스 호출 중 오류가 발생했습니다.",
         ) from exc
+
+    if image_path:
+        if hasattr(result, "model_copy"):
+            return result.model_copy(update={"image_path": image_path})
+        if isinstance(result, dict):
+            merged = dict(result)
+            merged["image_path"] = image_path
+            return merged
+        setattr(result, "image_path", image_path)
+
+    return result
