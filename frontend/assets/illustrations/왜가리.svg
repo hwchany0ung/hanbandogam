@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 220" width="200" height="220">
+  <rect width="200" height="220" fill="#faf8f3"/>
+  <!-- 물 반영 -->
+  <ellipse cx="100" cy="190" rx="50" ry="6" fill="#b8ccd8" opacity="0.35"/>
+  <!-- 다리 -->
+  <line x1="95" y1="165" x2="88" y2="192" stroke="#c8a878" stroke-width="3.5" stroke-linecap="round" opacity="0.85"/>
+  <line x1="108" y1="165" x2="115" y2="192" stroke="#c8a878" stroke-width="3.5" stroke-linecap="round" opacity="0.85"/>
+  <!-- 발가락 -->
+  <path d="M88 192 Q80 194 74 192 M88 192 Q84 196 82 200 M88 192 Q90 196 94 198" stroke="#c8a878" stroke-width="2" fill="none" opacity="0.75"/>
+  <path d="M115 192 Q123 194 129 192 M115 192 Q119 196 121 200 M115 192 Q113 196 109 198" stroke="#c8a878" stroke-width="2" fill="none" opacity="0.75"/>
+  <!-- 꼬리 -->
+  <path d="M108 148 Q120 155 128 145 Q122 138 112 142" fill="#9aa8b8" opacity="0.7"/>
+  <!-- 날개 접힌 모습 -->
+  <path d="M72 120 Q55 130 50 148 Q60 158 75 150 Q80 138 85 130" fill="#8090a0" opacity="0.8"/>
+  <path d="M128 120 Q145 130 150 148 Q140 158 125 150 Q120 138 115 130" fill="#8090a0" opacity="0.8"/>
+  <!-- 날개 결 -->
+  <path d="M56 138 Q62 132 70 135" stroke="#6a7888" stroke-width="1" fill="none" opacity="0.5"/>
+  <path d="M144 138 Q138 132 130 135" stroke="#6a7888" stroke-width="1" fill="none" opacity="0.5"/>
+  <!-- 몸통 -->
+  <ellipse cx="100" cy="135" rx="32" ry="35" fill="#e8eaec" opacity="0.95"/>
+  <!-- 가슴 흰색 -->
+  <ellipse cx="100" cy="145" rx="18" ry="22" fill="white" opacity="0.7"/>
+  <!-- 가슴 검은 줄무늬 -->
+  <path d="M94 130 Q100 125 106 130 Q103 140 100 148 Q97 140 94 130" fill="#1a1a2a" opacity="0.4"/>
+  <!-- 목 -->
+  <path d="M88 100 Q84 115 88 130 Q100 138 112 130 Q116 115 112 100" fill="#e8eaec" opacity="0.9"/>
+  <!-- 목 S자 곡선 -->
+  <path d="M95 100 Q88 110 92 122" stroke="#8090a0" stroke-width="1" fill="none" opacity="0.3"/>
+  <!-- 머리 -->
+  <ellipse cx="100" cy="88" rx="20" ry="17" fill="#e8eaec" opacity="0.95"/>
+  <!-- 검은 눈선 -->
+  <path d="M78 86 Q90 82 115 84" stroke="#1a1a2a" stroke-width="4" fill="none" stroke-linecap="round" opacity="0.85"/>
+  <!-- 눈 -->
+  <circle cx="108" cy="85" r="4.5" fill="#f5e060" opacity="0.9"/>
+  <circle cx="108" cy="85" r="2.5" fill="#1a1a2a" opacity="0.95"/>
+  <circle cx="107" cy="84" r="1" fill="white" opacity="0.8"/>
+  <!-- 흰 뺨 -->
+  <ellipse cx="97" cy="90" rx="10" ry="7" fill="white" opacity="0.6"/>
+  <!-- 부리 (길고 뾰족) -->
+  <path d="M84 88 Q68 86 48 84 Q68 88 84 90 Z" fill="#d4a820" opacity="0.9"/>
+  <!-- 머리 깃털 -->
+  <path d="M100 72 Q104 60 108 55 Q110 65 112 72" fill="#1a1a2a" opacity="0.6"/>
+  <path d="M100 72 Q96 60 94 58 Q93 68 92 72" fill="#1a1a2a" opacity="0.5"/>
+  <text x="100" y="210" text-anchor="middle" font-family="serif" font-size="11" fill="#8b7355" opacity="0.6">왜가리</text>
+</svg>

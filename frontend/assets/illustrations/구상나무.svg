@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 220" width="200" height="220">
+  <rect width="200" height="220" fill="#faf8f3"/>
+  <!-- 나무 줄기 -->
+  <rect x="94" y="155" width="12" height="45" rx="3" fill="#5c4033" opacity="0.75"/>
+  <!-- 뿌리 -->
+  <path d="M94 195 Q80 205 68 200" stroke="#5c4033" stroke-width="3" fill="none" opacity="0.5"/>
+  <path d="M106 195 Q120 205 132 200" stroke="#5c4033" stroke-width="3" fill="none" opacity="0.5"/>
+  <!-- 나무 아래층 -->
+  <ellipse cx="100" cy="155" rx="52" ry="22" fill="#2d5a27" opacity="0.85"/>
+  <path d="M48 155 Q60 135 100 128 Q140 135 152 155" fill="#2d5a27" opacity="0.85"/>
+  <!-- 나무 중간층 -->
+  <ellipse cx="100" cy="128" rx="40" ry="18" fill="#3a7a32" opacity="0.9"/>
+  <path d="M60 128 Q72 110 100 103 Q128 110 140 128" fill="#3a7a32" opacity="0.9"/>
+  <!-- 나무 위층 -->
+  <ellipse cx="100" cy="103" rx="30" ry="15" fill="#4a9a40" opacity="0.9"/>
+  <path d="M70 103 Q80 84 100 78 Q120 84 130 103" fill="#4a9a40" opacity="0.9"/>
+  <!-- 나무 꼭대기 -->
+  <ellipse cx="100" cy="78" rx="18" ry="12" fill="#5bb84e" opacity="0.9"/>
+  <path d="M82 78 Q88 62 100 56 Q112 62 118 78" fill="#5bb84e" opacity="0.9"/>
+  <!-- 꼭대기 뾰족 -->
+  <path d="M93 62 Q100 40 107 62" fill="#6cd45e" opacity="0.8"/>
+  <!-- 솔방울 포인트 (자주색) -->
+  <ellipse cx="78" cy="138" rx="5" ry="7" fill="#7b3f8a" opacity="0.7"/>
+  <ellipse cx="122" cy="138" rx="5" ry="7" fill="#7b3f8a" opacity="0.7"/>
+  <ellipse cx="88" cy="112" rx="4" ry="6" fill="#7b3f8a" opacity="0.65"/>
+  <ellipse cx="112" cy="112" rx="4" ry="6" fill="#7b3f8a" opacity="0.65"/>
+  <!-- 수묵화 텍스처 붓터치 -->
+  <path d="M55 150 Q58 148 62 150" stroke="#1a3a15" stroke-width="1.5" fill="none" opacity="0.3"/>
+  <path d="M138 150 Q142 148 145 150" stroke="#1a3a15" stroke-width="1.5" fill="none" opacity="0.3"/>
+  <!-- 종이 질감 -->
+  <text x="100" y="210" text-anchor="middle" font-family="serif" font-size="11" fill="#8b7355" opacity="0.6">구상나무</text>
+</svg>
