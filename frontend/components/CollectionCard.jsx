@@ -136,7 +136,7 @@ function CollectionCard({ item, onDelete }) {
       }).then(function(){ setSharing(false); }).catch(function(){ setSharing(false); });
     } else if (navigator.clipboard) {
       navigator.clipboard.writeText(fullText).then(function(){
-        alert("📋 링크가 복사됐어요!\n카톡·문자에 붙여넣으면 미리보기가 나타나요");
+        alert("링크가 복사됐어요!\n카톡·문자에 붙여넣으면 미리보기가 나타나요");
       }).catch(function(){ alert(fullText); });
     } else {
       alert(fullText);
@@ -173,14 +173,14 @@ function CollectionCard({ item, onDelete }) {
 
             {/* 희귀도 배지 */}
             <div style={{position:"absolute",top:"12px",left:"12px",padding:"4px 10px",borderRadius:"20px",fontFamily:"'Space Mono',monospace",fontSize:"9px",fontWeight:"700",letterSpacing:"1px",background:rc.bg,border:`1px solid ${rc.bd}`,color:rc.color}}>
-              ★ {rc.label}
+              <span style={{display:"inline-flex",alignItems:"center",gap:"5px"}}><Icon name="Star" size={10} strokeWidth={2.4} /> {rc.label}</span>
             </div>
 
             {/* 닫기 */}
             <button
               onClick={() => setZoomed(false)}
               style={{position:"absolute",top:"10px",right:"10px",width:"28px",height:"28px",borderRadius:"50%",background:"rgba(0,0,0,0.35)",border:"none",color:"#fff",fontSize:"14px",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}
-            >✕</button>
+            ><Icon name="X" size={15} /></button>
 
             {/* 사진 전환 토글 (사용자 사진 있을 때만) */}
             {hasUserPhoto && (
@@ -217,7 +217,7 @@ function CollectionCard({ item, onDelete }) {
               /* 이야기 */
               <div>
                 <div style={{fontSize:"14px",lineHeight:"1.85",color:"var(--ink-1)",fontFamily:"'Noto Serif KR',serif",letterSpacing:"-0.01em"}}>{story}</div>
-                <div style={{marginTop:"14px",fontSize:"10px",color:"var(--ink-3)",textAlign:"right"}}>탭하면 상세정보 →</div>
+                <div style={{marginTop:"14px",fontSize:"10px",color:"var(--ink-3)",display:"flex",alignItems:"center",justifyContent:"flex-end",gap:"4px"}}>탭하면 상세정보 <Icon name="ArrowRight" size={12} /></div>
               </div>
             ) : (
               /* 상세정보 */
@@ -231,7 +231,7 @@ function CollectionCard({ item, onDelete }) {
                     {item.district && <div><span style={{fontWeight:"700",color:"var(--ink-1)"}}>발견지</span><br/><span style={{color:"var(--ink-3)"}}>{item.district}</span></div>}
                   </div>
                 </div>
-                <div style={{marginTop:"8px",fontSize:"10px",color:"var(--ink-3)",textAlign:"right"}}>← 탭하면 이야기</div>
+                <div style={{marginTop:"8px",fontSize:"10px",color:"var(--ink-3)",display:"flex",alignItems:"center",justifyContent:"flex-end",gap:"4px"}}><Icon name="ArrowLeft" size={12} /> 탭하면 이야기</div>
               </div>
             )}
           </div>
@@ -240,7 +240,7 @@ function CollectionCard({ item, onDelete }) {
           <div style={{borderTop:"1px solid rgba(45,30,10,0.06)",padding:"12px 20px 14px"}}>
             {/* 보유 희귀도 표시 */}
             <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:"8px",marginBottom:"10px",padding:"8px 14px",borderRadius:"12px",background:rc.bg,border:`1px solid ${rc.bd}`}}>
-              <span style={{fontFamily:"'Space Mono',monospace",fontSize:"11px",fontWeight:"700",color:rc.color}}>★ {rc.label}</span>
+              <span style={{fontFamily:"'Space Mono',monospace",fontSize:"11px",fontWeight:"700",color:rc.color,display:"inline-flex",alignItems:"center",gap:"5px"}}><Icon name="Star" size={11} strokeWidth={2.4} /> {rc.label}</span>
               <span style={{fontSize:"11px",color:"rgba(45,30,10,0.2)"}}>|</span>
               <span style={{fontFamily:"'Space Mono',monospace",fontSize:"13px",fontWeight:"700",color:rc.color}}>상위 {RARITY_OWNERSHIP_PCT[rarity]}%</span>
               <span style={{fontSize:"10px",color:"var(--ink-3)"}}>만 보유</span>
@@ -250,7 +250,8 @@ function CollectionCard({ item, onDelete }) {
               disabled={sharing}
               style={{width:"100%",padding:"11px",borderRadius:"12px",border:`1.5px solid ${rc.bd}`,background:sharing?"rgba(45,30,10,0.06)":rc.bg,color:sharing?"var(--ink-3)":rc.color,fontFamily:"'Black Han Sans',sans-serif",fontSize:"15px",letterSpacing:"2px",cursor:sharing?"default":"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:"8px",transition:"all 0.2s"}}
             >
-              <span>{sharing?"⏳":"📤"}</span><span>{sharing?"캡처 중…":"자랑하기"}</span>
+              {sharing ? <Icon name="LoaderCircle" size={16} /> : <Icon name="Share2" size={16} />}
+              <span>{sharing?"캡처 중…":"자랑하기"}</span>
             </button>
           </div>
         </div>

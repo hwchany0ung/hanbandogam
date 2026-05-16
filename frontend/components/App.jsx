@@ -100,13 +100,13 @@ function App() {
 
   function handleSaved() {
     setColCount(c=>c+1);
-    showToast("📚 도감 +1! "+result.korean_name+" 수집 완료");
+    showToast("도감 +1! "+result.korean_name+" 수집 완료");
   }
 
   var tabs = [
-    { id:"upload",     icon:"📸", label:"촬영" },
-    { id:"collection", icon:"📚", label:"도감" },
-    { id:"map",        icon:"🗺️", label:"지도" },
+    { id:"upload",     icon:"Camera", label:"촬영" },
+    { id:"collection", icon:"BookOpen", label:"도감" },
+    { id:"map",        icon:"Map", label:"지도" },
   ];
 
   var activeTab = view==="map" ? "map" : (view==="collection") ? "collection" : "upload";
@@ -138,7 +138,7 @@ function App() {
             onClick={()=>setView(t.id)}
             style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:"3px",background:"none",border:"none",cursor:"pointer",color:activeTab===t.id?"var(--gold)":"var(--ink-3)",padding:"6px 0"}}
           >
-            <span style={{fontSize:"20px"}}>{t.icon}</span>
+            <Icon name={t.icon} size={20} strokeWidth={activeTab===t.id ? 2.4 : 2} />
             <span style={{fontFamily:"'Space Mono',monospace",fontSize:"8px",fontWeight:"700",letterSpacing:"1px"}}>{t.label}</span>
           </button>
         ))}

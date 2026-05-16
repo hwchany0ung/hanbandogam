@@ -21,9 +21,9 @@ var RARITY_CONFIG = {
 };
 
 var NATIVE_CONFIG = {
-  "토종":   { bg:"rgba(231,245,236,0.95)", bd:"var(--U-bd)", color:"var(--native)", label:"🇰🇷 토종" },
-  "외래종": { bg:"rgba(254,231,231,0.95)", bd:"rgba(220,38,38,0.35)", color:"var(--invasive)", label:"🚨 외래종" },
-  "불명확": { bg:"rgba(239,241,244,0.95)", bd:"var(--C-bd)", color:"var(--ink-3)", label:"❓ 불명확" },
+  "토종":   { bg:"rgba(231,245,236,0.95)", bd:"var(--U-bd)", color:"var(--native)", label:"토종" },
+  "외래종": { bg:"rgba(254,231,231,0.95)", bd:"rgba(220,38,38,0.35)", color:"var(--invasive)", label:"외래종" },
+  "불명확": { bg:"rgba(239,241,244,0.95)", bd:"var(--C-bd)", color:"var(--ink-3)", label:"불명확" },
 };
 
 function getRarity(koreanName) {
