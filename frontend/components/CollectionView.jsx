@@ -17,6 +17,9 @@ function CollectionView({ onBack }) {
     return Math.max(0.1, +(45 * Math.exp(-count * 0.08)).toFixed(1));
   }
   var topPct = calcTopPct(items.length);
+  var moreNeeded = topPct
+    ? Math.max(1, Math.ceil(-Math.log(topPct * 0.6 / 45) / 0.08) - items.length)
+    : null;
 
   // 희귀도별 카운트
   var rarCount = {L:0,E:0,R:0,U:0,C:0};
@@ -45,7 +48,7 @@ function CollectionView({ onBack }) {
         </div>
         {topPct && (
           <div style={{fontSize:"10px",color:"var(--ink-3)",marginTop:"7px",lineHeight:"1.5"}}>
-            종을 더 수집하면 상위 {+(topPct*0.6).toFixed(1)}%까지 올라갈 수 있어요
+            {moreNeeded}종 더 수집하면 상위 {+(topPct*0.6).toFixed(1)}%까지 올라갈 수 있어요
           </div>
         )}
         {!topPct && (
@@ -63,7 +66,7 @@ function CollectionView({ onBack }) {
               <div style={{flex:1,height:"5px",background:"rgba(45,30,10,0.06)",borderRadius:"3px",overflow:"hidden"}}>
                 <div style={{height:"100%",borderRadius:"3px",background:rc.color,width:(cnt/tot*100)+"%"}}/>
               </div>
-              <div style={{fontFamily:"'Space Mono',monospace",fontSize:"9px",color:rc.color,width:"38px",textAlign:"right",fontWeight:"600"}}>{cnt}/{tot}</div>
+              <div style={{fontFamily:"'Space Mono',monospace",fontSize:"9px",color:rc.color,width:"28px",textAlign:"right",fontWeight:"600"}}>{cnt}종</div>
             </div>
           );
         })}

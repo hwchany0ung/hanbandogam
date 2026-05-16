@@ -75,6 +75,8 @@ function CollectionCard({ item, onDelete }) {
   var [showDetail,   setShowDetail]   = React.useState(false);
   var [illustErr,    setIllustErr]    = React.useState(false);
   var [photoErr,     setPhotoErr]     = React.useState(false);
+  var [sharing,      setSharing]      = React.useState(false);
+  var modalRef = React.useRef(null);
 
   var rarity = getRarity(item.korean_name);
   var rc = RARITY_CONFIG[rarity];
@@ -99,12 +101,43 @@ function CollectionCard({ item, onDelete }) {
 
   function handleShare(e) {
     e.stopPropagation();
+    if (sharing) return;
     var ownerPct = RARITY_OWNERSHIP_PCT[rarity];
-    var text = "한반도감 📖\n" + item.korean_name + " (" + rc.label + ") 수집!\n전국민 중 상위 " + ownerPct + "%만 보유한 희귀 카드\n#한반도감 #한국토종생물 #" + item.korean_name;
-    if (navigator.share) {
-      navigator.share({ title:"한반도감", text:text }).catch(function(){});
+    var fallbackText = "한반도감 📖\n" + item.korean_name + " (" + rc.label + ") 수집!\n전국민 중 상위 " + ownerPct + "%만 보유한 희귀 카드\n#한반도감 #한국토종생물";
+
+    if (window.html2canvas && modalRef.current) {
+      setSharing(true);
+      html2canvas(modalRef.current, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: null,
+        logging: false,
+      }).then(function(canvas) {
+        canvas.toBlob(function(blob) {
+          var file = new File([blob], item.korean_name + "_한반도감.png", { type:"image/png" });
+          if (navigator.share && navigator.canShare && navigator.canShare({ files:[file] })) {
+            navigator.share({
+              title: "한반도감 — " + item.korean_name,
+              text: "전국민 중 상위 " + ownerPct + "%만 보유! #한반도감",
+              files: [file],
+            }).catch(function(){});
+          } else {
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement("a");
+            a.href = url; a.download = item.korean_name + "_한반도감.png"; a.click();
+            setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+          }
+          setSharing(false);
+        }, "image/png");
+      }).catch(function() {
+        setSharing(false);
+        if (navigator.share) navigator.share({ title:"한반도감", text:fallbackText }).catch(function(){});
+        else if (navigator.clipboard) navigator.clipboard.writeText(fallbackText).then(function(){ alert("클립보드에 복사됐어요!"); });
+      });
     } else {
-      navigator.clipboard ? navigator.clipboard.writeText(text).then(function(){ alert("클립보드에 복사됐어요!"); }) : alert(text);
+      if (navigator.share) navigator.share({ title:"한반도감", text:fallbackText }).catch(function(){});
+      else if (navigator.clipboard) navigator.clipboard.writeText(fallbackText).then(function(){ alert("클립보드에 복사됐어요!"); });
     }
   }
 
@@ -122,7 +155,7 @@ function CollectionCard({ item, onDelete }) {
         onClick={() => setZoomed(false)}
         style={{position:"fixed",inset:0,zIndex:1000,background:"rgba(15,10,5,0.82)",display:"flex",alignItems:"center",justifyContent:"center",padding:"24px"}}
       >
-        <div onClick={e => e.stopPropagation()} style={{width:"min(340px,90vw)",borderRadius:"20px",overflow:"hidden",boxShadow:"0 24px 80px rgba(0,0,0,0.5)",background:"var(--paper)",maxHeight:"90vh",display:"flex",flexDirection:"column"}}>
+        <div ref={modalRef} onClick={e => e.stopPropagation()} style={{width:"min(340px,90vw)",borderRadius:"20px",overflow:"hidden",boxShadow:"0 24px 80px rgba(0,0,0,0.5)",background:"var(--paper)",maxHeight:"90vh",display:"flex",flexDirection:"column"}}>
 
           {/* 사진 영역 — 클릭 시 일러스트↔사용자사진 */}
           <div
@@ -212,9 +245,10 @@ function CollectionCard({ item, onDelete }) {
             </div>
             <button
               onClick={handleShare}
-              style={{width:"100%",padding:"11px",borderRadius:"12px",border:`1.5px solid ${rc.bd}`,background:rc.bg,color:rc.color,fontFamily:"'Black Han Sans',sans-serif",fontSize:"15px",letterSpacing:"2px",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:"8px"}}
+              disabled={sharing}
+              style={{width:"100%",padding:"11px",borderRadius:"12px",border:`1.5px solid ${rc.bd}`,background:sharing?"rgba(45,30,10,0.06)":rc.bg,color:sharing?"var(--ink-3)":rc.color,fontFamily:"'Black Han Sans',sans-serif",fontSize:"15px",letterSpacing:"2px",cursor:sharing?"default":"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:"8px",transition:"all 0.2s"}}
             >
-              <span>📤</span><span>자랑하기</span>
+              <span>{sharing?"⏳":"📤"}</span><span>{sharing?"캡처 중…":"자랑하기"}</span>
             </button>
           </div>
         </div>

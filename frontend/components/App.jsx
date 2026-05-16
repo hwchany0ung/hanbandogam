@@ -1,3 +1,6 @@
+// 미션 인덱스 → DEMO_CAPTURES 인덱스 (0=따오기 1=미선나무 2=수달 3=동강할미꽃)
+var MISSION_DEMO_IDX = [1,3,1,1,1,2,1,3,3,1,0,0,1,3];
+
 // ── 데모 캡처 시나리오 (고희귀도 순환) ─────────────────────────────
 var DEMO_CAPTURES = [
   {
@@ -53,8 +56,9 @@ function App() {
   var [errMsg,       setErrMsg]       = React.useState("");
   var [colCount,     setColCount]     = React.useState(0);
   var [toast,        setToast]        = React.useState("");
-  var [shutterOn,    setShutterOn]    = React.useState(false);
-  var [demoIdx,      setDemoIdx]      = React.useState(0);
+  var [shutterOn,        setShutterOn]        = React.useState(false);
+  var [demoIdx,          setDemoIdx]          = React.useState(0);
+  var [missionCompleted, setMissionCompleted] = React.useState(false);
 
   React.useEffect(()=>{
     getCollection().then(list=>setColCount(list.length)).catch(()=>{});
@@ -72,22 +76,25 @@ function App() {
   }
 
   async function handleDemoCapture() {
-    // 셔터 플래시
     setShutterOn(true);
     await new Promise(r=>setTimeout(r,350));
     setShutterOn(false);
 
-    // 로딩 화면
-    var capture = DEMO_CAPTURES[demoIdx % DEMO_CAPTURES.length];
+    // 첫 촬영은 오늘의 미션에 맞는 종, 이후 순환
+    var todayMissionIdx = new Date().getDate() % MISSION_DEMO_IDX.length;
+    var captureIdx = demoIdx === 0
+      ? MISSION_DEMO_IDX[todayMissionIdx]
+      : demoIdx % DEMO_CAPTURES.length;
+    var capture = DEMO_CAPTURES[captureIdx];
     setDemoIdx(i=>i+1);
     setImageFile(null);
     setResult(null);
     setView("loading");
 
-    // 1.8초 로딩 후 결과
     await new Promise(r=>setTimeout(r,1800));
     setResult(capture);
     setView("result");
+    setMissionCompleted(true);
   }
 
   function handleRetry() { setResult(null); setImageFile(null); setView("upload"); }
@@ -100,9 +107,10 @@ function App() {
   var tabs = [
     { id:"upload",     icon:"📸", label:"촬영" },
     { id:"collection", icon:"📚", label:"도감" },
+    { id:"map",        icon:"🗺️", label:"지도" },
   ];
 
-  var activeTab = (view==="upload"||view==="loading"||view==="result"||view==="error") ? "upload" : "collection";
+  var activeTab = view==="map" ? "map" : (view==="collection") ? "collection" : "upload";
 
   return (
     <div style={{display:"flex",flexDirection:"column",height:"100vh",background:"var(--paper)",position:"relative"}}>
@@ -115,7 +123,8 @@ function App() {
 
       {/* 뷰 */}
       <div style={{flex:1,overflow:"hidden",display:"flex",flexDirection:"column",position:"relative",zIndex:1}}>
-        {view==="upload"     && <UploadView onUpload={handleUpload} onDemoCapture={handleDemoCapture} collectionCount={colCount}/>}
+        {view==="upload"     && <UploadView onUpload={handleUpload} onDemoCapture={handleDemoCapture} collectionCount={colCount} missionCompleted={missionCompleted}/>}
+        {view==="map"        && <MapView onBack={()=>setView("upload")}/>}
         {view==="loading"    && <LoadingView/>}
         {view==="result"     && <ResultCard result={result} imageFile={imageFile} onRetry={handleRetry} onSave={handleSaved} onCollection={()=>setView("collection")}/>}
         {view==="collection" && <CollectionView onBack={()=>setView("upload")}/>}

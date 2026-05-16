@@ -15,7 +15,7 @@ var DAILY_MISSIONS = [
   "돌이나 바위 틈에서 자라는 식물을 발견해보세요",
 ];
 
-function UploadView({ onUpload, onDemoCapture, collectionCount }) {
+function UploadView({ onUpload, onDemoCapture, collectionCount, missionCompleted }) {
   var [dragging, setDragging] = React.useState(false);
   var inputRef = React.useRef(null);
   var bokehRef = React.useRef(null);
@@ -93,14 +93,24 @@ function UploadView({ onUpload, onDemoCapture, collectionCount }) {
 
       {/* 일일 미션 */}
       <div className="mx-5 mt-6 relative" style={{zIndex:2}}>
-        <div className="px-4 py-4 rounded-xl" style={{background:"var(--surface)",border:"1px solid var(--gold-bd)",boxShadow:"0 4px 12px rgba(45,30,10,0.06)"}}>
+        <div className="px-4 py-4 rounded-xl" style={{
+          background: missionCompleted ? "rgba(22,163,74,0.07)" : "var(--surface)",
+          border: "1px solid " + (missionCompleted ? "rgba(22,163,74,0.35)" : "var(--gold-bd)"),
+          boxShadow: "0 4px 12px rgba(45,30,10,0.06)",
+          transition: "all 0.4s"
+        }}>
           <div style={{display:"flex",alignItems:"center",gap:"6px",marginBottom:"8px"}}>
-            <div style={{fontFamily:"'Space Mono',monospace",fontSize:"9px",fontWeight:"700",color:"var(--gold)",letterSpacing:"2px"}}>✦ TODAY'S MISSION</div>
+            <div style={{fontFamily:"'Space Mono',monospace",fontSize:"9px",fontWeight:"700",letterSpacing:"2px",color:missionCompleted?"var(--native)":"var(--gold)"}}>
+              {missionCompleted ? "✓ MISSION COMPLETE" : "✦ TODAY'S MISSION"}
+            </div>
           </div>
           <div style={{fontFamily:"'Noto Serif KR',serif",fontSize:"14px",fontWeight:"600",color:"var(--ink-1)",lineHeight:1.65}}>
             "{DAILY_MISSIONS[new Date().getDate() % DAILY_MISSIONS.length]}"
           </div>
-          <div style={{marginTop:"10px",fontSize:"10px",color:"var(--ink-3)"}}>위 촬영 버튼을 눌러 미션을 달성해보세요 📸</div>
+          {missionCompleted
+            ? <div style={{marginTop:"10px",fontSize:"11px",color:"var(--native)",fontWeight:"600"}}>🎉 오늘의 미션을 완료했어요!</div>
+            : <div style={{marginTop:"10px",fontSize:"10px",color:"var(--ink-3)"}}>위 촬영 버튼을 눌러 미션을 달성해보세요 📸</div>
+          }
         </div>
       </div>
 
