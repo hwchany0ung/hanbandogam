@@ -138,6 +138,13 @@
     }
     @keyframes shine { 0%{transform:translateX(-100%)} 30%,100%{transform:translateX(200%)} }
 
+    /* ── 셔터 플래시 ── */
+    @keyframes shutterFlash {
+      0%   { opacity:0.95; }
+      40%  { opacity:0.6; }
+      100% { opacity:0; }
+    }
+
     /* ── 토스트 ── */
     .toast {
       position:fixed; bottom:90px; left:50%; transform:translateX(-50%);
@@ -157,9 +164,13 @@
 <body>
   <div id="root"></div>
 
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
   <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <script type="text/babel" src="lib/api.js"></script>
   <script type="text/babel" src="components/CollectionCard.jsx"></script>
@@ -168,6 +179,7 @@
   <script type="text/babel" src="components/ResultCard.jsx"></script>
   <script type="text/babel" src="components/ErrorView.jsx"></script>
   <script type="text/babel" src="components/CollectionView.jsx"></script>
+  <script type="text/babel" src="components/MapView.jsx"></script>
   <script type="text/babel" src="components/App.jsx"></script>
 </body>
 </html>
