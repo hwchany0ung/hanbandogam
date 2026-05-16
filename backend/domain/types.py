@@ -18,6 +18,7 @@ class IdentifyResult(BaseModel):
     morphological_clues: str
     image_path: Optional[str] = None
     image_url: Optional[str] = None  # /assets/uploads/{uuid}.jpg (영구 저장 경로)
+    plant_type: Optional[str] = None  # tree | flower | herb | vine | fern | shrub | grass | other
 
 
 class CollectionAddRequest(BaseModel):

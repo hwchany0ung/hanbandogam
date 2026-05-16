@@ -1,15 +1,23 @@
 from __future__ import annotations
 
+import logging
 import uuid
 from pathlib import Path
 
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile
+
+logger = logging.getLogger(__name__)
 
 
 try:
     from backend.services.identify_service import IdentifyResult, run_identify
 except ImportError:
     from services.identify_service import IdentifyResult, run_identify
+
+try:
+    from backend.services.s3_uploader import upload_image as s3_upload_image, is_enabled as s3_enabled
+except ImportError:
+    from services.s3_uploader import upload_image as s3_upload_image, is_enabled as s3_enabled
 
 
 router = APIRouter(tags=["identify"])
@@ -76,15 +84,31 @@ async def identify(
             detail="이미지 식별 서비스 호출 중 오류가 발생했습니다.",
         ) from exc
 
-    if image_path:
+    final_url = image_path
+    try:
+        if s3_enabled():
+            s3_url = s3_upload_image(
+                image_bytes,
+                media_type,
+                korean_name=getattr(result, "korean_name", None),
+                native_status=getattr(result, "native_status", None),
+                plant_type=getattr(result, "plant_type", None),
+            )
+            if s3_url:
+                final_url = s3_url
+    except Exception as exc:
+        # S3 실패 시 로컬 image_path 로 폴백 (메인 흐름 유지, 모니터링용 로깅)
+        logger.warning("[s3] upload failed, falling back to local: %s: %s", type(exc).__name__, exc)
+
+    if final_url:
         if hasattr(result, "model_copy"):
-            return result.model_copy(update={"image_path": image_path, "image_url": image_path})
+            return result.model_copy(update={"image_path": final_url, "image_url": final_url})
         if isinstance(result, dict):
             merged = dict(result)
-            merged["image_path"] = image_path
-            merged["image_url"] = image_path
+            merged["image_path"] = final_url
+            merged["image_url"] = final_url
             return merged
-        setattr(result, "image_path", image_path)
-        setattr(result, "image_url", image_path)
+        setattr(result, "image_path", final_url)
+        setattr(result, "image_url", final_url)
 
     return result
