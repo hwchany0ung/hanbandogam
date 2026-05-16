@@ -178,11 +178,12 @@ function UploadView({ onUpload, onDemoCapture, collectionCount, missionCompleted
       <div className="home-bottom-stack relative" style={{zIndex:2}}>
 
         {/* 이벤트 게시판 */}
-        <div style={{paddingLeft:"var(--home-x-pad)",paddingRight:"0",marginBottom:"var(--mission-button-gap)"}}>
-          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:"8px",paddingRight:"var(--home-x-pad)"}}>
+        <div style={{marginBottom:"var(--mission-button-gap)"}}>
+          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:"8px",paddingLeft:"var(--home-x-pad)",paddingRight:"var(--home-x-pad)"}}>
             <div style={{fontFamily:"'Space Mono',monospace",fontSize:"9px",fontWeight:"700",letterSpacing:"2px",color:"var(--ink-3)"}}>이벤트 · 공지</div>
           </div>
-          <div style={{display:"flex",gap:"8px",overflowX:"auto",paddingBottom:"4px",scrollbarWidth:"none",WebkitOverflowScrolling:"touch"}}>
+          {/* 스크롤 컨테이너를 전체 너비로 — paddingLeft를 안으로 이동해 366px 제한 해소 */}
+          <div style={{display:"flex",gap:"8px",overflowX:"auto",paddingLeft:"var(--home-x-pad)",paddingBottom:"4px",scrollbarWidth:"none",WebkitOverflowScrolling:"touch"}}>
             {EVENTS.map(function(ev, i) {
               return (
                 <div key={i} onClick={function(){if(ev.action==="notice") setShowNotice(true);}} style={{flexShrink:0,width:"188px",padding:"12px 14px",borderRadius:"14px",background:ev.bg,border:"1px solid "+ev.bd,boxShadow:"0 2px 10px rgba(45,30,10,0.06)",cursor:ev.action?"pointer":"default"}}>
@@ -195,7 +196,6 @@ function UploadView({ onUpload, onDemoCapture, collectionCount, missionCompleted
                 </div>
               );
             })}
-            {/* 스크롤 끝 여백 스페이서 — paddingRight가 WebKit 수평 스크롤에서 무시되는 버그 우회 */}
             <div style={{flexShrink:0,width:"var(--home-x-pad)",minWidth:"var(--home-x-pad)"}} />
           </div>
         </div>
