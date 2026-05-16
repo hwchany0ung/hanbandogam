@@ -20,6 +20,7 @@ var FALLBACK = "/assets/illustrations/fallback.svg";
 function CollectionCard({ item, onDelete }) {
   var [flipped, setFlipped] = React.useState(false);
   var [imgErr,  setImgErr]  = React.useState(false);
+  var [zoomed,  setZoomed]  = React.useState(false);
 
   var rarity = getRarity(item.korean_name);
   var rc = RARITY_CONFIG[rarity];
@@ -35,10 +36,38 @@ function CollectionCard({ item, onDelete }) {
   }[rarity];
 
   return (
+    <>
+    {/* 확대 모달 */}
+    {zoomed && (
+      <div
+        onClick={()=>setZoomed(false)}
+        style={{position:"fixed",inset:0,zIndex:1000,background:"rgba(15,10,5,0.82)",display:"flex",alignItems:"center",justifyContent:"center",padding:"24px"}}
+      >
+        <div onClick={e=>e.stopPropagation()} style={{width:"min(340px,90vw)",borderRadius:"20px",overflow:"hidden",boxShadow:"0 24px 80px rgba(0,0,0,0.5)",background:"var(--paper)"}}>
+          {/* 일러스트 */}
+          <div style={{height:"260px",position:"relative",background:"var(--surface)",overflow:"hidden"}}>
+            <img src={src} alt={item.korean_name} style={{width:"100%",height:"100%",objectFit:"contain",padding:"12px"}} onError={()=>setImgErr(true)}/>
+            <div style={{position:"absolute",top:"12px",left:"12px",padding:"5px 12px",borderRadius:"20px",fontFamily:"'Space Mono',monospace",fontSize:"10px",fontWeight:"700",letterSpacing:"1px",background:rc.bg,border:`1px solid ${rc.bd}`,color:rc.color}}>★ {rc.label}</div>
+            <button onClick={()=>setZoomed(false)} style={{position:"absolute",top:"10px",right:"10px",width:"28px",height:"28px",borderRadius:"50%",background:"rgba(0,0,0,0.3)",border:"none",color:"#fff",fontSize:"14px",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}>✕</button>
+          </div>
+          {/* 정보 */}
+          <div style={{padding:"20px"}}>
+            <div style={{fontFamily:"'Noto Serif KR',serif",fontSize:"22px",fontWeight:"900",color:"var(--ink-1)"}}>{item.korean_name}</div>
+            <div style={{fontFamily:"'Space Mono',monospace",fontSize:"10px",fontStyle:"italic",color:"var(--ink-3)",marginTop:"3px"}}>{item.scientific_name}</div>
+            <div style={{marginTop:"10px",display:"inline-block",padding:"4px 10px",borderRadius:"10px",fontSize:"11px",background:nc.bg,color:nc.color}}>{item.native_status}</div>
+            <div style={{marginTop:"12px",fontSize:"13px",lineHeight:"1.75",color:"var(--ink-2)"}}>{item.ecology_summary}</div>
+            <div style={{marginTop:"10px",fontFamily:"'Space Mono',monospace",fontSize:"11px",color:rc.color,fontWeight:"700"}}>{Math.round(item.confidence*100)}% 신뢰도</div>
+            <div style={{marginTop:"6px",fontSize:"11px",color:"var(--ink-3)"}}>{item.conservation_status}</div>
+          </div>
+        </div>
+      </div>
+    )}
+
     <div
       className="card-flip-container cursor-pointer"
       style={{aspectRatio:"1",boxShadow:rarityBorderStyle,borderRadius:"12px"}}
       onClick={()=>setFlipped(!flipped)}
+      onDoubleClick={e=>{e.stopPropagation();setZoomed(true);}}
     >
       <div className={"card-flip-inner "+(flipped?"is-flipped":"")}>
 
@@ -70,5 +99,6 @@ function CollectionCard({ item, onDelete }) {
 
       </div>
     </div>
+    </>
   );
 }
