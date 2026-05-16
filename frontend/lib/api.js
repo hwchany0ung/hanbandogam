@@ -1,4 +1,4 @@
-window.DEMO_MODE = true;
+window.DEMO_MODE = false;
 var BASE_URL = "http://localhost:8000";
 
 // ── 희귀도 맵 (korean_name → L/E/R/U/C) ─────────────────────

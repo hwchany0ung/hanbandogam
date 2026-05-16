@@ -12,7 +12,7 @@ function ResultCard({ result, imageFile, onSave, onRetry, onCollection }) {
   async function handleSave() {
     if (saved) return;
     setSaving(true);
-    try { await addToCollection(result, previewUrl||""); setSaved(true); }
+    try { await addToCollection(result, previewUrl||""); setSaved(true); if (onSave) onSave(); }
     catch(e) { alert("저장 실패: "+e.message); }
     finally { setSaving(false); }
   }
