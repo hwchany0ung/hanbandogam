@@ -112,10 +112,23 @@ function UploadView({ onUpload, onDemoCapture, collectionCount, missionCompleted
         </div>
       </div>
 
+      {/* 산책 미션 */}
+      <div className="mx-5 mt-2 relative" style={{zIndex:2}}>
+        <div className="flex items-center gap-3 px-4 py-3 rounded-xl" style={{background:"var(--surface)",border:"1px solid rgba(45,30,10,0.06)",boxShadow:"0 2px 10px rgba(45,30,10,0.06)"}}>
+          <span style={{fontSize:"26px",flexShrink:0}}>🚶</span>
+          <div style={{flex:1}}>
+            <div style={{fontFamily:"'Space Mono',monospace",fontSize:"8px",color:"var(--gold)",letterSpacing:"2px",fontWeight:"700",marginBottom:"3px"}}>오늘의 산책 미션</div>
+            <div style={{fontSize:"13px",fontWeight:"700",color:"var(--ink-1)"}}>2,000보 산책하기</div>
+            <div style={{fontSize:"11px",color:"var(--ink-2)",marginTop:"2px"}}>산책하며 생물을 발견하세요</div>
+          </div>
+          <div style={{fontFamily:"'Space Mono',monospace",fontSize:"11px",color:"var(--ink-3)",fontWeight:"700",flexShrink:0}}>0 / 2000</div>
+        </div>
+      </div>
+
       {/* 카메라 버튼 */}
       <div className="px-6 mt-4 flex flex-col gap-3 relative" style={{zIndex:2}}>
         <button
-          onClick={() => onDemoCapture ? onDemoCapture() : inputRef.current.click()}
+          onClick={function(){ inputRef.current.click(); }}
           className="btn-shine w-full py-4 rounded-xl flex items-center justify-center gap-3"
           style={{background:"linear-gradient(135deg,var(--ink-1),#2C261B)",color:"#FBF7EC",fontFamily:"'Black Han Sans',sans-serif",fontSize:"15px",letterSpacing:"3px",boxShadow:"0 8px 24px rgba(45,30,10,0.25)",border:"none"}}
         >
@@ -123,7 +136,7 @@ function UploadView({ onUpload, onDemoCapture, collectionCount, missionCompleted
         </button>
       </div>
 
-      <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={e=>handleFile(e.target.files[0])}/>
+      <input ref={inputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={function(e){ handleFile(e.target.files[0]); }}/>
     </div>
   );
 }

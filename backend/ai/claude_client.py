@@ -5,7 +5,7 @@ import anthropic
 
 from domain.types import IdentifyResult
 
-_client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
+_client = None
 _MODEL = os.getenv("CLAUDE_MODEL", "claude-sonnet-4-6")
 
 _SYSTEM = """당신은 한국 생물종 식별 전문가입니다.
@@ -22,9 +22,21 @@ _SYSTEM = """당신은 한국 생물종 식별 전문가입니다.
 }"""
 
 
+def _get_client():
+    global _client
+    if _client is None:
+        key = os.environ.get("ANTHROPIC_API_KEY", "")
+        if not key:
+            raise RuntimeError("ANTHROPIC_API_KEY 환경변수가 없습니다. backend/.env 파일에 키를 설정하세요.")
+        _client = anthropic.Anthropic(api_key=key)
+    return _client
+
+
 async def identify_species(image_base64: str, media_type: str = "image/jpeg") -> IdentifyResult:
+    client = _get_client()
+
     def _call():
-        resp = _client.messages.create(
+        resp = client.messages.create(
             model=_MODEL,
             max_tokens=1024,
             system=_SYSTEM,

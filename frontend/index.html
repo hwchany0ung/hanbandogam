@@ -159,6 +159,30 @@
     /* 스크롤바 */
     ::-webkit-scrollbar { width:3px; }
     ::-webkit-scrollbar-thumb { background:var(--gold-bd); border-radius:3px; }
+
+    /* ── 성공 팝업 ── */
+    @keyframes scale-in {
+      0%   { transform:scale(0.5) translateY(20px); opacity:0; }
+      70%  { transform:scale(1.05) translateY(-4px); opacity:1; }
+      100% { transform:scale(1) translateY(0); opacity:1; }
+    }
+    @keyframes badge-glow {
+      0%,100% { box-shadow:0 0 0px rgba(255,255,255,0); }
+      50%      { box-shadow:0 0 24px rgba(255,255,255,0.5); }
+    }
+    @keyframes slide-down-pts {
+      from { transform:translateY(-20px); opacity:0; }
+      to   { transform:translateY(0); opacity:1; }
+    }
+    @keyframes pts-pop {
+      0%   { transform:scale(0.4) translateY(8px); opacity:0; }
+      65%  { transform:scale(1.12) translateY(-4px); opacity:1; }
+      100% { transform:scale(1) translateY(0); opacity:1; }
+    }
+    @keyframes star-burst {
+      0%   { transform:translate(-50%,-50%) scale(1.2); opacity:1; }
+      100% { transform:translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(0); opacity:0; }
+    }
   </style>
 </head>
 <body>
@@ -180,6 +204,7 @@
   <script type="text/babel" src="components/ErrorView.jsx"></script>
   <script type="text/babel" src="components/CollectionView.jsx"></script>
   <script type="text/babel" src="components/MapView.jsx"></script>
+  <script type="text/babel" src="components/SuccessPopup.jsx"></script>
   <script type="text/babel" src="components/App.jsx"></script>
 </body>
 </html>

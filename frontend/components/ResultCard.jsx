@@ -1,6 +1,5 @@
-function ResultCard({ result, imageFile, onSave, onRetry, onCollection }) {
-  var [saving, setSaving] = React.useState(false);
-  var [saved,  setSaved]  = React.useState(false);
+function ResultCard({ result, imageFile, onRetry, onCollection }) {
+  var [reported, setReported] = React.useState(false);
   var previewUrl = imageFile ? URL.createObjectURL(imageFile) : (result.image_path || null);
 
   var rarity = getRarity(result.korean_name);
@@ -8,14 +7,6 @@ function ResultCard({ result, imageFile, onSave, onRetry, onCollection }) {
   var nc = NATIVE_CONFIG[result.native_status] || NATIVE_CONFIG["불명확"];
   var pct = Math.round(result.confidence * 100);
   var morphTags = result.morphological_clues ? result.morphological_clues.split(/[,，、]+/).map(s=>s.trim()).filter(Boolean) : [];
-
-  async function handleSave() {
-    if (saved) return;
-    setSaving(true);
-    try { await addToCollection(result, previewUrl||""); setSaved(true); if (onSave) onSave(); }
-    catch(e) { alert("저장 실패: "+e.message); }
-    finally { setSaving(false); }
-  }
 
   return (
     <div className="flex flex-col flex-1" style={{background:"var(--paper)",minHeight:0}}>
@@ -84,22 +75,19 @@ function ResultCard({ result, imageFile, onSave, onRetry, onCollection }) {
         </div>
       </div>
 
-      {/* 고정 저장 버튼 (하단 sticky) */}
-      <div style={{flexShrink:0,padding:"10px 16px 14px",background:"var(--paper)",borderTop:"1px solid rgba(45,30,10,0.06)",boxShadow:"0 -4px 14px rgba(45,30,10,0.04)"}}>
-        <button
-          onClick={handleSave}
-          disabled={saving||saved}
-          className="btn-shine w-full py-3.5 rounded-xl"
-          style={{background:saved?"var(--ink-3)":"linear-gradient(135deg,#1D4ED8,var(--R))",border:"none",color:"#fff",fontFamily:"'Black Han Sans',sans-serif",fontSize:"15px",letterSpacing:"3px",cursor:saved?"default":"pointer",boxShadow:saved?"none":"0 6px 20px rgba(37,99,235,0.3)"}}
-        >
-          {saved?"✓ 도감에 저장됨":saving?"저장 중…":"📚  도감에 추가! +1"}
-        </button>
-
-        {saved && (
-          <button onClick={onCollection} style={{display:"block",width:"100%",textAlign:"center",marginTop:"8px",fontSize:"13px",color:"var(--gold)",textDecoration:"underline",background:"none",border:"none",cursor:"pointer"}}>
-            내 도감 보기 →
-          </button>
-        )}
+      {/* 하단 고정 바 */}
+      <div style={{flexShrink:0,padding:"10px 16px 14px",background:"var(--paper)",borderTop:"1px solid rgba(45,30,10,0.06)",boxShadow:"0 -4px 14px rgba(45,30,10,0.04)",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+        <div style={{display:"inline-flex",alignItems:"center",gap:"6px",padding:"6px 14px",borderRadius:"20px",background:"rgba(22,163,74,0.08)",border:"1px solid rgba(22,163,74,0.25)"}}>
+          <span style={{color:"var(--native)",fontSize:"12px"}}>✓</span>
+          <span style={{fontFamily:"'Space Mono',monospace",fontSize:"10px",fontWeight:"700",color:"var(--native)"}}>자동 저장됨</span>
+        </div>
+        <div style={{display:"flex",gap:"12px",alignItems:"center"}}>
+          <button onClick={onCollection} style={{fontSize:"12px",color:"var(--gold)",textDecoration:"underline",background:"none",border:"none",cursor:"pointer"}}>내 도감 →</button>
+          {reported
+            ? <span style={{fontSize:"11px",color:"var(--ink-3)"}}>신고 접수됨</span>
+            : <button onClick={function(){setReported(true);}} style={{fontSize:"11px",color:"var(--ink-3)",textDecoration:"underline",background:"none",border:"none",cursor:"pointer"}}>틀렸나요?</button>
+          }
+        </div>
       </div>
     </div>
   );
