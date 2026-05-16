@@ -9,7 +9,7 @@ var EVENTS = [
   },
   {
     tag:"공지", color:"var(--C)", bg:"var(--C-bg)", bd:"var(--C-bd)", icon:"Bell",
-    title:"앱 업데이트 안내", sub:"도감 정렬·저신뢰도 UI가 새로워졌어요", period:"2026.05",
+    title:"앱 업데이트 안내", sub:"포인트 후원 기부 제도 도입 !", period:"2026.05",
     action:"notice",
   },
 ];
@@ -57,6 +57,15 @@ var NOTICE_CONTENT = {
 function UploadView({ onUpload, onDemoCapture, collectionCount, missionCompleted }) {
   var [dragging, setDragging] = React.useState(false);
   var [showNotice, setShowNotice] = React.useState(false);
+  var [missionOpen, setMissionOpen] = React.useState(false);
+  var [evIdx, setEvIdx] = React.useState(0);
+
+  React.useEffect(function() {
+    var timer = setInterval(function() {
+      setEvIdx(function(i) { return (i + 1) % EVENTS.length; });
+    }, 3000);
+    return function() { clearInterval(timer); };
+  }, []);
   var inputRef = React.useRef(null);
   var bokehRef = React.useRef(null);
 
@@ -177,68 +186,93 @@ function UploadView({ onUpload, onDemoCapture, collectionCount, missionCompleted
 
       <div className="home-bottom-stack relative" style={{zIndex:2}}>
 
-        {/* 이벤트 게시판 */}
-        <div style={{marginBottom:"var(--mission-button-gap)"}}>
-          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:"8px",paddingLeft:"var(--home-x-pad)",paddingRight:"var(--home-x-pad)"}}>
-            <div style={{fontFamily:"'Space Mono',monospace",fontSize:"9px",fontWeight:"700",letterSpacing:"2px",color:"var(--ink-3)"}}>이벤트 · 공지</div>
-          </div>
-          {/* 스크롤 컨테이너를 전체 너비로 — paddingLeft를 안으로 이동해 366px 제한 해소 */}
-          <div style={{display:"flex",gap:"8px",overflowX:"auto",paddingLeft:"var(--home-x-pad)",paddingBottom:"4px",scrollbarWidth:"none",WebkitOverflowScrolling:"touch"}}>
-            {EVENTS.map(function(ev, i) {
-              return (
-                <div key={i} onClick={function(){if(ev.action==="notice") setShowNotice(true);}} style={{flexShrink:0,width:"188px",padding:"12px 14px",borderRadius:"14px",background:ev.bg,border:"1px solid "+ev.bd,boxShadow:"0 2px 10px rgba(45,30,10,0.06)",cursor:ev.action?"pointer":"default"}}>
-                  <div style={{display:"flex",alignItems:"center",gap:"6px",marginBottom:"7px"}}>
-                    <div style={{padding:"2px 7px",background:"rgba(255,255,255,0.55)",border:"1px solid "+ev.bd,borderRadius:"8px",fontFamily:"'Space Mono',monospace",fontSize:"8px",fontWeight:"700",color:ev.color,letterSpacing:"1px"}}>{ev.tag}</div>
-                    <span style={{fontFamily:"'Space Mono',monospace",fontSize:"8px",color:ev.color,marginLeft:"auto",opacity:0.8}}>{ev.period}</span>
-                  </div>
-                  <div style={{fontFamily:"'Noto Serif KR',serif",fontSize:"13px",fontWeight:"800",color:"var(--ink-1)",marginBottom:"3px",lineHeight:"1.3"}}>{ev.title}</div>
-                  <div style={{fontSize:"10px",color:"var(--ink-3)",lineHeight:"1.45"}}>{ev.sub}</div>
+        {/* 미션 카드 (미션 완료 전만 표시, 접힘/펼침) */}
+        {!missionCompleted && (
+          <div style={{margin:"0 var(--home-x-pad) var(--mission-button-gap)",overflow:"hidden"}}>
+            {missionOpen ? (
+              <div
+                onClick={() => onDemoCapture ? onDemoCapture() : inputRef.current.click()}
+                className="home-mission-card rounded-xl cursor-pointer"
+                style={{background:"var(--surface)",border:"1px solid rgba(45,30,10,0.06)",boxShadow:"0 2px 14px rgba(45,30,10,0.08)",transition:"all 0.3s"}}
+              >
+                <div className="home-mission-icon" style={{background:"var(--gold-dim)",color:"var(--gold)"}}>
+                  <Icon name={mission.icon} size={20} strokeWidth={1.9} />
                 </div>
-              );
-            })}
-            <div style={{flexShrink:0,width:"var(--home-x-pad)",minWidth:"var(--home-x-pad)"}} />
+                <div className="home-mission-body">
+                  <div className="home-mission-label" style={{color:"var(--gold)"}}>오늘의 탐사 미션</div>
+                  <div className="home-mission-title">{mission.title}</div>
+                  <div className="home-mission-sub">{mission.sub}</div>
+                </div>
+                <button
+                  onClick={function(e){e.stopPropagation();setMissionOpen(false);}}
+                  style={{color:"var(--ink-3)",flexShrink:0,lineHeight:0,background:"none",border:"none",cursor:"pointer",padding:"4px"}}
+                >
+                  <Icon name="ChevronLeft" size={18} strokeWidth={2} />
+                </button>
+              </div>
+            ) : (
+              <div
+                onClick={function(){setMissionOpen(true);}}
+                style={{
+                  display:"inline-flex",alignItems:"center",gap:"6px",
+                  padding:"10px 14px",borderRadius:"12px",
+                  background:"var(--surface)",border:"1px solid rgba(45,30,10,0.06)",
+                  boxShadow:"0 2px 8px rgba(45,30,10,0.07)",cursor:"pointer",
+                }}
+              >
+                <div style={{width:"28px",height:"28px",borderRadius:"50%",background:"var(--gold-dim)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                  <Icon name={mission.icon} size={14} strokeWidth={2} style={{color:"var(--gold)"}} />
+                </div>
+                <span style={{fontFamily:"'Noto Serif KR',serif",fontSize:"13px",fontWeight:"800",color:"var(--ink-1)"}}>미션</span>
+                <Icon name="ChevronRight" size={14} strokeWidth={2.5} style={{color:"var(--ink-3)"}} />
+              </div>
+            )}
           </div>
-        </div>
+        )}
 
-        {/* 일일 미션 카드 (카메라 바로 위) */}
-        <div className="home-mission-wrap">
-          <div
-            onClick={() => onDemoCapture ? onDemoCapture() : inputRef.current.click()}
-            className="home-mission-card rounded-xl cursor-pointer"
-            style={{
-              background: missionCompleted ? "rgba(22,163,74,0.07)" : "var(--surface)",
-              border: "1px solid " + (missionCompleted ? "rgba(22,163,74,0.35)" : "rgba(45,30,10,0.06)"),
-              boxShadow: "0 2px 14px rgba(45,30,10,0.08)",
-              transition: "all 0.4s",
-            }}
-          >
-            <div
-              className="home-mission-icon"
-              style={{
-                background: missionCompleted ? "rgba(22,163,74,0.10)" : "var(--gold-dim)",
-                color: missionCompleted ? "var(--native)" : "var(--gold)",
-              }}
-            >
-              <Icon name={mission.icon} size={20} strokeWidth={1.9} />
-            </div>
+        {/* 이벤트 캐러셀 */}
+        {(function(){
+          var ev = EVENTS[evIdx];
+          return (
+            <div style={{position:"relative",margin:"0 var(--home-x-pad) var(--mission-button-gap)"}}>
+              {/* 카드 */}
+              <div
+                key={evIdx}
+                onClick={function(){if(ev.action==="notice") setShowNotice(true);}}
+                className="home-mission-card rounded-xl"
+                style={{
+                  background:ev.bg, border:"1px solid "+ev.bd,
+                  boxShadow:"0 2px 10px rgba(45,30,10,0.06)",
+                  cursor:ev.action?"pointer":"default",
+                  animation:"evSlideIn 0.4s cubic-bezier(0.25,0.46,0.45,0.94)",
+                }}
+              >
+                {/* 아이콘 — 미션 아이콘과 동일 크기/구조 */}
+                <div className="home-mission-icon" style={{background:"rgba(255,255,255,0.55)",color:ev.color}}>
+                  <Icon name={ev.icon} size={20} strokeWidth={1.9} />
+                </div>
 
-            <div className="home-mission-body">
-              <div className="home-mission-label" style={{color:missionCompleted?"var(--native)":"var(--gold)"}}>
-                {missionCompleted ? "오늘의 미션 완료" : "오늘의 탐사 미션"}
-              </div>
-              <div className="home-mission-title">
-                {missionCompleted ? "미션 달성!" : mission.title}
-              </div>
-              <div className="home-mission-sub">
-                {mission.sub}
-              </div>
-            </div>
+                {/* 텍스트 */}
+                <div className="home-mission-body">
+                  <div style={{display:"flex",alignItems:"center",gap:"5px",marginBottom:"3px"}}>
+                    <div style={{padding:"1px 6px",background:"rgba(255,255,255,0.55)",border:"1px solid "+ev.bd,borderRadius:"6px",fontFamily:"'Space Mono',monospace",fontSize:"7px",fontWeight:"700",color:ev.color,letterSpacing:"1px"}}>{ev.tag}</div>
+                    <span style={{fontFamily:"'Space Mono',monospace",fontSize:"7px",color:ev.color,opacity:0.8}}>{ev.period}</span>
+                  </div>
+                  <div className="home-mission-title">{ev.title}</div>
+                  <div className="home-mission-sub">{ev.sub}</div>
+                </div>
 
-            <div style={{color:missionCompleted?"var(--native)":"var(--ink-3)",flexShrink:0,lineHeight:0}}>
-              <Icon name={missionCompleted ? "BadgeCheck" : "ArrowRight"} size={18} strokeWidth={2} />
+              </div>
+
+              {/* 점 인디케이터 */}
+              <div style={{display:"flex",justifyContent:"center",gap:"5px",marginTop:"6px"}}>
+                {EVENTS.map(function(_,i){
+                  return <div key={i} style={{width:i===evIdx?"16px":"5px",height:"4px",borderRadius:"3px",background:i===evIdx?ev.color:"rgba(45,30,10,0.15)",transition:"width 0.25s,background 0.25s"}}/>;
+                })}
+              </div>
             </div>
-          </div>
-        </div>
+          );
+        })()}
 
         {/* 카메라 버튼 */}
         <div className="home-primary-wrap flex flex-col gap-3">
