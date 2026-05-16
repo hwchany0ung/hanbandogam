@@ -1,5 +1,5 @@
 window.DEMO_MODE = false;
-var BASE_URL = "http://localhost:8000";
+var BASE_URL = "";
 
 // ── 희귀도 맵 (korean_name → L/E/R/U/C) ─────────────────────
 var RARITY_MAP = {
