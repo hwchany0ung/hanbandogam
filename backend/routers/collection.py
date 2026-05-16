@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query, status
 
 try:
@@ -17,9 +15,6 @@ except ImportError:
 
 
 router = APIRouter(prefix="/api/collection", tags=["collection"])
-
-# 일러스트 캐시 디렉토리
-ILLUST_DIR = Path(__file__).resolve().parents[2] / "frontend" / "assets" / "illustrations"
 
 
 # Design Ref: §4.1 — URL ?u= 쿼리에서 사용자 식별자 추출, 미지정 시 'global'
@@ -46,13 +41,6 @@ def add_to_collection(
     district: str | None = None
     if body.lat is not None and body.lng is not None:
         district = reverse_geocode(body.lat, body.lng)
-
-    # 일러스트 캐시 hit: 동일 종의 PNG가 이미 존재하면 canonical 경로로 image_path 교체
-    # → 모든 사용자가 같은 종을 동일한 일러스트 URL 로 저장
-    if body.korean_name:
-        cached_png = ILLUST_DIR / f"{body.korean_name}.png"
-        if cached_png.exists() and cached_png.stat().st_size > 1000:
-            body.image_path = f"/assets/illustrations/{body.korean_name}.png"
 
     saved = repository.save_result(body, district, u)
 
