@@ -85,17 +85,14 @@ jobs:
 
           python -m backend.db.seed 2>/dev/null || true
 
-          sqlite3 hanbando.db "ALTER TABLE collection ADD COLUMN lat REAL" 2>/dev/null || true
-          sqlite3 hanbando.db "ALTER TABLE collection ADD COLUMN lng REAL" 2>/dev/null || true
-          sqlite3 hanbando.db "ALTER TABLE collection ADD COLUMN district TEXT" 2>/dev/null || true
+          # backend 가 실제로 사용하는 DB 경로 (backend/hanbando.db)
+          DB="backend/hanbando.db"
+          sqlite3 "$DB" "ALTER TABLE collection ADD COLUMN lat REAL" 2>/dev/null || true
+          sqlite3 "$DB" "ALTER TABLE collection ADD COLUMN lng REAL" 2>/dev/null || true
+          sqlite3 "$DB" "ALTER TABLE collection ADD COLUMN district TEXT" 2>/dev/null || true
 
           # 실사진 경로 마이그레이션: /assets/photos/*.jpg → *.png (따오기 제외, PNG 없음)
-          sqlite3 hanbando.db "
-            UPDATE collection
-            SET image_path = REPLACE(image_path, '.jpg', '.png')
-            WHERE image_path LIKE '/assets/photos/%.jpg'
-              AND korean_name != '따오기';
-          " 2>/dev/null || true
+          sqlite3 "$DB" "UPDATE collection SET image_path = REPLACE(image_path, '.jpg', '.png') WHERE image_path LIKE '/assets/photos/%.jpg' AND korean_name != '따오기';" 2>/dev/null || true
 
           sudo systemctl daemon-reload
           sudo systemctl enable hanbando
