@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import Literal, Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class IdentifyResult(BaseModel):
@@ -23,9 +23,13 @@ class CollectionAddRequest(BaseModel):
     morphological_clues: str
     image_path: str
     memo: str = ""
+    lat: Optional[float] = None
+    lng: Optional[float] = None
 
 
 class CollectionItem(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+
     id: int
     korean_name: str
     scientific_name: str
@@ -36,4 +40,19 @@ class CollectionItem(BaseModel):
     morphological_clues: str
     image_path: str
     memo: str
+    lat: Optional[float] = None
+    lng: Optional[float] = None
+    district: Optional[str] = None
+    created_at: str
+
+
+class MapPoint(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+
+    id: int
+    korean_name: str
+    native_status: str
+    lat: float
+    lng: float
+    district: Optional[str] = None
     created_at: str

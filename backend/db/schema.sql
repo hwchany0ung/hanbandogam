@@ -9,5 +9,8 @@ CREATE TABLE IF NOT EXISTS collection (
     morphological_clues TEXT NOT NULL,
     image_path         TEXT NOT NULL,
     memo               TEXT DEFAULT '',
+    lat                REAL,
+    lng                REAL,
+    district           TEXT,
     created_at         DATETIME DEFAULT (datetime('now', 'localtime'))
 );

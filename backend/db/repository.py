@@ -1,7 +1,7 @@
 import sqlite3
 from pathlib import Path
 
-from domain.types import CollectionAddRequest, CollectionItem
+from domain.types import CollectionAddRequest, CollectionItem, MapPoint
 
 DB_PATH = Path(__file__).parent.parent / "hanbando.db"
 SCHEMA_PATH = Path(__file__).parent / "schema.sql"
@@ -20,7 +20,7 @@ def init_db() -> None:
     conn.close()
 
 
-def save_result(body: CollectionAddRequest) -> CollectionItem:
+def save_result(body: CollectionAddRequest, district: str | None = None) -> CollectionItem:
     conn = _connect()
     try:
         cur = conn.execute(
@@ -28,13 +28,14 @@ def save_result(body: CollectionAddRequest) -> CollectionItem:
             INSERT INTO collection
                 (korean_name, scientific_name, native_status, confidence,
                  ecology_summary, conservation_status, morphological_clues,
-                 image_path, memo)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                 image_path, memo, lat, lng, district)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 body.korean_name, body.scientific_name, body.native_status,
                 body.confidence, body.ecology_summary, body.conservation_status,
                 body.morphological_clues, body.image_path, body.memo,
+                body.lat, body.lng, district,
             ),
         )
         conn.commit()
@@ -75,6 +76,19 @@ def delete_by_id(item_id: int) -> None:
     try:
         conn.execute("DELETE FROM collection WHERE id = ?", (item_id,))
         conn.commit()
+    finally:
+        conn.close()
+
+
+def get_map_points() -> list[MapPoint]:
+    conn = _connect()
+    try:
+        rows = conn.execute(
+            "SELECT id, korean_name, native_status, lat, lng, district, created_at"
+            " FROM collection WHERE lat IS NOT NULL AND lng IS NOT NULL"
+            " ORDER BY created_at DESC"
+        ).fetchall()
+        return [MapPoint(**dict(r)) for r in rows]
     finally:
         conn.close()
 
