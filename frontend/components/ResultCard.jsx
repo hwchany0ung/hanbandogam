@@ -135,6 +135,9 @@ function ResultCard({ result, imageFile, onSave, onRetry, onCollection, alreadyC
   }
 
   var earnedPts = RARITY_POINTS[rarity] || 5;
+  var toastBg = rarity === "L"
+    ? "linear-gradient(135deg,#F5C842,#D4920A)"
+    : "linear-gradient(135deg,"+rc.color+",var(--ink-1))";
 
   return (
     <div className="flex flex-col flex-1 overflow-hidden" style={{background:"var(--paper)",height:"100%",minHeight:0}}>
@@ -151,7 +154,7 @@ function ResultCard({ result, imageFile, onSave, onRetry, onCollection, alreadyC
           gap:"8px",
           padding:"11px 20px",
           borderRadius:"28px",
-          background:"linear-gradient(135deg,"+rc.color+",var(--ink-1))",
+          background:toastBg,
           color:"#fff",
           fontFamily:"'Black Han Sans',sans-serif",
           fontSize:"14px",

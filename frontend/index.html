@@ -144,14 +144,19 @@
     @keyframes shine { 0%{transform:translateX(-100%)} 30%,100%{transform:translateX(200%)} }
 
     /* ── 포인트 토스트 ── */
+    @keyframes evSlideIn {
+      0%   { opacity:0; transform:translateX(18px); }
+      100% { opacity:1; transform:translateX(0); }
+    }
+
     @keyframes toastUp {
       0%   { transform:translateX(-50%) translateY(-20px); opacity:0; }
       60%  { transform:translateX(-50%) translateY(3px);   opacity:1; }
       100% { transform:translateX(-50%) translateY(0);     opacity:1; }
     }
     @keyframes toastFade {
-      0%   { opacity:1; }
-      100% { opacity:0; }
+      0%   { transform:translateX(-50%) translateY(0);     opacity:1; }
+      100% { transform:translateX(-50%) translateY(-16px); opacity:0; }
     }
 
     /* ── 셔터 플래시 ── */
@@ -638,9 +643,9 @@
 
   <script type="text/babel" src="lib/api.js?v=merge-fe-1"></script>
   <script type="text/babel" src="components/CollectionCard.jsx?v=merge-fe-1"></script>
-  <script type="text/babel" src="components/UploadView.jsx?v=notice-modal-1"></script>
+  <script type="text/babel" src="components/UploadView.jsx?v=carousel-auto-3"></script>
   <script type="text/babel" src="components/LoadingView.jsx"></script>
-  <script type="text/babel" src="components/ResultCard.jsx?v=action-buttons-points-1"></script>
+  <script type="text/babel" src="components/ResultCard.jsx?v=toast-gold-1"></script>
   <script type="text/babel" src="components/ErrorView.jsx"></script>
   <script type="text/babel" src="components/CollectionView.jsx?v=points-bar-1"></script>
   <script type="text/babel" src="components/MapView.jsx"></script>
