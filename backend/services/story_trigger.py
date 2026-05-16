@@ -33,10 +33,13 @@ def story_exists(korean_name: str) -> bool:
         return False
 
 
-def trigger_story_generation(korean_name: str) -> bool:
+def trigger_story_generation(korean_name: str, delay_sec: int = 25) -> bool:
     """GitHub Actions workflow_dispatch 호출.
 
     Returns True if API call succeeded, False otherwise.
+
+    delay_sec: illustration workflow와 commit/push race condition 회피용 대기
+    (BackgroundTask 라 메인 응답에 영향 없음).
     """
     if not korean_name:
         return False
@@ -45,6 +48,16 @@ def trigger_story_generation(korean_name: str) -> bool:
         return False
     if story_exists(korean_name):
         logger.info(f"[story-trigger] story already exists for {korean_name}, skip")
+        return False
+
+    # illustration workflow와 동시 push 충돌 회피
+    if delay_sec > 0:
+        import time
+        time.sleep(delay_sec)
+
+    # delay 동안 다른 트리거가 story 생성했을 수 있음 → 재확인
+    if story_exists(korean_name):
+        logger.info(f"[story-trigger] story generated during delay for {korean_name}, skip")
         return False
 
     url = f"https://api.github.com/repos/{GITHUB_REPO}/actions/workflows/{WORKFLOW_FILE}/dispatches"
