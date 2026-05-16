@@ -37,15 +37,20 @@
 
     html, body {
       background: #ECE3CC;
+      width: 100%;
+      height: 100%;
       min-height: 100vh;
       font-family: 'Noto Sans KR', sans-serif;
       color: var(--ink-1);
+      overflow: hidden;
     }
 
     #root {
       max-width: 390px;
       margin: 0 auto;
-      min-height: 100vh;
+      height: 100vh;
+      height: 100dvh;
+      min-height: 0;
       background: var(--paper);
       position: relative;
       overflow: hidden;
@@ -160,6 +165,273 @@
     ::-webkit-scrollbar { width:3px; }
     ::-webkit-scrollbar-thumb { background:var(--gold-bd); border-radius:3px; }
 
+    .app-shell {
+      display:flex;
+      flex-direction:column;
+      height:100vh;
+      height:100dvh;
+      min-height:0;
+      background:var(--paper);
+      position:relative;
+      overflow:hidden;
+    }
+    .app-view {
+      flex:1 1 auto;
+      min-height:0;
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      position:relative;
+      z-index:1;
+    }
+    .bottom-tabs {
+      flex:0 0 auto;
+      position:relative;
+      z-index:10;
+      background:rgba(244,237,220,0.96);
+      backdrop-filter:blur(20px);
+      border-top:1px solid var(--gold-bd);
+      display:flex;
+      padding:8px 0 calc(18px + env(safe-area-inset-bottom, 0px));
+    }
+
+    .home-screen {
+      --home-x-pad: 24px;
+      --home-top-pad: 48px;
+      --home-header-bottom: 24px;
+      --home-logo-size: 32px;
+      --home-subtitle-size: 9px;
+      --scanner-size: 196px;
+      --scanner-ring-2: 10px;
+      --scanner-ring-3: 20px;
+      --scanner-core-inset: 30px;
+      --scanner-icon-size: 36px;
+      --home-copy-gap: 20px;
+      --home-copy-title-size: 20px;
+      --home-copy-sub-size: 12px;
+      --button-height: 52px;
+      --button-font: 15px;
+      --button-icon-size: 18px;
+      --button-letter-spacing: 3px;
+      --mission-top-gap: 24px;
+      --mission-button-gap: 12px;
+      --button-bottom-gap: 16px;
+      --mission-pad-y: 12px;
+      --mission-pad-x: 16px;
+      --mission-label-size: 9px;
+      --mission-title-size: 15px;
+      --mission-sub-size: 11px;
+    }
+    .home-header {
+      padding-top:var(--home-top-pad);
+      padding-bottom:var(--home-header-bottom);
+      flex-shrink:0;
+    }
+    .home-logo {
+      font-family:'Black Han Sans',sans-serif;
+      font-size:var(--home-logo-size);
+      letter-spacing:6px;
+      color:var(--ink-1);
+      line-height:1.05;
+    }
+    .home-subtitle {
+      font-family:'Space Mono',monospace;
+      font-size:var(--home-subtitle-size);
+      color:var(--gold);
+      letter-spacing:4px;
+      margin-top:5px;
+      line-height:1.4;
+      white-space:nowrap;
+    }
+    .home-scan-zone {
+      flex:1 1 auto;
+      min-height:0;
+      justify-content:center;
+    }
+    .home-scanner {
+      width:var(--scanner-size);
+      height:var(--scanner-size);
+      position:relative;
+    }
+    .home-scanner .ring-2 { inset:var(--scanner-ring-2); }
+    .home-scanner .ring-3 { inset:var(--scanner-ring-3); }
+    .home-scanner .aperture-core { inset:var(--scanner-core-inset); }
+    .home-scanner .aperture-core .lucide-icon svg {
+      width:var(--scanner-icon-size);
+      height:var(--scanner-icon-size);
+    }
+    .home-copy { margin-top:var(--home-copy-gap); }
+    .home-copy-title {
+      font-family:'Noto Serif KR',serif;
+      font-size:var(--home-copy-title-size);
+      font-weight:700;
+      color:var(--ink-1);
+      line-height:1.25;
+    }
+    .home-copy-sub {
+      font-size:var(--home-copy-sub-size);
+      color:var(--ink-2);
+      margin-top:6px;
+      line-height:1.45;
+    }
+    .home-bottom-stack {
+      margin-top:0;
+      padding-top:var(--mission-top-gap);
+      padding-bottom:var(--button-bottom-gap);
+      flex-shrink:0;
+    }
+    .home-primary-wrap {
+      padding-left:var(--home-x-pad);
+      padding-right:var(--home-x-pad);
+      flex-shrink:0;
+    }
+    .home-primary-button {
+      min-height:var(--button-height);
+      height:var(--button-height);
+      padding:0 16px;
+      color:#FBF7EC;
+      font-family:'Black Han Sans',sans-serif;
+      font-size:var(--button-font);
+      letter-spacing:var(--button-letter-spacing);
+      box-shadow:0 8px 24px rgba(45,30,10,0.25);
+      border:none;
+      white-space:nowrap;
+    }
+    .home-primary-button .lucide-icon svg {
+      width:var(--button-icon-size);
+      height:var(--button-icon-size);
+    }
+    .home-mission-wrap {
+      margin:0 var(--home-x-pad) var(--mission-button-gap);
+      flex-shrink:0;
+    }
+    .home-mission-card {
+      padding:var(--mission-pad-y) var(--mission-pad-x);
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+    .home-mission-icon {
+      width:36px;
+      height:36px;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-shrink:0;
+    }
+    .home-mission-body {
+      flex:1;
+      min-width:0;
+    }
+    .home-mission-label {
+      font-family:'Space Mono',monospace;
+      font-size:var(--mission-label-size);
+      font-weight:700;
+      letter-spacing:1.5px;
+      margin-bottom:3px;
+      line-height:1.3;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .home-mission-title {
+      font-family:'Noto Serif KR',serif;
+      font-size:var(--mission-title-size);
+      font-weight:800;
+      color:var(--ink-1);
+      line-height:1.25;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .home-mission-sub {
+      margin-top:2px;
+      font-size:var(--mission-sub-size);
+      color:var(--ink-3);
+      line-height:1.35;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    @media (max-height: 740px) {
+      .home-screen {
+        --home-top-pad: 32px;
+        --home-header-bottom: 18px;
+        --scanner-size: 170px;
+        --scanner-ring-2: 9px;
+        --scanner-ring-3: 18px;
+        --scanner-core-inset: 26px;
+        --scanner-icon-size: 32px;
+        --home-copy-gap: 16px;
+        --button-height: 48px;
+        --button-font: 14px;
+        --button-icon-size: 16px;
+        --mission-top-gap: 18px;
+        --mission-button-gap: 10px;
+        --button-bottom-gap: 12px;
+        --mission-pad-y: 10px;
+        --mission-title-size: 14px;
+      }
+    }
+    @media (max-height: 660px) {
+      .home-screen {
+        --home-top-pad: 24px;
+        --home-header-bottom: 14px;
+        --home-logo-size: 28px;
+        --scanner-size: 144px;
+        --scanner-ring-2: 8px;
+        --scanner-ring-3: 16px;
+        --scanner-core-inset: 23px;
+        --scanner-icon-size: 28px;
+        --home-copy-gap: 12px;
+        --home-copy-title-size: 18px;
+        --home-copy-sub-size: 11px;
+        --button-height: 44px;
+        --button-font: 13px;
+        --button-icon-size: 15px;
+        --mission-top-gap: 14px;
+        --mission-button-gap: 9px;
+        --button-bottom-gap: 10px;
+        --mission-pad-y: 9px;
+        --mission-title-size: 13px;
+        --mission-sub-size: 10px;
+      }
+    }
+    @media (max-height: 580px) {
+      .home-screen {
+        --home-top-pad: 16px;
+        --home-header-bottom: 10px;
+        --home-logo-size: 25px;
+        --home-subtitle-size: 8px;
+        --scanner-size: 124px;
+        --scanner-ring-2: 7px;
+        --scanner-ring-3: 14px;
+        --scanner-core-inset: 20px;
+        --scanner-icon-size: 24px;
+        --home-copy-gap: 9px;
+        --home-copy-title-size: 16px;
+        --button-height: 40px;
+        --mission-top-gap: 10px;
+        --mission-button-gap: 8px;
+        --button-bottom-gap: 8px;
+        --mission-pad-y: 8px;
+        --mission-title-size: 12px;
+      }
+      .home-copy-sub,
+      .home-mission-sub { display:none !important; }
+    }
+    @media (max-width: 360px) {
+      .home-screen {
+        --home-x-pad: 18px;
+        --button-letter-spacing: 2px;
+      }
+      .home-logo { letter-spacing:4px; }
+      .home-subtitle { letter-spacing:3px; }
+      .home-primary-button { padding:0 12px; }
+    }
+
     .lucide-icon {
       display: inline-flex;
       align-items: center;
@@ -215,11 +487,11 @@
 
   <script type="text/babel" src="lib/api.js"></script>
   <script type="text/babel" src="components/CollectionCard.jsx"></script>
-  <script type="text/babel" src="components/UploadView.jsx"></script>
+  <script type="text/babel" src="components/UploadView.jsx?v=integrated-home-layout-1"></script>
   <script type="text/babel" src="components/LoadingView.jsx"></script>
   <script type="text/babel" src="components/ResultCard.jsx"></script>
   <script type="text/babel" src="components/ErrorView.jsx"></script>
-  <script type="text/babel" src="components/CollectionView.jsx"></script>
+  <script type="text/babel" src="components/CollectionView.jsx?v=integrated-collection-scroll-1"></script>
   <script type="text/babel" src="components/MapView.jsx"></script>
   <script type="text/babel" src="components/App.jsx"></script>
 </body>
