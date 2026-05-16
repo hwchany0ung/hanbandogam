@@ -188,6 +188,7 @@ function ResultCard({ result, imageFile, onSave, onRetry, onCollection, alreadyC
           <div style={{height:"300px",position:"relative",overflow:"hidden",background:"linear-gradient(145deg,#F4EDDC,#FAF5E6)"}}>
             {imgSrc
               ? <img
+                  className="result-photo-fade-image"
                   src={imgSrc}
                   alt="업로드"
                   style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}}
