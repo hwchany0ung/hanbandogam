@@ -6,8 +6,12 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from db.repository import init_db
-from routers import collection, identify
+try:
+    from backend.db.repository import init_db
+    from backend.routers import collection, identify
+except ImportError:
+    from db.repository import init_db
+    from routers import collection, identify
 
 
 @asynccontextmanager

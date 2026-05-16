@@ -1,8 +1,13 @@
 from fastapi import APIRouter, HTTPException, status
 
-from db import repository
-from domain.types import CollectionAddRequest, CollectionItem, MapPoint
-from services.geocode import reverse_geocode
+try:
+    from backend.db import repository
+    from backend.domain.types import CollectionAddRequest, CollectionItem, MapPoint
+    from backend.services.geocode import reverse_geocode
+except ImportError:
+    from db import repository
+    from domain.types import CollectionAddRequest, CollectionItem, MapPoint
+    from services.geocode import reverse_geocode
 
 
 router = APIRouter(prefix="/api/collection", tags=["collection"])
