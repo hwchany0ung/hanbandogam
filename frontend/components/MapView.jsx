@@ -61,7 +61,7 @@ function MapView({ onBack }) {
       marker.bindPopup(
         "<div style='font-family:sans-serif;min-width:120px'>" +
         "<b style='font-size:14px'>" + item.korean_name + "</b><br>" +
-        "<span style='color:" + rc.color + ";font-size:11px;font-weight:700'>★ " + rc.label + "</span><br>" +
+        "<span style='color:" + rc.color + ";font-size:11px;font-weight:700'>" + rc.label + "</span><br>" +
         "<span style='color:#888;font-size:11px'>" + loc.desc + "</span>" +
         "</div>"
       );
@@ -79,7 +79,7 @@ function MapView({ onBack }) {
         <button
           onClick={onBack}
           style={{width:"36px",height:"36px",borderRadius:"50%",background:"var(--surface)",border:"1px solid var(--gold-bd)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"16px",cursor:"pointer",flexShrink:0}}
-        >←</button>
+        ><Icon name="ArrowLeft" size={17} /></button>
         <div>
           <div style={{fontFamily:"'Black Han Sans',sans-serif",fontSize:"22px",letterSpacing:"2px",color:"var(--ink-1)"}}>발견 지도</div>
           <div style={{fontSize:"11px",color:"var(--ink-2)",marginTop:"2px"}}>수집한 생물 발견 위치</div>

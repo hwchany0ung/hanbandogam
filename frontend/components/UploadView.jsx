@@ -69,7 +69,7 @@ function UploadView({ onUpload, onDemoCapture, collectionCount, missionCompleted
           <div className="ring ring-1"/><div className="ring ring-2"/><div className="ring ring-3"/>
           <div className="aperture-core" style={{opacity:dragging?0.7:1}}>
             <div className="scan-bar"/>
-            <div style={{fontSize:"36px"}}>🔭</div>
+            <Icon name="ScanSearch" size={36} strokeWidth={1.8} style={{color:"var(--ink-2)"}} />
             <div style={{fontFamily:"'Space Mono',monospace",fontSize:"8px",color:"var(--ink-3)",letterSpacing:"2px"}}>TAP TO SCAN</div>
           </div>
         </div>
@@ -87,7 +87,7 @@ function UploadView({ onUpload, onDemoCapture, collectionCount, missionCompleted
           className="btn-shine w-full py-4 rounded-xl flex items-center justify-center gap-3"
           style={{background:"linear-gradient(135deg,var(--ink-1),#2C261B)",color:"#FBF7EC",fontFamily:"'Black Han Sans',sans-serif",fontSize:"15px",letterSpacing:"3px",boxShadow:"0 8px 24px rgba(45,30,10,0.25)",border:"none"}}
         >
-          📷&nbsp;&nbsp;카메라로 촬영
+          <Icon name="Camera" size={18} strokeWidth={2.3} /> <span>카메라로 촬영</span>
         </button>
       </div>
 
@@ -101,15 +101,15 @@ function UploadView({ onUpload, onDemoCapture, collectionCount, missionCompleted
         }}>
           <div style={{display:"flex",alignItems:"center",gap:"6px",marginBottom:"8px"}}>
             <div style={{fontFamily:"'Space Mono',monospace",fontSize:"9px",fontWeight:"700",letterSpacing:"2px",color:missionCompleted?"var(--native)":"var(--gold)"}}>
-              {missionCompleted ? "✓ MISSION COMPLETE" : "✦ TODAY'S MISSION"}
+              {missionCompleted ? "MISSION COMPLETE" : "TODAY'S MISSION"}
             </div>
           </div>
           <div style={{fontFamily:"'Noto Serif KR',serif",fontSize:"14px",fontWeight:"600",color:"var(--ink-1)",lineHeight:1.65}}>
             "{DAILY_MISSIONS[new Date().getDate() % DAILY_MISSIONS.length]}"
           </div>
           {missionCompleted
-            ? <div style={{marginTop:"10px",fontSize:"11px",color:"var(--native)",fontWeight:"600"}}>🎉 오늘의 미션을 완료했어요!</div>
-            : <div style={{marginTop:"10px",fontSize:"10px",color:"var(--ink-3)"}}>위 촬영 버튼을 눌러 미션을 달성해보세요 📸</div>
+            ? <div style={{marginTop:"10px",fontSize:"11px",color:"var(--native)",fontWeight:"600",display:"flex",alignItems:"center",gap:"6px"}}><Icon name="BadgeCheck" size={14} /> 오늘의 미션을 완료했어요!</div>
+            : <div style={{marginTop:"10px",fontSize:"10px",color:"var(--ink-3)",display:"flex",alignItems:"center",gap:"6px"}}><Icon name="Camera" size={13} /> 위 촬영 버튼을 눌러 미션을 달성해보세요</div>
           }
         </div>
       </div>

@@ -21,9 +21,9 @@ function ResultCard({ result, imageFile, onSave, onRetry, onCollection }) {
     <div className="flex flex-col flex-1 overflow-y-auto" style={{background:"var(--paper)"}}>
       {/* 탑바 */}
       <div className="flex items-center gap-3 px-4 pt-4 pb-3">
-        <button onClick={onRetry} style={{width:"36px",height:"36px",borderRadius:"50%",background:"var(--surface)",border:"1px solid var(--gold-bd)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"16px",color:"var(--ink-1)",boxShadow:"0 2px 6px rgba(45,30,10,0.06)",flexShrink:0,cursor:"pointer"}}>←</button>
+        <button onClick={onRetry} style={{width:"36px",height:"36px",borderRadius:"50%",background:"var(--surface)",border:"1px solid var(--gold-bd)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"16px",color:"var(--ink-1)",boxShadow:"0 2px 6px rgba(45,30,10,0.06)",flexShrink:0,cursor:"pointer"}}><Icon name="ArrowLeft" size={17} /></button>
         <div style={{fontSize:"13px",color:"var(--ink-2)",fontWeight:"500"}}>AI 판별 결과</div>
-        <div style={{marginLeft:"auto",display:"inline-flex",alignItems:"center",gap:"5px",padding:"4px 10px",background:"var(--E-bg)",border:"1px solid var(--E-bd)",borderRadius:"20px",fontFamily:"'Space Mono',monospace",fontSize:"9px",color:"var(--E)",fontWeight:"700"}}>✦ CLAUDE</div>
+        <div style={{marginLeft:"auto",display:"inline-flex",alignItems:"center",gap:"5px",padding:"4px 10px",background:"var(--E-bg)",border:"1px solid var(--E-bd)",borderRadius:"20px",fontFamily:"'Space Mono',monospace",fontSize:"9px",color:"var(--E)",fontWeight:"700"}}><Icon name="Sparkles" size={12} /> CLAUDE</div>
       </div>
 
       {/* 카드 */}
@@ -33,12 +33,12 @@ function ResultCard({ result, imageFile, onSave, onRetry, onCollection }) {
         <div style={{height:"300px",position:"relative",overflow:"hidden",background:"linear-gradient(145deg,#F4EDDC,#FAF5E6)"}}>
           {previewUrl
             ? <img src={previewUrl} alt="업로드" style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}}/>
-            : <div className="flex items-center justify-center h-full" style={{fontSize:"48px"}}>🌿</div>
+            : <div className="flex items-center justify-center h-full" style={{color:"var(--U)"}}><Icon name="Sprout" size={48} strokeWidth={1.6} /></div>
           }
           <div className="holo"/>
           {/* 희귀도 배지 */}
           <div style={{position:"absolute",top:"12px",left:"12px",padding:"5px 12px",borderRadius:"20px",fontFamily:"'Space Mono',monospace",fontSize:"10px",fontWeight:"700",letterSpacing:"1.5px",background:rc.bg,border:`1px solid ${rc.bd}`,color:rc.color,backdropFilter:"blur(8px)"}}>
-            ★ {rc.label}
+            <span style={{display:"inline-flex",alignItems:"center",gap:"5px"}}><Icon name="Star" size={11} strokeWidth={2.4} /> {rc.label}</span>
           </div>
           {/* 토종 배지 */}
           <div style={{position:"absolute",top:"12px",right:"12px",padding:"5px 11px",borderRadius:"20px",fontSize:"11px",fontWeight:"600",background:nc.bg,border:`1px solid ${nc.bd}`,color:nc.color,backdropFilter:"blur(8px)"}}>
@@ -86,12 +86,12 @@ function ResultCard({ result, imageFile, onSave, onRetry, onCollection }) {
             className="btn-shine w-full py-4 rounded-xl"
             style={{background:saved?"var(--ink-3)":"linear-gradient(135deg,#1D4ED8,var(--R))",border:"none",color:"#fff",fontFamily:"'Black Han Sans',sans-serif",fontSize:"15px",letterSpacing:"3px",cursor:saved?"default":"pointer",boxShadow:saved?"none":"0 6px 20px rgba(37,99,235,0.3)"}}
           >
-            {saved?"✓ 도감에 저장됨":saving?"저장 중…":"📚  도감에 추가! +1"}
+            {saved ? <span style={{display:"inline-flex",alignItems:"center",justifyContent:"center",gap:"8px"}}><Icon name="Check" size={17} strokeWidth={2.5} /> 도감에 저장됨</span> : saving ? "저장 중…" : <span style={{display:"inline-flex",alignItems:"center",justifyContent:"center",gap:"8px"}}><Icon name="BookOpen" size={17} strokeWidth={2.4} /> 도감에 추가! +1</span>}
           </button>
 
           {saved && (
-            <button onClick={onCollection} style={{display:"block",width:"100%",textAlign:"center",marginTop:"12px",fontSize:"13px",color:"var(--gold)",textDecoration:"underline",background:"none",border:"none",cursor:"pointer"}}>
-              내 도감 보기 →
+            <button onClick={onCollection} style={{display:"flex",alignItems:"center",justifyContent:"center",gap:"5px",width:"100%",textAlign:"center",marginTop:"12px",fontSize:"13px",color:"var(--gold)",textDecoration:"underline",background:"none",border:"none",cursor:"pointer"}}>
+              내 도감 보기 <Icon name="ArrowRight" size={14} />
             </button>
           )}
         </div>

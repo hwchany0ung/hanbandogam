@@ -78,7 +78,7 @@ function CollectionView({ onBack }) {
           <div className="flex justify-center items-center h-32" style={{color:"var(--ink-3)"}}>불러오는 중…</div>
         ) : items.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-40 gap-3" style={{color:"var(--ink-3)"}}>
-            <span style={{fontSize:"40px"}}>📖</span>
+            <Icon name="BookOpen" size={40} strokeWidth={1.7} />
             <p style={{fontSize:"13px"}}>아직 도감이 비어있어요</p>
           </div>
         ) : (
@@ -90,7 +90,7 @@ function CollectionView({ onBack }) {
               ))}
               {Array.from({length:Math.max(0,102-items.length)},(_,i)=>(
                 <div key={"lock-"+i} style={{aspectRatio:"1",borderRadius:"12px",background:"rgba(31,26,18,0.04)",border:"1.5px dashed rgba(31,26,18,0.10)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:"3px"}}>
-                  <span style={{fontSize:"16px",opacity:0.25}}>🔒</span>
+                  <Icon name="Lock" size={16} strokeWidth={1.8} style={{opacity:0.25}} />
                   <span style={{fontFamily:"'Space Mono',monospace",fontSize:"7px",color:"var(--ink-3)",letterSpacing:"1px",opacity:0.4}}>???</span>
                 </div>
               ))}
