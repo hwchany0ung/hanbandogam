@@ -132,7 +132,7 @@ function App() {
           <CollectionView onBack={()=>setView("upload")}/>
         </div>
         <div style={{display: view==="map" ? "flex" : "none", flex:1, flexDirection:"column", minHeight:0}}>
-          <MapView onBack={()=>setView("upload")}/>
+          <MapView onBack={()=>setView("upload")} isActive={view==="map"}/>
         </div>
       </div>
 

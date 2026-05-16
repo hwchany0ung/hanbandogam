@@ -24,11 +24,21 @@ var SPECIES_LOCATIONS = {
   "따오기":       { lat: 35.572, lng: 128.423, desc: "창녕 우포늪" },
 };
 
-function MapView({ onBack }) {
+function MapView({ onBack, isActive }) {
   var mapRef    = React.useRef(null);
   var mapInst   = React.useRef(null);
   var markersRef = React.useRef([]);
   var [items, setItems] = React.useState(null);
+
+  // keep-alive: display:none 상태에서 init 된 지도는 컨테이너 크기를 0으로 인식.
+  // isActive 가 true 가 되는 순간 invalidateSize 로 재계산.
+  React.useEffect(function() {
+    if (isActive && mapInst.current) {
+      setTimeout(function(){
+        if (mapInst.current) mapInst.current.invalidateSize();
+      }, 50);
+    }
+  }, [isActive]);
 
   React.useEffect(function() {
     getCollection().then(setItems).catch(function(){ setItems([]); });
