@@ -24,19 +24,27 @@ ILLUST_DIR = Path(__file__).resolve().parents[2] / "frontend" / "assets" / "illu
 
 
 def illustration_exists(korean_name: str) -> bool:
-    """프론트엔드 디렉토리에 PNG가 이미 있는지 확인."""
+    """프론트엔드 디렉토리에 PNG가 이미 있는지 정확 매칭으로 확인.
+
+    "족도리풀" 검색 시 "개족도리풀.png" 매칭 막기 위해 substring 매칭 X.
+    """
     if not korean_name:
         return False
-    # 1) 컨벤션 경로 ({name}.png)
+    # 1) 컨벤션 경로 정확 매칭: {name}.png
     convention = ILLUST_DIR / f"{korean_name}.png"
     if convention.exists() and convention.stat().st_size > 1000:
         return True
-    # 2) plant_NNN_{name}.png 패턴 (seed 데이터)
+    # 2) plant_NNN_{name}.png 패턴 정확 매칭 (seed 데이터)
+    suffix = f"_{korean_name}.png"
     if ILLUST_DIR.exists():
         for f in ILLUST_DIR.iterdir():
-            if f.is_file() and korean_name in f.name and f.suffix == ".png":
-                if f.stat().st_size > 1000:
-                    return True
+            if (
+                f.is_file()
+                and f.name.startswith("plant_")
+                and f.name.endswith(suffix)
+                and f.stat().st_size > 1000
+            ):
+                return True
     return False
 
 
