@@ -56,6 +56,16 @@ confidence는 0.0 이상 1.0 이하의 숫자로 반환한다.
 - morphological_clues는 메인 종의 특징만 기술한다.
 
 확신이 낮으면 (confidence < 0.5) native_status는 "불명확"을 사용한다.
+
+📂 식물 분류 (plant_type) — 다음 8개 중 하나로 정확히 분류:
+- tree: 나무 (목본, 줄기 단단)
+- shrub: 관목 (작은 나무, 가지 많음)
+- flower: 꽃이 주된 특징인 초본
+- herb: 풀 (꽃·잎이 같이 보이는 일반 초본)
+- vine: 덩굴 (감거나 기는 식물)
+- fern: 양치류 (포자 식물)
+- grass: 벼과·외떡잎 풀
+- other: 동물 / 분류 불가 / 위 7개에 안 맞음
 """.strip()
 
 USER_PROMPT = """
@@ -73,7 +83,8 @@ USER_PROMPT = """
   "confidence": 0.0,
   "ecology_summary": "한국어 생태 설명 (여러 종일 경우 끝에 다른 종 언급)",
   "conservation_status": "보전 상태 또는 'N/A'",
-  "morphological_clues": "메인 종의 식별 포인트"
+  "morphological_clues": "메인 종의 식별 포인트",
+  "plant_type": "tree|shrub|flower|herb|vine|fern|grass|other"
 }
 """.strip()
 
@@ -134,6 +145,16 @@ def _normalize_confidence(value: Any) -> float:
     return min(max(confidence, 0.0), 1.0)
 
 
+_ALLOWED_PLANT_TYPES = {"tree", "shrub", "flower", "herb", "vine", "fern", "grass", "other"}
+
+
+def _normalize_plant_type(value: Any) -> str | None:
+    if value is None:
+        return None
+    s = str(value).strip().lower()
+    return s if s in _ALLOWED_PLANT_TYPES else "other"
+
+
 def _build_identify_result(data: dict[str, Any]) -> IdentifyResult:
     normalized_data = {
         "korean_name": str(data.get("korean_name") or "불명확"),
@@ -143,6 +164,7 @@ def _build_identify_result(data: dict[str, Any]) -> IdentifyResult:
         "ecology_summary": str(data.get("ecology_summary") or ""),
         "conservation_status": str(data.get("conservation_status") or ""),
         "morphological_clues": str(data.get("morphological_clues") or ""),
+        "plant_type": _normalize_plant_type(data.get("plant_type")),
     }
 
     if hasattr(IdentifyResult, "model_validate"):
