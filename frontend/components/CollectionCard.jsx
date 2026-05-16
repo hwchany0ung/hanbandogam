@@ -204,8 +204,15 @@ function CollectionCard({ item, onDelete }) {
   var photoCandidates = photoCandidatesFor(item);
   var hasUserPhoto = photoIndex < photoCandidates.length;
   var userSrc = hasUserPhoto ? photoCandidates[photoIndex] : FALLBACK;
+  var photoCandidatesKey = photoCandidates.join("|");
 
   var displaySrc = (showPhoto && hasUserPhoto) ? userSrc : illustSrc;
+
+  React.useEffect(function() {
+    if (typeof preloadImagePath !== "function") return;
+    preloadImagePath(illustSrc);
+    photoCandidates.forEach(preloadImagePath);
+  }, [illustSrc, photoCandidatesKey]);
 
   var STORY_DATA = (typeof window !== "undefined" && window.STORIES_DATA) || {};
   var story = STORY_DATA[item.korean_name] || item.ecology_summary;
@@ -268,6 +275,8 @@ function CollectionCard({ item, onDelete }) {
             <img
               src={displaySrc}
               alt={item.korean_name}
+              loading="eager"
+              decoding="async"
               style={{
                 position:"absolute",
                 left:"50%",
@@ -404,6 +413,8 @@ function CollectionCard({ item, onDelete }) {
       <img
         src={illustSrc}
         alt={item.korean_name}
+        loading="eager"
+        decoding="async"
         style={{width:"100%",height:"100%",objectFit:"cover"}}
         onError={() => {
           // ILLUSTRATION_MAP → convention → SVG 자동생성

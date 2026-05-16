@@ -151,6 +151,23 @@ def _build_identify_result(data: dict[str, Any]) -> IdentifyResult:
     return IdentifyResult(**normalized_data)
 
 
+def _build_unidentified_result(reason: str = "") -> IdentifyResult:
+    data = {
+        "korean_name": "해당 없음",
+        "scientific_name": "N/A",
+        "native_status": "불명확",
+        "confidence": 0.0,
+        "ecology_summary": reason or "사진만으로 종을 안정적으로 판별하기 어렵습니다. 생물의 전체 형태와 잎, 꽃, 열매 같은 단서가 더 잘 보이게 다시 촬영해 주세요.",
+        "conservation_status": "N/A",
+        "morphological_clues": "식별 가능한 형태 단서가 부족합니다.",
+    }
+
+    if hasattr(IdentifyResult, "model_validate"):
+        return IdentifyResult.model_validate(data)
+
+    return IdentifyResult(**data)
+
+
 def _identify_species_sync(image_base64: str, media_type: str) -> IdentifyResult:
     api_key = os.getenv("ANTHROPIC_API_KEY")
 
@@ -186,9 +203,14 @@ def _identify_species_sync(image_base64: str, media_type: str) -> IdentifyResult
     )
 
     response_text = _extract_response_text(response)
-    result_data = _parse_json_object(response_text)
 
-    return _build_identify_result(result_data)
+    try:
+        result_data = _parse_json_object(response_text)
+        if not isinstance(result_data, dict):
+            return _build_unidentified_result()
+        return _build_identify_result(result_data)
+    except (json.JSONDecodeError, TypeError, ValueError):
+        return _build_unidentified_result()
 
 
 async def identify_species(

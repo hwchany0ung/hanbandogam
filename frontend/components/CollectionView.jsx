@@ -13,7 +13,7 @@ function CollectionView({ onBack }) {
   }
 
   var uniqueItems = getUniqueCollectionItems(items);
-  var [sortBy,    setSortBy]    = React.useState("name");     // "name" | "rarity"
+  var [sortBy,    setSortBy]    = React.useState("name");     // "name" | "rarity" | "latest"
   var [sortOrder, setSortOrder] = React.useState("asc");      // "asc" | "desc"
 
   // 등급 우선순위 (L 최고 → C 최저)
@@ -25,6 +25,9 @@ function CollectionView({ onBack }) {
       var cmp;
       if (sortBy === "name") {
         cmp = a.korean_name.localeCompare(b.korean_name, "ko");
+      } else if (sortBy === "latest") {
+        cmp = getCreatedTime(b) - getCreatedTime(a);
+        if (cmp === 0) cmp = (b.id || 0) - (a.id || 0);
       } else {
         // rarity: 높은 등급 우선이 기본
         var ra = RARITY_RANK[getRarity(a.korean_name)] || 0;
@@ -69,13 +72,15 @@ function CollectionView({ onBack }) {
             </div>
             {topPct && (
               <div style={{display:"inline-flex",alignItems:"center",padding:"4px 12px",borderRadius:"20px",background:"linear-gradient(135deg,rgba(184,144,47,0.12),rgba(184,144,47,0.18))",border:"1px solid var(--gold-bd)"}}>
-                <span style={{fontFamily:"'Space Mono',monospace",fontSize:"11px",color:"var(--gold)",fontWeight:"700"}}>전국민중 상위 {topPct}%</span>
+                <span style={{fontSize:"12px",color:"var(--gold)",fontWeight:"800",letterSpacing:"-0.2px"}}>
+                  전국민중 상위 <span style={{fontFamily:"'Space Mono',monospace",fontSize:"15px",fontWeight:"900"}}>{topPct}%</span>
+                </span>
               </div>
             )}
           </div>
           {topPct && (
             <div style={{fontSize:"10px",color:"var(--ink-3)",marginTop:"7px",lineHeight:"1.5"}}>
-              {moreNeeded}종 더 수집하면 상위 {+(topPct*0.6).toFixed(1)}%까지 올라갈 수 있어요
+              {moreNeeded}종 더 수집하면 상위 <span style={{fontFamily:"'Space Mono',monospace",fontSize:"13px",fontWeight:"900",color:"var(--gold)"}}>{+(topPct*0.6).toFixed(1)}%</span>까지 올라갈 수 있어요
             </div>
           )}
           {!topPct && (
@@ -123,6 +128,10 @@ function CollectionView({ onBack }) {
                     onClick={() => setSortBy("rarity")}
                     style={{padding:"3px 9px",background:sortBy==="rarity"?"var(--surface)":"transparent",borderRadius:"5px",fontSize:"10px",border:"none",cursor:"pointer",color:sortBy==="rarity"?"var(--ink-1)":"var(--ink-3)",fontWeight:sortBy==="rarity"?"700":"500",boxShadow:sortBy==="rarity"?"0 1px 3px rgba(45,30,10,0.1)":"none"}}
                   >등급순</button>
+                  <button
+                    onClick={() => setSortBy("latest")}
+                    style={{padding:"3px 9px",background:sortBy==="latest"?"var(--surface)":"transparent",borderRadius:"5px",fontSize:"10px",border:"none",cursor:"pointer",color:sortBy==="latest"?"var(--ink-1)":"var(--ink-3)",fontWeight:sortBy==="latest"?"700":"500",boxShadow:sortBy==="latest"?"0 1px 3px rgba(45,30,10,0.1)":"none"}}
+                  >최신순</button>
                 </div>
                 {/* 오름/내림 토글 */}
                 <button

@@ -24,7 +24,8 @@ ALLOWED_EXTENSIONS = {
     "image/webp": ".webp",
 }
 
-MAX_IMAGE_BYTES = 10 * 1024 * 1024
+MAX_IMAGE_BYTES = 15 * 1024 * 1024
+MAX_IMAGE_MB = MAX_IMAGE_BYTES // (1024 * 1024)
 
 
 def _persist_upload(image_bytes: bytes, media_type: str) -> str:
@@ -47,7 +48,7 @@ async def identify(
         raise HTTPException(status_code=400, detail="업로드된 이미지 파일이 비어 있습니다.")
 
     if len(image_bytes) > MAX_IMAGE_BYTES:
-        raise HTTPException(status_code=413, detail="이미지 용량이 너무 큽니다 (최대 10MB).")
+        raise HTTPException(status_code=413, detail=f"이미지 용량이 너무 큽니다 (최대 {MAX_IMAGE_MB}MB).")
 
     media_type = file.content_type or "image/jpeg"
 
