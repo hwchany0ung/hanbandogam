@@ -20,6 +20,11 @@ def _connect() -> sqlite3.Connection:
 def _migrate_user_id_column(conn: sqlite3.Connection) -> None:
     # Design Ref: §3.2 — idempotent migration via PRAGMA table_info guard
     cols = {row[1] for row in conn.execute("PRAGMA table_info(collection)")}
+    if "image_url" not in cols:
+        try:
+            conn.execute("ALTER TABLE collection ADD COLUMN image_url TEXT")
+        except sqlite3.OperationalError:
+            pass
     if "user_id" not in cols:
         try:
             conn.execute(

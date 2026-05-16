@@ -59,6 +59,7 @@ function App() {
   var [shutterOn,        setShutterOn]        = React.useState(false);
   var [demoIdx,          setDemoIdx]          = React.useState(0);
   var [missionCompleted, setMissionCompleted] = React.useState(false);
+  var [newSpeciesKeys,   setNewSpeciesKeys]   = React.useState([]);
 
   React.useEffect(()=>{
     getCollection().then(function(list) {
@@ -109,8 +110,22 @@ function App() {
       setCollectionItems(function(prev) {
         return [savedItem].concat(prev || []);
       });
+      var key = getSpeciesNoticeKey(savedItem);
+      if (key) {
+        setNewSpeciesKeys(function(prev) {
+          return prev.indexOf(key) >= 0 ? prev : prev.concat(key);
+        });
+      }
     }
     showToast("도감 +1! "+result.korean_name+" 수집 완료");
+  }
+
+  function handleSeenSpecies(item) {
+    var key = getSpeciesNoticeKey(item);
+    if (!key) return;
+    setNewSpeciesKeys(function(prev) {
+      return prev.filter(function(value) { return value !== key; });
+    });
   }
 
   var tabs = [
@@ -139,7 +154,12 @@ function App() {
 
         {/* keep-alive: CollectionView 와 MapView 는 mount 유지 + display 토글 (탭 전환 즉시 복귀) */}
         <div style={{display: view==="collection" ? "flex" : "none", flex:1, flexDirection:"column", minHeight:0}}>
-          <CollectionView isActive={view==="collection"} onBack={()=>setView("upload")}/>
+          <CollectionView
+            isActive={view==="collection"}
+            onBack={()=>setView("upload")}
+            newSpeciesKeys={newSpeciesKeys}
+            onSeenSpecies={handleSeenSpecies}
+          />
         </div>
         <div style={{display: view==="map" ? "flex" : "none", flex:1, flexDirection:"column", minHeight:0}}>
           <MapView onBack={()=>setView("upload")} isActive={view==="map"}/>
@@ -152,9 +172,14 @@ function App() {
           <button
             key={t.id}
             onClick={()=>setView(t.id)}
-            style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:"3px",background:"none",border:"none",cursor:"pointer",color:activeTab===t.id?"var(--gold)":"var(--ink-3)",padding:"6px 0"}}
+            style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:"3px",background:"none",border:"none",cursor:"pointer",color:activeTab===t.id?"var(--gold)":"var(--ink-3)",padding:"6px 0",position:"relative"}}
           >
-            <Icon name={t.icon} size={20} strokeWidth={activeTab===t.id ? 2.4 : 2} />
+            <span style={{position:"relative",display:"inline-flex"}}>
+              <Icon name={t.icon} size={20} strokeWidth={activeTab===t.id ? 2.4 : 2} />
+              {t.id === "collection" && newSpeciesKeys.length > 0 && (
+                <span style={{position:"absolute",right:"-5px",top:"-5px",width:"8px",height:"8px",borderRadius:"50%",background:"#DC2626",border:"1.5px solid var(--paper)",boxShadow:"0 0 0 1px rgba(220,38,38,0.18)"}}/>
+              )}
+            </span>
             <span style={{fontFamily:"'Space Mono',monospace",fontSize:"8px",fontWeight:"700",letterSpacing:"1px"}}>{t.label}</span>
           </button>
         ))}

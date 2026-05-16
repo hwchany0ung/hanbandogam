@@ -14,7 +14,7 @@ function calcLevelProgress(pts) {
   return Math.min(1, (pts - start) / (end - start));
 }
 
-function CollectionView({ isActive, onBack }) {
+function CollectionView({ isActive, onBack, newSpeciesKeys, onSeenSpecies }) {
   var [items,   setItems]   = React.useState([]);
   var [loading, setLoading] = React.useState(true);
 
@@ -185,7 +185,13 @@ function CollectionView({ isActive, onBack }) {
             </div>
             <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:"8px"}}>
               {sortedItems.map(item=>(
-                <CollectionCard key={item.id} item={item} onDelete={handleDelete}/>
+                <CollectionCard
+                  key={item.id}
+                  item={item}
+                  onDelete={handleDelete}
+                  isNew={newSpeciesKeys && newSpeciesKeys.indexOf(getSpeciesNoticeKey(item)) >= 0}
+                  onSeen={onSeenSpecies}
+                />
               ))}
               {Array.from({length:Math.max(0,102-uniqueItems.length)},(_,i)=>(
                 <div key={"lock-"+i} style={{aspectRatio:"1",borderRadius:"12px",background:"rgba(31,26,18,0.04)",border:"1.5px dashed rgba(31,26,18,0.10)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:"3px"}}>

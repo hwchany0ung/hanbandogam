@@ -150,7 +150,7 @@ function generateIllustration(name, rarity) {
   return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
 }
 
-function CollectionCard({ item, onDelete }) {
+function CollectionCard({ item, onDelete, isNew, onSeen }) {
   var [zoomed,       setZoomed]       = React.useState(false);
   var [showPhoto,    setShowPhoto]    = React.useState(false);
   var [showDetail,   setShowDetail]   = React.useState(false);
@@ -274,6 +274,7 @@ function CollectionCard({ item, onDelete }) {
   }
 
   function openModal() {
+    if (isNew && onSeen) onSeen(item);
     setShowPhoto(false);
     setShowDetail(false);
     setPhotoIndex(0);
@@ -456,6 +457,9 @@ function CollectionCard({ item, onDelete }) {
         <div style={{position:"absolute",top:"5px",right:"5px",padding:"2px 6px",borderRadius:"999px",background:"rgba(31,26,18,0.72)",color:"#fff",fontFamily:"'Space Mono',monospace",fontSize:"8px",fontWeight:"700",zIndex:2}}>
           x{item.observation_count}
         </div>
+      )}
+      {isNew && (
+        <div style={{position:"absolute",top:"6px",right:"6px",width:"9px",height:"9px",borderRadius:"50%",background:"#DC2626",border:"1.5px solid var(--surface)",boxShadow:"0 0 0 1px rgba(220,38,38,0.18)",zIndex:4}}/>
       )}
       {/* 종명 오버레이 */}
       <div style={{position:"absolute",bottom:0,left:0,right:0,padding:"4px 3px",background:"linear-gradient(0deg,rgba(0,0,0,0.65),transparent)",fontSize:"9px",color:"#fff",textAlign:"center",fontWeight:"600",zIndex:3}}>
