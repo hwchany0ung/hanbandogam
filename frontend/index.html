@@ -215,6 +215,7 @@
       --button-icon-size: 18px;
       --button-letter-spacing: 3px;
       --mission-top-gap: 24px;
+      --button-bottom-gap: 16px;
       --mission-pad-y: 16px;
       --mission-pad-x: 16px;
       --mission-title-size: 9px;
@@ -269,7 +270,10 @@
     .home-primary-wrap {
       padding-left:var(--home-x-pad);
       padding-right:var(--home-x-pad);
-      margin-top:var(--button-top-gap);
+      margin-top:auto;
+      padding-top:var(--button-top-gap);
+      padding-bottom:var(--button-bottom-gap);
+      flex-shrink:0;
     }
     .home-primary-button {
       min-height:var(--button-height);
@@ -289,6 +293,7 @@
     }
     .home-mission-wrap {
       margin:var(--mission-top-gap) var(--home-x-pad) 0;
+      flex-shrink:0;
     }
     .home-mission-card {
       padding:var(--mission-pad-y) var(--mission-pad-x);
@@ -333,6 +338,7 @@
         --button-font: 14px;
         --button-icon-size: 16px;
         --mission-top-gap: 18px;
+        --button-bottom-gap: 12px;
         --mission-pad-y: 13px;
       }
     }
@@ -354,6 +360,7 @@
         --button-font: 13px;
         --button-icon-size: 15px;
         --mission-top-gap: 14px;
+        --button-bottom-gap: 10px;
         --mission-pad-y: 11px;
         --mission-font: 13px;
         --mission-helper-size: 9px;
@@ -381,6 +388,7 @@
         --button-top-gap: 14px;
         --button-height: 40px;
         --mission-top-gap: 10px;
+        --button-bottom-gap: 8px;
         --mission-pad-y: 9px;
         --mission-font: 12px;
       }

@@ -79,17 +79,6 @@ function UploadView({ onUpload, onDemoCapture, collectionCount, missionCompleted
         </div>
       </div>
 
-      {/* 버튼 */}
-      <div className="home-primary-wrap flex flex-col gap-3 relative" style={{zIndex:2}}>
-        <button
-          onClick={() => onDemoCapture ? onDemoCapture() : inputRef.current.click()}
-          className="btn-shine home-primary-button w-full rounded-xl flex items-center justify-center gap-3"
-          style={{background:"linear-gradient(135deg,var(--ink-1),#2C261B)"}}
-        >
-          <Icon name="Camera" size={18} strokeWidth={2.3} /> <span>카메라로 촬영</span>
-        </button>
-      </div>
-
       {/* 일일 미션 */}
       <div className="home-mission-wrap relative" style={{zIndex:2}}>
         <div className="home-mission-card rounded-xl" style={{
@@ -111,6 +100,17 @@ function UploadView({ onUpload, onDemoCapture, collectionCount, missionCompleted
             : <div className="home-mission-helper" style={{color:"var(--ink-3)"}}><Icon name="Camera" size={13} /> 위 촬영 버튼을 눌러 미션을 달성해보세요</div>
           }
         </div>
+      </div>
+
+      {/* 버튼 */}
+      <div className="home-primary-wrap flex flex-col gap-3 relative" style={{zIndex:2}}>
+        <button
+          onClick={() => onDemoCapture ? onDemoCapture() : inputRef.current.click()}
+          className="btn-shine home-primary-button w-full rounded-xl flex items-center justify-center gap-3"
+          style={{background:"linear-gradient(135deg,var(--ink-1),#2C261B)"}}
+        >
+          <Icon name="Camera" size={18} strokeWidth={2.3} /> <span>카메라로 촬영</span>
+        </button>
       </div>
 
       <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={e=>handleFile(e.target.files[0])}/>
