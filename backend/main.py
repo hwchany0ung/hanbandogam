@@ -40,3 +40,8 @@ if assets_dir.exists():
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
+
+frontend_dir = Path(__file__).parent.parent / "frontend"
+if frontend_dir.exists():
+    app.mount("/", StaticFiles(directory=frontend_dir, html=True), name="frontend")

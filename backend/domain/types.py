@@ -1,12 +1,17 @@
 from __future__ import annotations
+
 from typing import Literal, Optional
+
 from pydantic import BaseModel, ConfigDict, Field
+
+
+NativeStatus = Literal["토종", "외래종", "불명확"]
 
 
 class IdentifyResult(BaseModel):
     korean_name: str
     scientific_name: str
-    native_status: Literal["토종", "외래종", "불명확"]
+    native_status: NativeStatus
     confidence: float = Field(ge=0.0, le=1.0)
     ecology_summary: str
     conservation_status: str
@@ -16,7 +21,7 @@ class IdentifyResult(BaseModel):
 class CollectionAddRequest(BaseModel):
     korean_name: str
     scientific_name: str
-    native_status: str
+    native_status: NativeStatus
     confidence: float = Field(ge=0.0, le=1.0)
     ecology_summary: str
     conservation_status: str
@@ -33,7 +38,7 @@ class CollectionItem(BaseModel):
     id: int
     korean_name: str
     scientific_name: str
-    native_status: str
+    native_status: NativeStatus
     confidence: float
     ecology_summary: str
     conservation_status: str
@@ -51,7 +56,7 @@ class MapPoint(BaseModel):
 
     id: int
     korean_name: str
-    native_status: str
+    native_status: NativeStatus
     lat: float
     lng: float
     district: Optional[str] = None
