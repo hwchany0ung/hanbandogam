@@ -1,1 +1,72 @@
-﻿
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>한반도감</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet" />
+
+  <!-- TailwindCSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- 플립 카드 CSS -->
+  <style>
+    body { font-family: 'Noto Serif KR', serif; }
+
+    .card-flip-container {
+      perspective: 1000px;
+    }
+    .card-flip-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+      transform-style: preserve-3d;
+    }
+    .card-flip-inner.is-flipped {
+      transform: rotateY(180deg);
+    }
+    .card-face {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+    .card-face-back {
+      transform: rotateY(180deg);
+    }
+
+    /* 스크롤바 */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-thumb { background: #d6d3d1; border-radius: 4px; }
+  </style>
+</head>
+<body class="bg-stone-100 min-h-screen flex items-center justify-center">
+
+  <div id="root"></div>
+
+  <!-- React 18 CDN -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+
+  <!-- Babel Standalone (JSX 실시간 컴파일) -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- 1. 전역 상수 & API -->
+  <script type="text/babel" src="lib/api.js"></script>
+
+  <!-- 2. 리프 컴포넌트 먼저 -->
+  <script type="text/babel" src="components/CollectionCard.jsx"></script>
+  <script type="text/babel" src="components/UploadView.jsx"></script>
+  <script type="text/babel" src="components/LoadingView.jsx"></script>
+  <script type="text/babel" src="components/ResultCard.jsx"></script>
+  <script type="text/babel" src="components/ErrorView.jsx"></script>
+  <script type="text/babel" src="components/CollectionView.jsx"></script>
+
+  <!-- 3. App (마지막 — createRoot 호출) -->
+  <script type="text/babel" src="components/App.jsx"></script>
+
+</body>
+</html>
