@@ -1,4 +1,4 @@
-window.DEMO_MODE = false;
+window.DEMO_MODE = true;
 var BASE_URL = "";
 
 // Design Ref: §5.1 — 사용자 식별자 부트스트랩 (URL ?u= > localStorage > 신규 UUID 16자)
@@ -88,6 +88,60 @@ var NATIVE_CONFIG = {
 
 function getRarity(koreanName) {
   return RARITY_MAP[koreanName] || "C";
+}
+
+function cleanSpeciesText(value) {
+  return (value || "").toString().trim();
+}
+
+function normalizeSpeciesText(value) {
+  return cleanSpeciesText(value).toLowerCase();
+}
+
+function isSameSpecies(a, b) {
+  var aKorean = cleanSpeciesText(a && a.korean_name);
+  var bKorean = cleanSpeciesText(b && b.korean_name);
+  if (aKorean && bKorean && aKorean === bKorean) return true;
+
+  var aScientific = normalizeSpeciesText(a && a.scientific_name);
+  var bScientific = normalizeSpeciesText(b && b.scientific_name);
+  return !!(aScientific && bScientific && aScientific === bScientific);
+}
+
+function getCreatedTime(item) {
+  var time = Date.parse(item && item.created_at ? item.created_at : "");
+  return Number.isNaN(time) ? 0 : time;
+}
+
+function getUniqueCollectionItems(items) {
+  var groups = [];
+  (items || []).forEach(function(item) {
+    var index = groups.findIndex(function(group) {
+      return isSameSpecies(group.item, item);
+    });
+
+    if (index === -1) {
+      groups.push({ item:Object.assign({}, item), count:1 });
+      return;
+    }
+
+    groups[index].count += 1;
+    if (getCreatedTime(item) >= getCreatedTime(groups[index].item)) {
+      groups[index].item = Object.assign({}, item);
+    }
+  });
+
+  return groups.map(function(group) {
+    return Object.assign({}, group.item, { observation_count:group.count });
+  }).sort(function(a, b) {
+    return (getCreatedTime(b) - getCreatedTime(a)) || ((b.id || 0) - (a.id || 0));
+  });
+}
+
+function findCollectedItem(items, candidate) {
+  return getUniqueCollectionItems(items).find(function(item) {
+    return isSameSpecies(item, candidate);
+  }) || null;
 }
 
 // ── 데모 데이터 ───────────────────────────────────────────────

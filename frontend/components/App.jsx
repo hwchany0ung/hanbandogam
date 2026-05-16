@@ -54,15 +54,21 @@ function App() {
   var [result,       setResult]       = React.useState(null);
   var [imageFile,    setImageFile]    = React.useState(null);
   var [errMsg,       setErrMsg]       = React.useState("");
-  var [colCount,     setColCount]     = React.useState(0);
+  var [collectionItems, setCollectionItems] = React.useState([]);
   var [toast,        setToast]        = React.useState("");
   var [shutterOn,        setShutterOn]        = React.useState(false);
   var [demoIdx,          setDemoIdx]          = React.useState(0);
   var [missionCompleted, setMissionCompleted] = React.useState(false);
 
   React.useEffect(()=>{
-    getCollection().then(list=>setColCount(list.length)).catch(()=>{});
+    getCollection().then(function(list) {
+      setCollectionItems(Array.isArray(list) ? list : []);
+    }).catch(()=>{});
   },[]);
+
+  var uniqueCollectionItems = getUniqueCollectionItems(collectionItems);
+  var colCount = uniqueCollectionItems.length;
+  var existingItem = result ? findCollectedItem(collectionItems, result) : null;
 
   function showToast(msg) {
     setToast(msg);
@@ -98,8 +104,12 @@ function App() {
 
   function handleRetry() { setResult(null); setImageFile(null); setView("upload"); }
 
-  function handleSaved() {
-    setColCount(c=>c+1);
+  function handleSaved(savedItem) {
+    if (savedItem) {
+      setCollectionItems(function(prev) {
+        return [savedItem].concat(prev || []);
+      });
+    }
     showToast("도감 +1! "+result.korean_name+" 수집 완료");
   }
 
@@ -124,7 +134,7 @@ function App() {
       <div className="app-view">
         {view==="upload"     && <UploadView onUpload={handleUpload} onDemoCapture={handleDemoCapture} collectionCount={colCount} missionCompleted={missionCompleted}/>}
         {view==="loading"    && <LoadingView/>}
-        {view==="result"     && <ResultCard result={result} imageFile={imageFile} onRetry={handleRetry} onSave={handleSaved} onCollection={()=>setView("collection")}/>}
+        {view==="result"     && <ResultCard result={result} imageFile={imageFile} onRetry={handleRetry} onSave={handleSaved} onCollection={()=>setView("collection")} alreadyCollected={!!existingItem} existingItem={existingItem} onCloseExisting={handleRetry}/>}
         {view==="error"      && <ErrorView message={errMsg} onRetry={handleRetry}/>}
 
         {/* keep-alive: CollectionView 와 MapView 는 mount 유지 + display 토글 (탭 전환 즉시 복귀) */}
