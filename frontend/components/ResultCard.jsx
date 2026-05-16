@@ -43,7 +43,51 @@ function ResultCard({ result, imageFile, onSave, onRetry, onCollection, alreadyC
     result.korean_name === "N/A" ||
     result.scientific_name === "N/A" ||
     result.confidence <= minConfidence;
-  var decisiveReason = result.ecology_summary || result.morphological_clues || "사진의 핵심 형태 단서가 부족해 신뢰도 기준을 넘지 못했어요.";
+  var lowConfidenceSummary = result.ecology_summary || "사진만으로 종을 안정적으로 판별하기 어려워요.";
+  var decisiveReason = result.morphological_clues || ("신뢰도 " + pct + "%로 도감 추가 기준인 " + Math.round(minConfidence * 100) + "%를 넘지 못했어요.");
+  var lowConfidenceCodeStyle = {
+    display:"inline",
+    padding:"2px 6px",
+    borderRadius:"5px",
+    background:"rgba(31,26,18,0.08)",
+    border:"1px solid rgba(31,26,18,0.12)",
+    color:"var(--ink-1)",
+    fontFamily:"'Space Mono','Noto Sans KR',monospace",
+    fontSize:"13.5px",
+    lineHeight:"1.8",
+    fontWeight:"800",
+    boxDecorationBreak:"clone",
+    WebkitBoxDecorationBreak:"clone"
+  };
+
+  function splitLowConfidenceSummary(text) {
+    var source = text || "";
+    var match = null;
+    var displayText = "";
+
+    var quotedContext = source.match(/([가-힣A-Za-z0-9\s]+의\s*)['"‘“]([^'"’”]+)['"’”](?=[^가-힣A-Za-z0-9]*(?:로 보이는|처럼 보이는|로 추정|캐릭터))/);
+    if (quotedContext) {
+      match = { index:quotedContext.index, text:quotedContext[0] };
+      displayText = (quotedContext[1] + quotedContext[2]).replace(/\s+/g, " ").trim();
+    }
+
+    if (!match) {
+      var subjectPattern = /(?:해당\s*사진은|사진은|이미지는|사진이|이는|이것은)\s*([^.!?。]+?)(?=\s*(?:같아요|로 보여요|처럼 보여요|로 보입니다|처럼 보입니다|로 보이는|로 추정|로 판단|입니다|이에요|예요))/;
+      var subject = source.match(subjectPattern);
+      if (subject) {
+        match = { index:subject.index + subject[0].indexOf(subject[1]), text:subject[1] };
+        displayText = subject[1].trim();
+      }
+    }
+
+    if (!match || !displayText) return [{ text:source, highlight:false }];
+
+    return [
+      { text:source.slice(0, match.index), highlight:false },
+      { text:displayText, highlight:true },
+      { text:source.slice(match.index + match.text.length), highlight:false },
+    ].filter(function(part) { return part.text; });
+  }
 
   async function handleSave() {
     if (saved || notIdentified || alreadyCollected) return;
@@ -130,24 +174,16 @@ function ResultCard({ result, imageFile, onSave, onRetry, onCollection, alreadyC
 
             {/* 생태 요약 / 저신뢰도 이유 */}
             <div style={{fontFamily:"'Space Mono',monospace",fontSize:"9px",color:notIdentified?"var(--invasive)":"var(--gold)",letterSpacing:"2px",marginBottom:"6px",fontWeight:"700"}}>
-              {notIdentified ? "DECISIVE REASON" : "생태 요약"}
+              {notIdentified ? "판별 안내" : "생태 요약"}
             </div>
             {notIdentified ? (
-              <div style={{
-                marginBottom:"14px",
-                padding:"12px 13px",
-                borderRadius:"10px",
-                background:"linear-gradient(135deg,rgba(31,26,18,0.92),rgba(58,45,28,0.9))",
-                border:"1px solid rgba(184,144,47,0.28)",
-                boxShadow:"inset 3px 0 0 var(--invasive),0 8px 22px rgba(31,26,18,0.12)",
-                color:"#FFF7E8",
-                fontSize:"14.5px",
-                lineHeight:"1.72",
-                fontWeight:"700",
-                letterSpacing:"-0.01em",
-                wordBreak:"keep-all"
-              }}>
-                {decisiveReason}
+              <div style={{fontSize:"13px",lineHeight:"1.85",color:"var(--ink-2)",marginBottom:"14px",wordBreak:"keep-all"}}>
+                {splitLowConfidenceSummary(lowConfidenceSummary).map(function(part, index) {
+                  return part.highlight
+                    ? <span key={index} style={lowConfidenceCodeStyle}>{part.text}</span>
+                    : <React.Fragment key={index}>{part.text}</React.Fragment>;
+                })}{" "}
+                <span style={lowConfidenceCodeStyle}>{decisiveReason}</span>
               </div>
             ) : (
               <div style={{fontSize:"13px",lineHeight:"1.75",color:"var(--ink-2)",marginBottom:"14px"}}>{result.ecology_summary}</div>
