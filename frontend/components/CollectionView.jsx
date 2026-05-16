@@ -75,6 +75,12 @@ function CollectionView({ onBack }) {
               {items.map(item=>(
                 <CollectionCard key={item.id} item={item} onDelete={handleDelete}/>
               ))}
+              {Array.from({length:Math.max(0,102-items.length)},(_,i)=>(
+                <div key={"lock-"+i} style={{aspectRatio:"1",borderRadius:"12px",background:"rgba(31,26,18,0.04)",border:"1.5px dashed rgba(31,26,18,0.10)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:"3px"}}>
+                  <span style={{fontSize:"16px",opacity:0.25}}>🔒</span>
+                  <span style={{fontFamily:"'Space Mono',monospace",fontSize:"7px",color:"var(--ink-3)",letterSpacing:"1px",opacity:0.4}}>???</span>
+                </div>
+              ))}
             </div>
           </>
         )}
