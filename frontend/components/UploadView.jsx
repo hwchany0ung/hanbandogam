@@ -1,18 +1,18 @@
 var DAILY_MISSIONS = [
-  "흰색과 초록색이 공존하는 식물을 찍어보세요",
-  "길가에서 발견한 들꽃을 찾아보세요",
-  "가장 가까운 공원에서 나무를 탐색해보세요",
-  "노란색 꽃이 피어있는 식물을 찾아보세요",
-  "잎 모양이 독특한 식물을 발견해보세요",
-  "물가 주변의 수생식물을 촬영해보세요",
-  "산이나 숲에서 특이한 식물을 찾아보세요",
-  "자주색 또는 보라색 꽃을 피운 식물을 찾아보세요",
-  "줄기나 가시가 특이한 식물을 찍어보세요",
-  "꽃보다 잎이 더 아름다운 식물을 탐색해보세요",
-  "빨간 열매를 맺은 식물을 발견해보세요",
-  "이름을 모르는 식물을 사진으로 찍어보세요",
-  "넓은 잎사귀를 가진 식물을 찾아보세요",
-  "돌이나 바위 틈에서 자라는 식물을 발견해보세요",
+  { icon:"🌿", title:"흰초록 조화를 발견하라!", sub:"흰색과 초록색이 공존하는 식물을 찾아보세요" },
+  { icon:"🌼", title:"길가의 들꽃을 찾아라!",   sub:"길가에서 발견한 들꽃을 촬영해보세요" },
+  { icon:"🌳", title:"공원의 나무를 탐색하라!", sub:"가장 가까운 공원에서 나무를 찾아보세요" },
+  { icon:"🌻", title:"노란 꽃을 발견하라!",     sub:"노란색 꽃이 피어있는 식물을 찍어보세요" },
+  { icon:"🍃", title:"독특한 잎을 찾아라!",     sub:"잎 모양이 독특한 식물을 발견해보세요" },
+  { icon:"💧", title:"물가 생물을 탐색하라!",   sub:"물가 주변의 생물을 촬영해보세요" },
+  { icon:"🌲", title:"산속의 식물을 찾아라!",   sub:"산이나 숲에서 특이한 식물을 탐색해보세요" },
+  { icon:"💜", title:"보라 꽃을 발견하라!",     sub:"자주색 또는 보라색 꽃을 찾아보세요" },
+  { icon:"🌵", title:"가시 식물을 찾아라!",     sub:"줄기나 가시가 특이한 식물을 촬영해보세요" },
+  { icon:"🍀", title:"잎의 아름다움을 담아라!", sub:"꽃보다 잎이 인상적인 식물을 탐색해보세요" },
+  { icon:"🍎", title:"빨간 열매를 발견하라!",   sub:"빨간 열매를 맺은 식물을 찾아보세요" },
+  { icon:"🔍", title:"미지의 식물을 만나라!",   sub:"이름을 모르는 식물을 사진으로 찍어보세요" },
+  { icon:"🌿", title:"넓은 잎을 찾아라!",       sub:"넓은 잎사귀를 가진 식물을 발견해보세요" },
+  { icon:"🪨", title:"바위틈 생명을 찾아라!",   sub:"돌이나 바위 틈에서 자라는 식물을 발견해보세요" },
 ];
 
 function UploadView({ onUpload, onDemoCapture, collectionCount, missionCompleted }) {
@@ -45,6 +45,8 @@ function UploadView({ onUpload, onDemoCapture, collectionCount, missionCompleted
     if (file.size > 5*1024*1024) { alert("5MB 이하 이미지만 가능해요"); return; }
     onUpload(file);
   }
+
+  var mission = DAILY_MISSIONS[new Date().getDate() % DAILY_MISSIONS.length];
 
   return (
     <div className="flex flex-col flex-1 relative overflow-hidden" style={{background:"var(--paper)"}}>
@@ -80,8 +82,38 @@ function UploadView({ onUpload, onDemoCapture, collectionCount, missionCompleted
         </div>
       </div>
 
-      {/* 버튼 */}
-      <div className="px-6 mt-7 flex flex-col gap-3 relative" style={{zIndex:2}}>
+      {/* 일일 미션 카드 (카메라 위) */}
+      <div className="mx-5 mt-6 relative" style={{zIndex:2}}>
+        <div
+          onClick={() => onDemoCapture ? onDemoCapture() : inputRef.current.click()}
+          className="px-4 py-3 rounded-xl flex items-center gap-3 cursor-pointer"
+          style={{
+            background: missionCompleted ? "rgba(22,163,74,0.07)" : "var(--surface)",
+            border: "1px solid " + (missionCompleted ? "rgba(22,163,74,0.35)" : "rgba(45,30,10,0.06)"),
+            boxShadow: "0 2px 14px rgba(45,30,10,0.08)",
+            transition: "all 0.4s",
+          }}
+        >
+          <div style={{fontSize:"30px",flexShrink:0,lineHeight:1}}>{mission.icon}</div>
+
+          <div style={{flex:1,minWidth:0}}>
+            <div style={{fontFamily:"'Space Mono',monospace",fontSize:"9px",fontWeight:"700",letterSpacing:"1.5px",color:missionCompleted?"var(--native)":"var(--gold)",marginBottom:"3px"}}>
+              {missionCompleted ? "✓ 오늘의 미션 완료" : "오늘의 탐사 미션"}
+            </div>
+            <div style={{fontFamily:"'Noto Serif KR',serif",fontSize:"15px",fontWeight:"800",color:"var(--ink-1)",lineHeight:1.25,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>
+              {missionCompleted ? "🎉 미션 달성!" : mission.title}
+            </div>
+            <div style={{fontSize:"11px",color:"var(--ink-3)",marginTop:"2px",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>
+              {mission.sub}
+            </div>
+          </div>
+
+          <div style={{fontSize:"18px",color:missionCompleted?"var(--native)":"var(--ink-3)",flexShrink:0,fontWeight:"300"}}>→</div>
+        </div>
+      </div>
+
+      {/* 카메라 버튼 */}
+      <div className="px-6 mt-4 flex flex-col gap-3 relative" style={{zIndex:2}}>
         <button
           onClick={() => onDemoCapture ? onDemoCapture() : inputRef.current.click()}
           className="btn-shine w-full py-4 rounded-xl flex items-center justify-center gap-3"
@@ -89,29 +121,6 @@ function UploadView({ onUpload, onDemoCapture, collectionCount, missionCompleted
         >
           📷&nbsp;&nbsp;카메라로 촬영
         </button>
-      </div>
-
-      {/* 일일 미션 */}
-      <div className="mx-5 mt-6 relative" style={{zIndex:2}}>
-        <div className="px-4 py-4 rounded-xl" style={{
-          background: missionCompleted ? "rgba(22,163,74,0.07)" : "var(--surface)",
-          border: "1px solid " + (missionCompleted ? "rgba(22,163,74,0.35)" : "var(--gold-bd)"),
-          boxShadow: "0 4px 12px rgba(45,30,10,0.06)",
-          transition: "all 0.4s"
-        }}>
-          <div style={{display:"flex",alignItems:"center",gap:"6px",marginBottom:"8px"}}>
-            <div style={{fontFamily:"'Space Mono',monospace",fontSize:"9px",fontWeight:"700",letterSpacing:"2px",color:missionCompleted?"var(--native)":"var(--gold)"}}>
-              {missionCompleted ? "✓ MISSION COMPLETE" : "✦ TODAY'S MISSION"}
-            </div>
-          </div>
-          <div style={{fontFamily:"'Noto Serif KR',serif",fontSize:"14px",fontWeight:"600",color:"var(--ink-1)",lineHeight:1.65}}>
-            "{DAILY_MISSIONS[new Date().getDate() % DAILY_MISSIONS.length]}"
-          </div>
-          {missionCompleted
-            ? <div style={{marginTop:"10px",fontSize:"11px",color:"var(--native)",fontWeight:"600"}}>🎉 오늘의 미션을 완료했어요!</div>
-            : <div style={{marginTop:"10px",fontSize:"10px",color:"var(--ink-3)"}}>위 촬영 버튼을 눌러 미션을 달성해보세요 📸</div>
-          }
-        </div>
       </div>
 
       <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={e=>handleFile(e.target.files[0])}/>
