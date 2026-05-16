@@ -1,7 +1,47 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 220" width="200" height="220">
-  <rect width="200" height="220" fill="#faf8f3"/>
-  <circle cx="100" cy="105" r="45" fill="none" stroke="#c8b89a" stroke-width="2" stroke-dasharray="6 4" opacity="0.6"/>
-  <text x="100" y="100" text-anchor="middle" font-family="serif" font-size="36" fill="#c8b89a" opacity="0.5">🌿</text>
-  <text x="100" y="125" text-anchor="middle" font-family="serif" font-size="11" fill="#a89878" opacity="0.6">이미지 준비 중</text>
-  <text x="100" y="210" text-anchor="middle" font-family="serif" font-size="11" fill="#8b7355" opacity="0.4">한반도감</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <filter id="brush">
+      <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="3" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="2.5" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="soft"><feGaussianBlur stdDeviation="1.2"/></filter>
+    <radialGradient id="bg" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#FAF5E8"/>
+      <stop offset="100%" stop-color="#EDE0C4"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="200" height="200" fill="url(#bg)"/>
+
+  <!-- 대나무 줄기 -->
+  <g filter="url(#brush)" opacity="0.72">
+    <path d="M95 190 Q94 170 95 148 Q96 126 94 104 Q93 82 95 58 Q96 36 94 14" stroke="#2A3520" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <path d="M110 190 Q111 168 110 146 Q109 124 111 100 Q112 78 110 54" stroke="#2A3520" stroke-width="6" fill="none" stroke-linecap="round" opacity="0.6"/>
+  </g>
+
+  <!-- 대나무 마디 -->
+  <g filter="url(#brush)" opacity="0.6">
+    <path d="M88 148 Q102 146 108 148" stroke="#1A2414" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M88 104 Q102 102 108 104" stroke="#1A2414" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M88 58 Q102 56 108 58" stroke="#1A2414" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M103 148 Q109 146 116 148" stroke="#1A2414" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <path d="M103 100 Q109 98 116 100" stroke="#1A2414" stroke-width="2" fill="none" stroke-linecap="round"/>
+  </g>
+
+  <!-- 잎 -->
+  <g filter="url(#brush)" opacity="0.75">
+    <path d="M95 130 Q75 118 58 112" stroke="#2A3520" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M95 130 Q72 125 60 130" stroke="#2A3520" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M95 86 Q118 74 136 68" stroke="#2A3520" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M95 86 Q120 82 132 88" stroke="#2A3520" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M110 122 Q132 110 148 105" stroke="#2A3520" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+    <path d="M110 78 Q88 66 72 60" stroke="#2A3520" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  </g>
+
+  <!-- 물음표 느낌의 여백 한자 스타일 -->
+  <text x="100" y="175" text-anchor="middle" font-size="11" fill="#8A7060" opacity="0.45" font-family="serif" letter-spacing="2">미발견</text>
+
+  <!-- 낙관 -->
+  <rect x="160" y="158" width="26" height="26" rx="2" fill="#B03020" opacity="0.12"/>
+  <text x="173" y="176" text-anchor="middle" font-size="8" fill="#B03020" opacity="0.4" font-family="serif">?</text>
 </svg>

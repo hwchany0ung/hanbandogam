@@ -30,7 +30,7 @@ function ResultCard({ result, imageFile, onSave, onRetry, onCollection }) {
       <div className="mx-4 mb-6 rounded-2xl overflow-hidden" style={{background:"var(--surface)",border:"1px solid rgba(45,30,10,0.06)",boxShadow:rc?`0 0 0 1.5px ${rc.bd},0 16px 48px rgba(45,30,10,0.12)`:""}}>
 
         {/* 사진 */}
-        <div style={{height:"240px",position:"relative",overflow:"hidden",background:"linear-gradient(145deg,#F4EDDC,#FAF5E6)"}}>
+        <div style={{height:"300px",position:"relative",overflow:"hidden",background:"linear-gradient(145deg,#F4EDDC,#FAF5E6)"}}>
           {previewUrl
             ? <img src={previewUrl} alt="업로드" style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}}/>
             : <div className="flex items-center justify-center h-full" style={{fontSize:"48px"}}>🌿</div>
