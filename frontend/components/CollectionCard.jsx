@@ -50,6 +50,8 @@ var PHOTO_MAP = {
   "노랑갈퀴":       "/assets/photos/노랑갈퀴.jpg",
   "가시복분자딸기": "/assets/photos/가시복분자딸기.jpg",
   "분홍바늘꽃":     "/assets/photos/분홍바늘꽃.jpg",
+  "이팝나무":       "/assets/photos/이팝나무.jpg",
+  "소나무":         "/assets/photos/소나무.jpg",
 };
 
 var RARITY_OWNERSHIP_PCT = { L:"0.3", E:"1.2", R:"4.5", U:"15", C:"40" };
