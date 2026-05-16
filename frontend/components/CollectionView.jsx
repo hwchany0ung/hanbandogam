@@ -12,6 +12,31 @@ function CollectionView({ onBack }) {
     catch(e) { alert("삭제 실패: "+e.message); }
   }
 
+  var [sortBy,    setSortBy]    = React.useState("name");     // "name" | "rarity"
+  var [sortOrder, setSortOrder] = React.useState("asc");      // "asc" | "desc"
+
+  // 등급 우선순위 (L 최고 → C 최저)
+  var RARITY_RANK = { L:5, E:4, R:3, U:2, C:1 };
+
+  var sortedItems = React.useMemo(function() {
+    var arr = items.slice();
+    arr.sort(function(a, b) {
+      var cmp;
+      if (sortBy === "name") {
+        cmp = a.korean_name.localeCompare(b.korean_name, "ko");
+      } else {
+        // rarity: 높은 등급 우선이 기본
+        var ra = RARITY_RANK[getRarity(a.korean_name)] || 0;
+        var rb = RARITY_RANK[getRarity(b.korean_name)] || 0;
+        cmp = rb - ra;
+        // 같은 등급이면 이름순 보조 정렬
+        if (cmp === 0) cmp = a.korean_name.localeCompare(b.korean_name, "ko");
+      }
+      return sortOrder === "asc" ? cmp : -cmp;
+    });
+    return arr;
+  }, [items, sortBy, sortOrder]);
+
   function calcTopPct(count) {
     if (count === 0) return null;
     return Math.max(0.1, +(45 * Math.exp(-count * 0.08)).toFixed(1));
@@ -83,9 +108,31 @@ function CollectionView({ onBack }) {
           </div>
         ) : (
           <>
-            <div style={{padding:"6px 0 8px",fontFamily:"'Space Mono',monospace",fontSize:"10px",color:"var(--ink-3)",letterSpacing:"2px",fontWeight:"700"}}>발견한 종 · {items.length}</div>
+            {/* 정렬 + 발견한 종 라벨 */}
+            <div style={{padding:"6px 0 8px",display:"flex",alignItems:"center",justifyContent:"space-between",gap:"8px"}}>
+              <div style={{fontFamily:"'Space Mono',monospace",fontSize:"10px",color:"var(--ink-3)",letterSpacing:"2px",fontWeight:"700",flexShrink:0}}>발견한 종 · {items.length}</div>
+              <div style={{display:"flex",alignItems:"center",gap:"6px"}}>
+                {/* 정렬 기준 토글 */}
+                <div style={{display:"flex",gap:"2px",background:"rgba(45,30,10,0.05)",borderRadius:"7px",padding:"2px"}}>
+                  <button
+                    onClick={() => setSortBy("name")}
+                    style={{padding:"3px 9px",background:sortBy==="name"?"var(--surface)":"transparent",borderRadius:"5px",fontSize:"10px",border:"none",cursor:"pointer",color:sortBy==="name"?"var(--ink-1)":"var(--ink-3)",fontWeight:sortBy==="name"?"700":"500",boxShadow:sortBy==="name"?"0 1px 3px rgba(45,30,10,0.1)":"none"}}
+                  >이름순</button>
+                  <button
+                    onClick={() => setSortBy("rarity")}
+                    style={{padding:"3px 9px",background:sortBy==="rarity"?"var(--surface)":"transparent",borderRadius:"5px",fontSize:"10px",border:"none",cursor:"pointer",color:sortBy==="rarity"?"var(--ink-1)":"var(--ink-3)",fontWeight:sortBy==="rarity"?"700":"500",boxShadow:sortBy==="rarity"?"0 1px 3px rgba(45,30,10,0.1)":"none"}}
+                  >등급순</button>
+                </div>
+                {/* 오름/내림 토글 */}
+                <button
+                  onClick={() => setSortOrder(o => o==="asc" ? "desc" : "asc")}
+                  title={sortOrder==="asc" ? "오름차순" : "내림차순"}
+                  style={{width:"24px",height:"24px",borderRadius:"6px",background:"var(--surface)",border:"1px solid var(--gold-bd)",color:"var(--gold)",fontSize:"12px",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:"700"}}
+                >{sortOrder==="asc" ? "↑" : "↓"}</button>
+              </div>
+            </div>
             <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:"8px"}}>
-              {items.map(item=>(
+              {sortedItems.map(item=>(
                 <CollectionCard key={item.id} item={item} onDelete={handleDelete}/>
               ))}
               {Array.from({length:Math.max(0,102-items.length)},(_,i)=>(

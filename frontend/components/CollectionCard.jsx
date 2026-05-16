@@ -103,41 +103,23 @@ function CollectionCard({ item, onDelete }) {
     e.stopPropagation();
     if (sharing) return;
     var ownerPct = RARITY_OWNERSHIP_PCT[rarity];
-    var fallbackText = "한반도감 📖\n" + item.korean_name + " (" + rc.label + ") 수집!\n전국민 중 상위 " + ownerPct + "%만 보유한 희귀 카드\n#한반도감 #한국토종생물";
+    var shareUrl = window.location.origin + "/share/" + encodeURIComponent(item.korean_name);
+    var promo = item.korean_name + " (" + rc.label + ") 발견!\n전국민 중 상위 " + ownerPct + "%만 보유한 카드\n#한반도감 #한국토종생물";
+    var fullText = promo + "\n\n" + shareUrl;
 
-    if (window.html2canvas && modalRef.current) {
+    if (navigator.share) {
       setSharing(true);
-      html2canvas(modalRef.current, {
-        scale: 2,
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: null,
-        logging: false,
-      }).then(function(canvas) {
-        canvas.toBlob(function(blob) {
-          var file = new File([blob], item.korean_name + "_한반도감.png", { type:"image/png" });
-          if (navigator.share && navigator.canShare && navigator.canShare({ files:[file] })) {
-            navigator.share({
-              title: "한반도감 — " + item.korean_name,
-              text: "전국민 중 상위 " + ownerPct + "%만 보유! #한반도감",
-              files: [file],
-            }).catch(function(){});
-          } else {
-            var url = URL.createObjectURL(blob);
-            var a = document.createElement("a");
-            a.href = url; a.download = item.korean_name + "_한반도감.png"; a.click();
-            setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
-          }
-          setSharing(false);
-        }, "image/png");
-      }).catch(function() {
-        setSharing(false);
-        if (navigator.share) navigator.share({ title:"한반도감", text:fallbackText }).catch(function(){});
-        else if (navigator.clipboard) navigator.clipboard.writeText(fallbackText).then(function(){ alert("클립보드에 복사됐어요!"); });
-      });
+      navigator.share({
+        title: "한반도감 - " + item.korean_name,
+        text: promo,
+        url: shareUrl,
+      }).then(function(){ setSharing(false); }).catch(function(){ setSharing(false); });
+    } else if (navigator.clipboard) {
+      navigator.clipboard.writeText(fullText).then(function(){
+        alert("📋 링크가 복사됐어요!\n카톡·문자에 붙여넣으면 미리보기가 나타나요");
+      }).catch(function(){ alert(fullText); });
     } else {
-      if (navigator.share) navigator.share({ title:"한반도감", text:fallbackText }).catch(function(){});
-      else if (navigator.clipboard) navigator.clipboard.writeText(fallbackText).then(function(){ alert("클립보드에 복사됐어요!"); });
+      alert(fullText);
     }
   }
 
