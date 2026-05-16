@@ -127,7 +127,7 @@ function UploadView({ onUpload, onDemoCapture, collectionCount, missionCompleted
         </button>
       </div>
 
-      <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={e=>handleFile(e.target.files[0])}/>
+      <input ref={inputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={e=>handleFile(e.target.files[0])}/>
     </div>
   );
 }
