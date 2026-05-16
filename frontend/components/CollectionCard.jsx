@@ -22,7 +22,6 @@ var ILLUSTRATION_MAP = {
   "할미꽃":         "/assets/illustrations/plant_024_동강할미꽃.png",
   "미선나무":       "/assets/illustrations/plant_030_미선나무.png",
   "좀민들레":       "/assets/illustrations/plant_074_좀민들레.png",
-  "서양민들레":     "/assets/illustrations/plant_101_서양민들레.png",
   "가시박":         "/assets/illustrations/plant_102_가시박.png",
   "단풍잎돼지풀":   "/assets/illustrations/plant_103_단풍잎돼지풀.png",
   "돼지풀":         "/assets/illustrations/plant_104_돼지풀.png",

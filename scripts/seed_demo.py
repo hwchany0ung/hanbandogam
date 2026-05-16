@@ -187,20 +187,7 @@ SEEDS = [
         "lat": 35.3143, "lng": 127.7341, "district": "경남 함양",
         "created_at": "2026-05-01 10:05:22",
     },
-    # ── 외래종 6종 ──────────────────────────────────────────────────
-    {
-        "korean_name": "서양민들레",
-        "scientific_name": "Taraxacum officinale",
-        "native_status": "외래종",
-        "confidence": 0.97,
-        "ecology_summary": "유럽 원산 귀화식물. 국내 민들레 군락을 빠르게 대체하고 있어 생태계 교란종 우려 대상. 총포 외편이 뒤로 젖혀지는 것이 특징.",
-        "conservation_status": "LC",
-        "morphological_clues": "총포 외편 뒤로 반곡, 꽃 진한 노란색, 로제트형 잎, 연중 개화 가능",
-        "image_path": "/assets/illustrations/plant_101_서양민들레.png",
-        "memo": "서울 한강공원 전역 확산",
-        "lat": 37.5284, "lng": 126.9348, "district": "서울 영등포",
-        "created_at": "2026-05-15 07:30:00",
-    },
+    # ── 외래종 5종 ──────────────────────────────────────────────────
     {
         "korean_name": "돼지풀",
         "scientific_name": "Ambrosia artemisiifolia",

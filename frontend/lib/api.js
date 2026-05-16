@@ -24,6 +24,32 @@ function withUid(path) {
   return path + (path.indexOf("?") >= 0 ? "&" : "?") + "u=" + encodeURIComponent(USER_ID);
 }
 
+// 도감 데이터 캐시 (탭 전환 가속용)
+var _collectionCache = null;
+var _collectionCacheAt = 0;
+var COLLECTION_CACHE_TTL_MS = 30000;  // 30초
+
+function invalidateCollectionCache() {
+  _collectionCache = null;
+  _collectionCacheAt = 0;
+}
+
+// 이미지 프리로드 (브라우저 캐시 워밍업)
+function preloadCollectionImages(items) {
+  if (!Array.isArray(items)) return;
+  items.forEach(function(it) {
+    if (it && it.image_path && /^\/assets\//.test(it.image_path)) {
+      var img = new Image();
+      img.src = it.image_path;
+    }
+  });
+}
+
+// 전역 노출 (다른 컴포넌트에서 invalidate 호출용)
+if (typeof window !== "undefined") {
+  window.invalidateCollectionCache = invalidateCollectionCache;
+}
+
 // ── 희귀도 맵 (korean_name → L/E/R/U/C) ─────────────────────
 var RARITY_MAP = {
   // L (전설/멸종위기 1급)
@@ -41,7 +67,7 @@ var RARITY_MAP = {
   "좀민들레":"U","은행나무":"U","진달래":"U","개족도리풀":"U",
   // C (평범/외래종/흔함)
   "개나리":"C","철쭉":"C","무궁화":"C","소나무":"C","참나무":"C","황소개구리":"C",
-  "서양민들레":"C","돼지풀":"C","단풍잎돼지풀":"C","미국쑥부쟁이":"C","양미역취":"C","가시박":"C",
+  "돼지풀":"C","단풍잎돼지풀":"C","미국쑥부쟁이":"C","양미역취":"C","가시박":"C",
 };
 
 var RARITY_CONFIG = {
@@ -103,25 +129,44 @@ async function identifySpecies(imageFile) {
 
 async function getCollection() {
   if (window.DEMO_MODE) return DEMO_COLLECTION;
+  // 캐시 hit
+  if (_collectionCache && (Date.now() - _collectionCacheAt) < COLLECTION_CACHE_TTL_MS) {
+    return _collectionCache;
+  }
   var res = await fetch(BASE_URL+withUid("/api/collection"));
   if (!res.ok) throw new Error("목록 조회 실패");
-  return res.json();
+  var data = await res.json();
+  _collectionCache = data;
+  _collectionCacheAt = Date.now();
+  // 이미지 프리로드 (비동기, 결과 영향 X)
+  try { preloadCollectionImages(data); } catch(_) {}
+  return data;
 }
 
 async function addToCollection(result, imageUrl) {
   if (window.DEMO_MODE) {
     var item = Object.assign({},result,{id:Date.now(),image_path:imageUrl||"",memo:"",created_at:new Date().toISOString()});
-    DEMO_COLLECTION.unshift(item); return item;
+    DEMO_COLLECTION.unshift(item);
+    invalidateCollectionCache();
+    return item;
   }
   var res = await fetch(BASE_URL+withUid("/api/collection"),{
     method:"POST", headers:{"Content-Type":"application/json"},
     body:JSON.stringify(Object.assign({},result,{image_path:imageUrl||""})),
   });
   if (!res.ok) throw new Error("저장 실패");
-  return res.json();
+  var saved = await res.json();
+  invalidateCollectionCache();  // 신규 종 추가됨 → 캐시 무효화
+  return saved;
 }
 
 async function deleteCollectionItem(itemId) {
-  if (window.DEMO_MODE) { var i=DEMO_COLLECTION.findIndex(x=>x.id===itemId); if(i!==-1)DEMO_COLLECTION.splice(i,1); return; }
+  if (window.DEMO_MODE) {
+    var i=DEMO_COLLECTION.findIndex(x=>x.id===itemId);
+    if(i!==-1)DEMO_COLLECTION.splice(i,1);
+    invalidateCollectionCache();
+    return;
+  }
   await fetch(BASE_URL+withUid("/api/collection/"+itemId),{method:"DELETE"});
+  invalidateCollectionCache();
 }
