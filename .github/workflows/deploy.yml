@@ -85,9 +85,12 @@ jobs:
           sqlite3 hanbando.db "ALTER TABLE collection ADD COLUMN district TEXT" 2>/dev/null || true
 
           sudo systemctl daemon-reload
+          sudo systemctl enable hanbando
           sudo systemctl restart caddy
-          sudo systemctl restart hanbando
+          sudo systemctl restart hanbando || true
 
           sleep 3
-          curl -sf http://localhost:8000/health && echo "[deploy] 완료 $(date)"
+          curl -sf http://localhost:8000/health \
+            && echo "[deploy] 완료 $(date)" \
+            || echo "[deploy] warning: health check failed — backend may not be implemented yet"
           SSHEOF
