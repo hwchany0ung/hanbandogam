@@ -69,45 +69,91 @@ var STORY_MAP = {
 
 var FALLBACK = "/assets/illustrations/fallback.svg";
 
-// 도감에 없는 새 종은 자동으로 수묵화풍 식물 일러스트 생성
+// 도감에 없는 새 종은 자동으로 식물도감풍 일러스트 생성
 var RARITY_HEX    = { L:"#C99227", E:"#8B5CF6", R:"#2563EB", U:"#16A34A", C:"#6B7280" };
 var RARITY_BG_HEX = { L:"#FBF3DC", E:"#F3EDFE", R:"#E8F0FE", U:"#E7F5EC", C:"#EFF1F4" };
 
 function generateIllustration(name, rarity) {
-  var color = RARITY_HEX[rarity] || RARITY_HEX.C;
-  var bg    = RARITY_BG_HEX[rarity] || RARITY_BG_HEX.C;
-  // 종명 해시로 좌우 변이 (같은 종은 항상 같은 모양)
+  var flower    = RARITY_HEX[rarity] || RARITY_HEX.C;
+  var paperBg   = "#FBF7EC";   // 한지 크림
+  var leafLight = "#9DB87A";   // 연한 잎
+  var leafDark  = "#6B8E4E";   // 진한 잎
+  var stem      = "#7A6549";   // 줄기 갈색
+  var ink       = "#5C5345";   // 잉크
+
+  // 종명 해시로 변이 (같은 종은 항상 같은 모양, 다른 종은 다른 모양)
   var seed = 0;
-  for (var i = 0; i < (name||"").length; i++) seed = (seed * 31 + name.charCodeAt(i)) % 1000;
-  var leafFlip = (seed % 2 === 0) ? 1 : -1;
-  var flowerY  = 14 + (seed % 5);
+  for (var i = 0; i < (name||"").length; i++) seed = (seed * 31 + name.charCodeAt(i)) % 10000;
+  var flip       = (seed % 2) === 0 ? 1 : -1;
+  var stemBend   = ((seed >> 1) % 5) - 2;
+  var flowerYOff = ((seed >> 3) % 4);
+  var leafScale  = (1 + ((seed >> 5) % 3) * 0.08).toFixed(2);
+  var bendL      = 8 + ((seed >> 7) % 6);
+  var bendR      = 8 + ((seed >> 11) % 6);
+
   var svg =
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">' +
-      '<rect width="100" height="100" fill="' + bg + '"/>' +
+      // 한지 배경
+      '<rect width="100" height="100" fill="' + paperBg + '"/>' +
       // 한지 텍스처 점
-      '<circle cx="22" cy="25" r="0.8" fill="#C8BDA8" opacity="0.35"/>' +
-      '<circle cx="78" cy="35" r="0.8" fill="#C8BDA8" opacity="0.35"/>' +
-      '<circle cx="30" cy="78" r="0.8" fill="#C8BDA8" opacity="0.3"/>' +
-      '<circle cx="72" cy="68" r="0.8" fill="#C8BDA8" opacity="0.3"/>' +
-      // 줄기 (수묵 느낌)
-      '<path d="M50 90 Q 50 70 ' + (48 + leafFlip) + ' 50 Q ' + (47 + leafFlip*2) + ' 32 50 ' + (flowerY + 4) + '" stroke="#5C5345" stroke-width="1.3" fill="none" opacity="0.55" stroke-linecap="round"/>' +
-      // 아래 잎
-      '<path d="M50 72 Q ' + (35 - leafFlip*3) + ' 68 ' + (28 - leafFlip*3) + ' 58 Q 42 64 50 70 Z" fill="' + color + '" opacity="0.32"/>' +
-      // 중간 왼쪽 잎
-      '<path d="M48 56 Q 26 50 20 34 Q 38 42 49 53 Z" fill="' + color + '" opacity="0.4"/>' +
-      '<path d="M48 56 Q 30 50 22 38" stroke="' + color + '" stroke-width="0.6" fill="none" opacity="0.55"/>' +
-      // 중간 오른쪽 잎
-      '<path d="M50 46 Q 72 40 80 24 Q 60 32 50 44 Z" fill="' + color + '" opacity="0.4"/>' +
-      '<path d="M50 46 Q 70 40 78 26" stroke="' + color + '" stroke-width="0.6" fill="none" opacity="0.55"/>' +
-      // 꽃 (4장 꽃잎)
-      '<circle cx="50" cy="' + flowerY + '" r="5" fill="' + color + '" opacity="0.5"/>' +
-      '<circle cx="44" cy="' + (flowerY-2) + '" r="3.2" fill="' + color + '" opacity="0.72"/>' +
-      '<circle cx="56" cy="' + (flowerY-2) + '" r="3.2" fill="' + color + '" opacity="0.72"/>' +
-      '<circle cx="50" cy="' + (flowerY-6) + '" r="3.2" fill="' + color + '" opacity="0.72"/>' +
-      '<circle cx="50" cy="' + (flowerY+2) + '" r="3.2" fill="' + color + '" opacity="0.72"/>' +
-      '<circle cx="50" cy="' + (flowerY-1) + '" r="1.4" fill="#FAF5E6"/>' +
-      // 종명
-      '<text x="50" y="96" text-anchor="middle" font-family="Noto Serif KR, serif" font-size="5.5" fill="#5C5345" opacity="0.85">' + (name||"") + '</text>' +
+      '<circle cx="14" cy="22" r="0.7" fill="#C8BDA8" opacity="0.45"/>' +
+      '<circle cx="85" cy="18" r="0.6" fill="#C8BDA8" opacity="0.4"/>' +
+      '<circle cx="20" cy="78" r="0.7" fill="#C8BDA8" opacity="0.4"/>' +
+      '<circle cx="82" cy="75" r="0.5" fill="#C8BDA8" opacity="0.45"/>' +
+      '<circle cx="48" cy="10" r="0.4" fill="#C8BDA8" opacity="0.4"/>' +
+      '<circle cx="10" cy="50" r="0.5" fill="#C8BDA8" opacity="0.35"/>' +
+      '<circle cx="92" cy="48" r="0.6" fill="#C8BDA8" opacity="0.4"/>' +
+      // 메인 줄기 (자연스러운 S 곡선)
+      '<path d="M50 92 Q ' + (48 + stemBend) + ' 72 ' + (52 + stemBend*flip) + ' 52 Q ' + (48 + stemBend) + ' 28 50 16" stroke="' + stem + '" stroke-width="1.5" fill="none" opacity="0.7" stroke-linecap="round"/>' +
+      // 좌측 분기 줄기
+      '<path d="M' + (49 + stemBend) + ' 62 Q 40 56 ' + (30 - bendL*0.3) + ' 47" stroke="' + stem + '" stroke-width="1" fill="none" opacity="0.55" stroke-linecap="round"/>' +
+      // 우측 분기 줄기
+      '<path d="M' + (51 + stemBend) + ' 47 Q 62 42 ' + (72 + bendR*0.3) + ' 32" stroke="' + stem + '" stroke-width="1" fill="none" opacity="0.55" stroke-linecap="round"/>' +
+      // 좌측 큰 잎 (분기 끝, 길쭉)
+      '<g transform="translate(' + (30 - bendL*0.3) + ' 47) rotate(-' + bendL + ')">' +
+        '<ellipse rx="' + (8.5*leafScale) + '" ry="' + (3.8*leafScale) + '" fill="' + leafLight + '" opacity="0.78"/>' +
+        '<line x1="-' + (7.5*leafScale) + '" y1="0" x2="' + (7.5*leafScale) + '" y2="0" stroke="' + leafDark + '" stroke-width="0.4" opacity="0.7"/>' +
+      '</g>' +
+      // 우측 큰 잎 (분기 끝)
+      '<g transform="translate(' + (72 + bendR*0.3) + ' 32) rotate(' + bendR + ')">' +
+        '<ellipse rx="' + (8.5*leafScale) + '" ry="' + (3.8*leafScale) + '" fill="' + leafLight + '" opacity="0.78"/>' +
+        '<line x1="-' + (7.5*leafScale) + '" y1="0" x2="' + (7.5*leafScale) + '" y2="0" stroke="' + leafDark + '" stroke-width="0.4" opacity="0.7"/>' +
+      '</g>' +
+      // 좌측 중간 잎
+      '<g transform="translate(38 56) rotate(-30)">' +
+        '<ellipse rx="6" ry="3" fill="' + leafLight + '" opacity="0.62"/>' +
+        '<line x1="-5" y1="0" x2="5" y2="0" stroke="' + leafDark + '" stroke-width="0.3" opacity="0.6"/>' +
+      '</g>' +
+      // 우측 중간 잎
+      '<g transform="translate(62 38) rotate(22)">' +
+        '<ellipse rx="6" ry="3" fill="' + leafLight + '" opacity="0.62"/>' +
+        '<line x1="-5" y1="0" x2="5" y2="0" stroke="' + leafDark + '" stroke-width="0.3" opacity="0.6"/>' +
+      '</g>' +
+      // 좌측 하단 작은 잎
+      '<g transform="translate(36 76) rotate(-42)">' +
+        '<ellipse rx="5" ry="2.5" fill="' + leafLight + '" opacity="0.55"/>' +
+      '</g>' +
+      // 우측 하단 작은 잎
+      '<g transform="translate(64 78) rotate(38)">' +
+        '<ellipse rx="5" ry="2.5" fill="' + leafLight + '" opacity="0.55"/>' +
+      '</g>' +
+      // 메인 꽃 (5장 꽃잎 + 노란 꽃술)
+      '<g transform="translate(50 ' + (16 + flowerYOff) + ')">' +
+        '<circle cx="-4" cy="-2" r="3.3" fill="' + flower + '" opacity="0.8"/>' +
+        '<circle cx="4" cy="-2" r="3.3" fill="' + flower + '" opacity="0.8"/>' +
+        '<circle cx="-3" cy="4" r="3.3" fill="' + flower + '" opacity="0.8"/>' +
+        '<circle cx="3" cy="4" r="3.3" fill="' + flower + '" opacity="0.8"/>' +
+        '<circle cx="0" cy="-5.5" r="3.3" fill="' + flower + '" opacity="0.8"/>' +
+        '<circle cx="0" cy="0" r="2.3" fill="#FCEEA8"/>' +
+      '</g>' +
+      // 좌측 분기 끝 작은 꽃
+      '<circle cx="' + (30 - bendL*0.3) + '" cy="47" r="2.6" fill="' + flower + '" opacity="0.68"/>' +
+      '<circle cx="' + (30 - bendL*0.3) + '" cy="47" r="1.2" fill="#FCEEA8"/>' +
+      // 우측 분기 끝 작은 꽃
+      '<circle cx="' + (72 + bendR*0.3) + '" cy="32" r="2.6" fill="' + flower + '" opacity="0.68"/>' +
+      '<circle cx="' + (72 + bendR*0.3) + '" cy="32" r="1.2" fill="#FCEEA8"/>' +
+      // 종명 라벨
+      '<text x="50" y="97" text-anchor="middle" font-family="Noto Serif KR, serif" font-size="5" font-weight="600" fill="' + ink + '" opacity="0.85">' + (name||"") + '</text>' +
     '</svg>';
   return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
 }
