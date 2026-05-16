@@ -16,14 +16,38 @@ def _connect() -> sqlite3.Connection:
     return conn
 
 
+def _migrate_user_id_column(conn: sqlite3.Connection) -> None:
+    # Design Ref: §3.2 — idempotent migration via PRAGMA table_info guard
+    cols = {row[1] for row in conn.execute("PRAGMA table_info(collection)")}
+    if "user_id" not in cols:
+        try:
+            conn.execute(
+                "ALTER TABLE collection ADD COLUMN user_id "
+                "TEXT NOT NULL DEFAULT 'global'"
+            )
+        except sqlite3.OperationalError:
+            # 컬럼 추가 실패해도 부팅은 진행 (legacy 모드: WHERE 'global'만 매치)
+            pass
+    conn.execute(
+        "CREATE INDEX IF NOT EXISTS idx_collection_user_id "
+        "ON collection(user_id)"
+    )
+
+
 def init_db() -> None:
     conn = _connect()
     conn.executescript(SCHEMA_PATH.read_text(encoding="utf-8"))
+    _migrate_user_id_column(conn)
     conn.commit()
     conn.close()
 
 
-def save_result(body: CollectionAddRequest, district: str | None = None) -> CollectionItem:
+def save_result(
+    body: CollectionAddRequest,
+    district: str | None = None,
+    user_id: str = "global",
+) -> CollectionItem:
+    # Plan SC-3: POST는 본인 user_id로 저장 (클라이언트가 'global' 보내도 그대로 저장됨; 시연 신뢰 모델)
     conn = _connect()
     try:
         cur = conn.execute(
@@ -31,14 +55,14 @@ def save_result(body: CollectionAddRequest, district: str | None = None) -> Coll
             INSERT INTO collection
                 (korean_name, scientific_name, native_status, confidence,
                  ecology_summary, conservation_status, morphological_clues,
-                 image_path, memo, lat, lng, district)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                 image_path, memo, lat, lng, district, user_id)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 body.korean_name, body.scientific_name, body.native_status,
                 body.confidence, body.ecology_summary, body.conservation_status,
                 body.morphological_clues, body.image_path, body.memo,
-                body.lat, body.lng, district,
+                body.lat, body.lng, district, user_id,
             ),
         )
         conn.commit()
@@ -50,22 +74,28 @@ def save_result(body: CollectionAddRequest, district: str | None = None) -> Coll
         conn.close()
 
 
-def get_all() -> list[CollectionItem]:
+def get_all(user_id: str = "global") -> list[CollectionItem]:
+    # Plan SC-2: WHERE user_id IN ('global', :uid) — 시드 + 본인 카드
     conn = _connect()
     try:
         rows = conn.execute(
-            "SELECT * FROM collection ORDER BY created_at DESC"
+            "SELECT * FROM collection"
+            " WHERE user_id = 'global' OR user_id = ?"
+            " ORDER BY created_at DESC",
+            (user_id,),
         ).fetchall()
         return [_to_item(r) for r in rows]
     finally:
         conn.close()
 
 
-def get_by_id(item_id: int) -> CollectionItem:
+def get_by_id(item_id: int, user_id: str = "global") -> CollectionItem:
     conn = _connect()
     try:
         row = conn.execute(
-            "SELECT * FROM collection WHERE id = ?", (item_id,)
+            "SELECT * FROM collection"
+            " WHERE id = ? AND (user_id = 'global' OR user_id = ?)",
+            (item_id, user_id),
         ).fetchone()
         if row is None:
             raise KeyError(item_id)
@@ -74,22 +104,31 @@ def get_by_id(item_id: int) -> CollectionItem:
         conn.close()
 
 
-def delete_by_id(item_id: int) -> None:
+def delete_by_id(item_id: int, user_id: str = "global") -> int:
+    # Plan SC-3: global row는 절대 삭제 안 됨 (AND user_id = :uid; 'global' 매치 차단)
+    # Returns rowcount: 0이면 본인 row 아니거나 존재하지 않음 (라우터에서 404 처리)
     conn = _connect()
     try:
-        conn.execute("DELETE FROM collection WHERE id = ?", (item_id,))
+        cur = conn.execute(
+            "DELETE FROM collection WHERE id = ? AND user_id = ?",
+            (item_id, user_id),
+        )
         conn.commit()
+        return cur.rowcount
     finally:
         conn.close()
 
 
-def get_map_points() -> list[MapPoint]:
+def get_map_points(user_id: str = "global") -> list[MapPoint]:
     conn = _connect()
     try:
         rows = conn.execute(
             "SELECT id, korean_name, native_status, lat, lng, district, created_at"
-            " FROM collection WHERE lat IS NOT NULL AND lng IS NOT NULL"
-            " ORDER BY created_at DESC"
+            " FROM collection"
+            " WHERE lat IS NOT NULL AND lng IS NOT NULL"
+            "   AND (user_id = 'global' OR user_id = ?)"
+            " ORDER BY created_at DESC",
+            (user_id,),
         ).fetchall()
         return [MapPoint(**dict(r)) for r in rows]
     finally:

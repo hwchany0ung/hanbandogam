@@ -12,5 +12,8 @@ CREATE TABLE IF NOT EXISTS collection (
     lat                REAL,
     lng                REAL,
     district           TEXT,
+    user_id            TEXT NOT NULL DEFAULT 'global',
     created_at         DATETIME DEFAULT (datetime('now', 'localtime'))
 );
+
+-- 인덱스는 _migrate_user_id_column()에서 생성 (기존 DB에 컬럼 없는 상태에서 schema 재실행 시 안전)

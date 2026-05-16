@@ -1,6 +1,29 @@
 window.DEMO_MODE = false;
 var BASE_URL = "";
 
+// Design Ref: §5.1 — 사용자 식별자 부트스트랩 (URL ?u= > localStorage > 신규 UUID 16자)
+var USER_ID = (function () {
+  var params = new URLSearchParams(window.location.search);
+  var uid = params.get("u") || localStorage.getItem("hanbando_uid") || "";
+  if (!uid) {
+    uid = (window.crypto && window.crypto.randomUUID)
+      ? window.crypto.randomUUID().replace(/-/g, "").slice(0, 16)
+      : "u" + Math.random().toString(36).slice(2, 12) + Math.random().toString(36).slice(2, 8);
+  }
+  localStorage.setItem("hanbando_uid", uid);
+  if (params.get("u") !== uid) {
+    params.set("u", uid);
+    var newUrl = window.location.pathname + "?" + params.toString() + window.location.hash;
+    history.replaceState(null, "", newUrl);
+  }
+  return uid;
+})();
+
+// Design Ref: §5.2 — collection API URL에 ?u= 자동 부착
+function withUid(path) {
+  return path + (path.indexOf("?") >= 0 ? "&" : "?") + "u=" + encodeURIComponent(USER_ID);
+}
+
 // ── 희귀도 맵 (korean_name → L/E/R/U/C) ─────────────────────
 var RARITY_MAP = {
   // L (전설/멸종위기 1급)
@@ -80,7 +103,7 @@ async function identifySpecies(imageFile) {
 
 async function getCollection() {
   if (window.DEMO_MODE) return DEMO_COLLECTION;
-  var res = await fetch(BASE_URL+"/api/collection");
+  var res = await fetch(BASE_URL+withUid("/api/collection"));
   if (!res.ok) throw new Error("목록 조회 실패");
   return res.json();
 }
@@ -90,7 +113,7 @@ async function addToCollection(result, imageUrl) {
     var item = Object.assign({},result,{id:Date.now(),image_path:imageUrl||"",memo:"",created_at:new Date().toISOString()});
     DEMO_COLLECTION.unshift(item); return item;
   }
-  var res = await fetch(BASE_URL+"/api/collection",{
+  var res = await fetch(BASE_URL+withUid("/api/collection"),{
     method:"POST", headers:{"Content-Type":"application/json"},
     body:JSON.stringify(Object.assign({},result,{image_path:imageUrl||""})),
   });
@@ -100,5 +123,5 @@ async function addToCollection(result, imageUrl) {
 
 async function deleteCollectionItem(itemId) {
   if (window.DEMO_MODE) { var i=DEMO_COLLECTION.findIndex(x=>x.id===itemId); if(i!==-1)DEMO_COLLECTION.splice(i,1); return; }
-  await fetch(BASE_URL+"/api/collection/"+itemId,{method:"DELETE"});
+  await fetch(BASE_URL+withUid("/api/collection/"+itemId),{method:"DELETE"});
 }
