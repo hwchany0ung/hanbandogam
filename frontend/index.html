@@ -138,6 +138,13 @@
     }
     @keyframes shine { 0%{transform:translateX(-100%)} 30%,100%{transform:translateX(200%)} }
 
+    /* ── 셔터 플래시 ── */
+    @keyframes shutterFlash {
+      0%   { opacity:0.95; }
+      40%  { opacity:0.6; }
+      100% { opacity:0; }
+    }
+
     /* ── 토스트 ── */
     .toast {
       position:fixed; bottom:90px; left:50%; transform:translateX(-50%);

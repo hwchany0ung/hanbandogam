@@ -1,4 +1,4 @@
-function UploadView({ onUpload, collectionCount }) {
+function UploadView({ onUpload, onDemoCapture, collectionCount }) {
   var [dragging, setDragging] = React.useState(false);
   var inputRef = React.useRef(null);
   var bokehRef = React.useRef(null);
@@ -66,7 +66,7 @@ function UploadView({ onUpload, collectionCount }) {
       {/* 버튼 */}
       <div className="px-6 mt-7 flex flex-col gap-3 relative" style={{zIndex:2}}>
         <button
-          onClick={() => inputRef.current.click()}
+          onClick={() => onDemoCapture ? onDemoCapture() : inputRef.current.click()}
           className="btn-shine w-full py-4 rounded-xl flex items-center justify-center gap-3"
           style={{background:"linear-gradient(135deg,var(--ink-1),#2C261B)",color:"#FBF7EC",fontFamily:"'Black Han Sans',sans-serif",fontSize:"15px",letterSpacing:"3px",boxShadow:"0 8px 24px rgba(45,30,10,0.25)",border:"none"}}
         >
