@@ -73,7 +73,7 @@ function App() {
     }
 
     setIsLoading(true);
-    setSaved(false);
+    setIsSaved(false);
     setError("");
 
     var nextImageUrl = URL.createObjectURL(file);
@@ -104,7 +104,7 @@ function App() {
       setCollection(function (currentItems) {
         return [savedItem].concat(currentItems);
       });
-      setSaved(true);
+      setIsSaved(true);
       setToast("도감에 추가 완료");
     } catch (err) {
       setError(getFriendlyError(err, "도감 저장에 실패했습니다."));
