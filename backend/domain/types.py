@@ -21,6 +21,10 @@ class IdentifyResult(BaseModel):
     plant_type: Optional[str] = None  # tree | flower | herb | vine | fern | shrub | grass | other
     illustration_url: Optional[str] = None  # 콜드스타트: S3 일러스트 URL
     story: Optional[str] = None              # 콜드스타트: 이야기 텍스트 (DB or Claude Haiku)
+    verification_source: Optional[str] = None        # "GBIF" / "GBIF_FALLBACK:reason"
+    verification_matched: Optional[bool] = None      # GBIF 매칭 성공 여부
+    verification_confidence: Optional[int] = None    # GBIF confidence 0~100
+    verification_matched_name: Optional[str] = None  # GBIF canonical name
 
 
 class CollectionAddRequest(BaseModel):

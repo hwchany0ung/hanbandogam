@@ -14,6 +14,12 @@ try:
 except ImportError:
     from ai.claude_client import IdentifyResult, identify_species
 
+# 학명 교차검증 (GBIF) — 본선 슬라이드/Q&A 명시 기능
+try:
+    from backend.services.scientific_name_verifier import verify_scientific_name
+except ImportError:
+    from services.scientific_name_verifier import verify_scientific_name  # type: ignore
+
 
 UPSTAGE_ENDPOINT = "https://api.upstage.ai/v1/solar"
 UPSTAGE_MODEL = "solar-pro2"
@@ -171,6 +177,23 @@ async def run_identify(
     result = await identify_species(image_base64, media_type or "image/jpeg")
 
     _ = memo
+
+    # 학명 교차검증 (GBIF) — Claude vision 응답에 verification 메타 부착
+    scientific_name = _get_result_value(result, "scientific_name")
+    if scientific_name and scientific_name != "N/A":
+        try:
+            verification = verify_scientific_name(str(scientific_name))
+            result = _copy_result_with(
+                result,
+                verification_source=verification.get("source"),
+                verification_matched=verification.get("matched"),
+                verification_confidence=verification.get("confidence"),
+                verification_matched_name=verification.get("matched_name"),
+            )
+        except Exception as exc:  # noqa: BLE001
+            import logging
+            logging.getLogger(__name__).warning("[verify] 예외: %s", exc)
+
     ecology_summary = _get_result_value(result, "ecology_summary")
     enriched_summary = await enrich_korean_text(str(ecology_summary or ""))
 
