@@ -123,11 +123,17 @@ function App() {
       {/* 뷰 */}
       <div className="app-view">
         {view==="upload"     && <UploadView onUpload={handleUpload} onDemoCapture={handleDemoCapture} collectionCount={colCount} missionCompleted={missionCompleted}/>}
-        {view==="map"        && <MapView onBack={()=>setView("upload")}/>}
         {view==="loading"    && <LoadingView/>}
         {view==="result"     && <ResultCard result={result} imageFile={imageFile} onRetry={handleRetry} onSave={handleSaved} onCollection={()=>setView("collection")}/>}
-        {view==="collection" && <CollectionView onBack={()=>setView("upload")}/>}
         {view==="error"      && <ErrorView message={errMsg} onRetry={handleRetry}/>}
+
+        {/* keep-alive: CollectionView 와 MapView 는 mount 유지 + display 토글 (탭 전환 즉시 복귀) */}
+        <div style={{display: view==="collection" ? "flex" : "none", flex:1, flexDirection:"column", minHeight:0}}>
+          <CollectionView onBack={()=>setView("upload")}/>
+        </div>
+        <div style={{display: view==="map" ? "flex" : "none", flex:1, flexDirection:"column", minHeight:0}}>
+          <MapView onBack={()=>setView("upload")}/>
+        </div>
       </div>
 
       {/* 바텀 내비 */}

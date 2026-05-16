@@ -160,15 +160,20 @@ function CollectionCard({ item, onDelete }) {
   //  3) 둘 다 실패하면 → 자동생성 SVG (수묵화풍)
   var autoIllust = generateIllustration(item.korean_name, rarity);
   var conventionPath = "/assets/illustrations/" + encodeURIComponent(item.korean_name) + ".png";
+  var hasExplicitMapping = !!ILLUSTRATION_MAP[item.korean_name];
 
   var illustSrc;
-  if (illustErr && conventionErr) {
-    illustSrc = autoIllust;
-  } else if (ILLUSTRATION_MAP[item.korean_name] && !illustErr) {
+  if (hasExplicitMapping && !illustErr) {
+    // 명시적 매핑 우선
     illustSrc = ILLUSTRATION_MAP[item.korean_name];
+  } else if (hasExplicitMapping && illustErr) {
+    // 명시적 매핑 실패 → convention 도 같은 plant_NNN 경로일 수 있으니 컨벤션 스킵하고 바로 autoIllust
+    illustSrc = autoIllust;
   } else if (!conventionErr) {
+    // 명시적 매핑 없음 → convention 시도
     illustSrc = conventionPath;
   } else {
+    // 모두 실패 → SVG 자동생성
     illustSrc = autoIllust;
   }
   var isIllustPath = item.image_path && item.image_path.startsWith("/assets/illustrations/");

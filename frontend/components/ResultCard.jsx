@@ -32,6 +32,10 @@ function ResultCard({ result, imageFile, onSave, onRetry, onCollection }) {
       // 영구 URL (result.image_url 또는 사전 정의 image_path) 우선
       var pathToSave = result.image_url || (result.image_path && !result.image_path.startsWith("blob:") ? result.image_path : "");
       await addToCollection(result, pathToSave);
+      // 캐시 무효화 (api.js 가 처리하지만 방어적으로 한번 더)
+      if (typeof window !== "undefined" && typeof window.invalidateCollectionCache === "function") {
+        window.invalidateCollectionCache();
+      }
       setSaved(true);
       if (onSave) onSave();
     }
