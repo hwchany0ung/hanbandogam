@@ -76,11 +76,17 @@ def add_to_collection(
     if body.lat is not None and body.lng is not None:
         district = reverse_geocode(body.lat, body.lng)
 
-    # 일러스트 캐시 hit: 동일 종의 PNG가 이미 존재하면 canonical 경로로 image_path 교체
-    # → 모든 사용자가 같은 종을 동일한 일러스트 URL 로 저장
+    # 일러스트 캐시 hit: image_path 는 일러스트 canonical 경로로 교체하되,
+    # 사용자 원본 사진(S3 또는 /assets/uploads/ URL)은 image_url 로 옮겨 보존한다.
+    # → 도감 카드 "내 사진" 탭에 사용자 사진을 정상 표시 (PDCA cold-start fix)
     if body.korean_name:
         cached_png = ILLUST_DIR / f"{body.korean_name}.png"
         if cached_png.exists() and cached_png.stat().st_size > 1000:
+            if not body.image_url and body.image_path and (
+                body.image_path.startswith(("http://", "https://"))
+                or body.image_path.startswith("/assets/uploads/")
+            ):
+                body.image_url = body.image_path  # 원본 사용자 사진 보존
             body.image_path = f"/assets/illustrations/{body.korean_name}.png"
 
     saved = repository.save_result(body, district, u)

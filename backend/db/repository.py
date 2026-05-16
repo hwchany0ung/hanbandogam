@@ -56,13 +56,15 @@ def save_result(
             INSERT INTO collection
                 (korean_name, scientific_name, native_status, confidence,
                  ecology_summary, conservation_status, morphological_clues,
-                 image_path, memo, lat, lng, district, user_id)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                 image_path, image_url, memo, lat, lng, district, user_id)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 body.korean_name, body.scientific_name, body.native_status,
                 body.confidence, body.ecology_summary, body.conservation_status,
-                body.morphological_clues, body.image_path, body.memo,
+                body.morphological_clues, body.image_path,
+                getattr(body, "image_url", None),  # S3 사용자 사진 URL (image_path 일러스트 덮어쓰기와 무관 보존)
+                body.memo,
                 body.lat, body.lng, district, user_id,
             ),
         )

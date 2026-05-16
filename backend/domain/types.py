@@ -32,6 +32,7 @@ class CollectionAddRequest(BaseModel):
     conservation_status: str
     morphological_clues: str
     image_path: str
+    image_url: Optional[str] = None  # S3 사용자 사진 URL (보존 — image_path 가 일러스트로 덮어써져도 살아남음)
     memo: str = ""
     lat: Optional[float] = None
     lng: Optional[float] = None
@@ -49,6 +50,7 @@ class CollectionItem(BaseModel):
     conservation_status: str
     morphological_clues: str
     image_path: str
+    image_url: Optional[str] = None  # S3 사용자 사진 URL
     memo: str
     lat: Optional[float] = None
     lng: Optional[float] = None

@@ -113,6 +113,7 @@ jobs:
           sqlite3 "$DB" "ALTER TABLE collection ADD COLUMN lng REAL" 2>/dev/null || true
           sqlite3 "$DB" "ALTER TABLE collection ADD COLUMN district TEXT" 2>/dev/null || true
           sqlite3 "$DB" "ALTER TABLE species ADD COLUMN story TEXT" 2>/dev/null || true
+          sqlite3 "$DB" "ALTER TABLE collection ADD COLUMN image_url TEXT" 2>/dev/null || true
 
           # 실사진 경로 마이그레이션: /assets/photos/*.jpg → *.png (따오기 제외, PNG 없음)
           sqlite3 "$DB" "UPDATE collection SET image_path = REPLACE(image_path, '.jpg', '.png') WHERE image_path LIKE '/assets/photos/%.jpg' AND korean_name != '따오기';" 2>/dev/null || true

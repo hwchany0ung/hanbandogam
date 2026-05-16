@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS collection (
     conservation_status TEXT NOT NULL,
     morphological_clues TEXT NOT NULL,
     image_path         TEXT NOT NULL,
+    image_url          TEXT,  -- S3 사용자 사진 URL (image_path 가 일러스트로 덮어써질 때 원본 사진 보존)
     memo               TEXT DEFAULT '',
     lat                REAL,
     lng                REAL,
