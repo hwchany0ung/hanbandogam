@@ -18,6 +18,13 @@ class IdentifyResult(BaseModel):
     morphological_clues: str
     image_path: Optional[str] = None
     image_url: Optional[str] = None  # /assets/uploads/{uuid}.jpg (영구 저장 경로)
+    plant_type: Optional[str] = None  # tree | flower | herb | vine | fern | shrub | grass | other
+    illustration_url: Optional[str] = None  # 콜드스타트: S3 일러스트 URL
+    story: Optional[str] = None              # 콜드스타트: 이야기 텍스트 (DB or Claude Haiku)
+    verification_source: Optional[str] = None        # "GBIF" / "GBIF_FALLBACK:reason"
+    verification_matched: Optional[bool] = None      # GBIF 매칭 성공 여부
+    verification_confidence: Optional[int] = None    # GBIF confidence 0~100
+    verification_matched_name: Optional[str] = None  # GBIF canonical name
 
 
 class CollectionAddRequest(BaseModel):
@@ -29,6 +36,7 @@ class CollectionAddRequest(BaseModel):
     conservation_status: str
     morphological_clues: str
     image_path: str
+    image_url: Optional[str] = None  # S3 사용자 사진 URL (보존 — image_path 가 일러스트로 덮어써져도 살아남음)
     memo: str = ""
     lat: Optional[float] = None
     lng: Optional[float] = None
@@ -46,6 +54,7 @@ class CollectionItem(BaseModel):
     conservation_status: str
     morphological_clues: str
     image_path: str
+    image_url: Optional[str] = None  # S3 사용자 사진 URL
     memo: str
     lat: Optional[float] = None
     lng: Optional[float] = None

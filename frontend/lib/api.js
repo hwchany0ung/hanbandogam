@@ -281,15 +281,17 @@ async function getCollection() {
 }
 
 async function addToCollection(result, imageUrl) {
+  // image_url: S3 사용자 사진 URL (image_path 가 일러스트로 덮어써져도 살아남도록 명시 전송)
+  var userPhotoUrl = result.image_url || (imageUrl && /^https?:\/\//.test(imageUrl) ? imageUrl : "") || "";
   if (window.DEMO_MODE) {
-    var item = Object.assign({},result,{id:Date.now(),image_path:imageUrl||"",memo:"",created_at:new Date().toISOString()});
+    var item = Object.assign({},result,{id:Date.now(),image_path:imageUrl||"",image_url:userPhotoUrl,memo:"",created_at:new Date().toISOString()});
     DEMO_COLLECTION.unshift(item);
     invalidateCollectionCache();
     return item;
   }
   var res = await fetch(BASE_URL+withUid("/api/collection"),{
     method:"POST", headers:{"Content-Type":"application/json"},
-    body:JSON.stringify(Object.assign({},result,{image_path:imageUrl||""})),
+    body:JSON.stringify(Object.assign({},result,{image_path:imageUrl||"",image_url:userPhotoUrl})),
   });
   if (!res.ok) {
     var detail = "";

@@ -1,10 +1,12 @@
-function CollectionView({ onBack }) {
+function CollectionView({ isActive, onBack }) {
   var [items,   setItems]   = React.useState([]);
   var [loading, setLoading] = React.useState(true);
 
+  // 최초 mount + isActive 가 true 로 바뀔 때마다 재조회 (캐시 무효 시 새 fetch, 유효 시 캐시 hit)
   React.useEffect(()=>{
+    if (isActive === false) return;  // mount 직후 1회는 isActive=undefined or true 라 통과
     getCollection().then(setItems).catch(console.error).finally(()=>setLoading(false));
-  },[]);
+  },[isActive]);
 
   async function handleDelete(id) {
     if (!confirm("도감에서 삭제할까요?")) return;

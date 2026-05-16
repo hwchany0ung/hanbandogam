@@ -44,6 +44,14 @@ var ILLUSTRATION_MAP = {
   "미호종개":"/assets/illustrations/미호종개.svg",
 };
 
+// 시연용 실사진 매핑 — DB에 옛 일러스트 경로로 저장된 카드도 사진 전환 가능하게 함
+var PHOTO_MAP = {
+  "한라솜다리":     "/assets/photos/한라솜다리.jpg",
+  "노랑갈퀴":       "/assets/photos/노랑갈퀴.jpg",
+  "가시복분자딸기": "/assets/photos/가시복분자딸기.jpg",
+  "분홍바늘꽃":     "/assets/photos/분홍바늘꽃.jpg",
+};
+
 var RARITY_OWNERSHIP_PCT = { L:"0.3", E:"1.2", R:"4.5", U:"15", C:"40" };
 
 // 이야기 데이터는 frontend/data/stories.json 에서 사전 로드 (window.STORIES_DATA).
@@ -154,23 +162,26 @@ function CollectionCard({ item, onDelete }) {
   var rc = RARITY_CONFIG[rarity];
   var nc = NATIVE_CONFIG[item.native_status] || NATIVE_CONFIG["불명확"];
 
-  // 3단계 폴백 체인:
-  //  1) ILLUSTRATION_MAP 에 명시적 매핑이 있으면 → 그 PNG
-  //  2) 없으면 convention 경로 `/assets/illustrations/{name}.png` 시도 (GH Actions가 자동 생성)
-  //  3) 둘 다 실패하면 → 자동생성 SVG (수묵화풍)
+  // Design Ref: §5.6 — 일러스트 탭 우선순위 (S3 illustration_url 1순위 → 기존 PNG → 자동 생성 SVG)
+  // [s3Err 폴백 체인]
+  //  0) item.illustration_url — S3 (NEW, backend story_trigger 산출물)
+  //  1) ILLUSTRATION_MAP 명시적 매핑 PNG (시연 종)
+  //  2) convention 경로 `/assets/illustrations/{name}.png` (GH Actions 자동 생성)
+  //  3) 자동생성 SVG (수묵화풍)
   var autoIllust = generateIllustration(item.korean_name, rarity);
   var conventionPath = "/assets/illustrations/" + encodeURIComponent(item.korean_name) + ".png";
   var hasExplicitMapping = !!ILLUSTRATION_MAP[item.korean_name];
+  var s3IllustUrl = item.illustration_url || null;   // S3 (NEW)
 
   var illustSrc;
-  if (hasExplicitMapping && !illustErr) {
-    // 명시적 매핑 우선
+  if (s3IllustUrl && !illustErr) {
+    // S3 1순위
+    illustSrc = s3IllustUrl;
+  } else if (hasExplicitMapping && (!illustErr || (s3IllustUrl && illustErr && !conventionErr))) {
+    // S3 실패 후 명시적 매핑으로 폴백, 또는 처음부터 매핑만 있는 경우
     illustSrc = ILLUSTRATION_MAP[item.korean_name];
-  } else if (hasExplicitMapping && illustErr) {
-    // 명시적 매핑 실패 → convention 도 같은 plant_NNN 경로일 수 있으니 컨벤션 스킵하고 바로 autoIllust
-    illustSrc = autoIllust;
   } else if (!conventionErr) {
-    // 명시적 매핑 없음 → convention 시도
+    // convention 경로 시도
     illustSrc = conventionPath;
   } else {
     // 모두 실패 → SVG 자동생성
@@ -189,7 +200,10 @@ function CollectionCard({ item, onDelete }) {
     var paths = [];
     var path = item.image_path || "";
     var encodedName = encodeURIComponent(item.korean_name || "");
+
+    if (item.image_url) paths.push(item.image_url);
     if (path && !path.startsWith("/assets/illustrations/")) paths.push(path);
+    if (PHOTO_MAP[item.korean_name]) paths.push(PHOTO_MAP[item.korean_name]);
     if (encodedName) {
       paths.push(
         "/assets/photos/" + encodedName + ".jpg",
@@ -214,8 +228,16 @@ function CollectionCard({ item, onDelete }) {
     photoCandidates.forEach(preloadImagePath);
   }, [illustSrc, photoCandidatesKey]);
 
+  // Design Ref: §5.6 — 이야기 탭 우선순위 (DB story 1순위 → seed → ecology_summary)
+  //  1) item.story — DB (NEW, Claude Haiku 자동 생성)
+  //  2) window.STORIES_DATA[korean_name] — 기존 seed (frontend/data/stories.json)
+  //  3) item.ecology_summary — 폴백
+  //  4) 기본 문구
   var STORY_DATA = (typeof window !== "undefined" && window.STORIES_DATA) || {};
-  var story = STORY_DATA[item.korean_name] || item.ecology_summary;
+  var story = item.story
+            || STORY_DATA[item.korean_name]
+            || item.ecology_summary
+            || "이야기는 곧 추가됩니다.";
 
   var rarityBorderStyle = {
     L: "0 0 0 1.5px var(--L-bd),0 4px 14px rgba(201,146,39,0.28)",
@@ -416,10 +438,12 @@ function CollectionCard({ item, onDelete }) {
         loading="eager"
         decoding="async"
         style={{width:"100%",height:"100%",objectFit:"cover"}}
-        onError={() => {
-          // ILLUSTRATION_MAP → convention → SVG 자동생성
-          if (!illustErr) setIllustErr(true);
-          else if (!conventionErr) setConventionErr(true);
+        onError={(e) => {
+          // S3 illustration_url → ILLUSTRATION_MAP/convention → SVG 자동생성 폴백 체인
+          if (!illustErr) { setIllustErr(true); return; }
+          if (!conventionErr) { setConventionErr(true); return; }
+          // 모든 폴백 실패 → 깨진 placeholder 방지 (autoIllust 가 항상 성공해야 함)
+          e.target.onerror = null;
         }}
       />
       {/* 희귀도 배지 */}

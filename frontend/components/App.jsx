@@ -139,7 +139,7 @@ function App() {
 
         {/* keep-alive: CollectionView 와 MapView 는 mount 유지 + display 토글 (탭 전환 즉시 복귀) */}
         <div style={{display: view==="collection" ? "flex" : "none", flex:1, flexDirection:"column", minHeight:0}}>
-          <CollectionView onBack={()=>setView("upload")}/>
+          <CollectionView isActive={view==="collection"} onBack={()=>setView("upload")}/>
         </div>
         <div style={{display: view==="map" ? "flex" : "none", flex:1, flexDirection:"column", minHeight:0}}>
           <MapView onBack={()=>setView("upload")} isActive={view==="map"}/>

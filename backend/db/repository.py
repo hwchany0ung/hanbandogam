@@ -1,5 +1,6 @@
 import sqlite3
 from pathlib import Path
+from typing import Optional
 
 try:
     from backend.domain.types import CollectionAddRequest, CollectionItem, MapPoint
@@ -55,13 +56,15 @@ def save_result(
             INSERT INTO collection
                 (korean_name, scientific_name, native_status, confidence,
                  ecology_summary, conservation_status, morphological_clues,
-                 image_path, memo, lat, lng, district, user_id)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                 image_path, image_url, memo, lat, lng, district, user_id)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 body.korean_name, body.scientific_name, body.native_status,
                 body.confidence, body.ecology_summary, body.conservation_status,
-                body.morphological_clues, body.image_path, body.memo,
+                body.morphological_clues, body.image_path,
+                getattr(body, "image_url", None),  # S3 사용자 사진 URL (image_path 일러스트 덮어쓰기와 무관 보존)
+                body.memo,
                 body.lat, body.lng, district, user_id,
             ),
         )
@@ -137,3 +140,41 @@ def get_map_points(user_id: str = "global") -> list[MapPoint]:
 
 def _to_item(row: sqlite3.Row) -> CollectionItem:
     return CollectionItem(**dict(row))
+
+
+def get_story(korean_name: str) -> Optional[str]:
+    """species.story 조회. 없으면 None."""
+    conn = _connect()
+    try:
+        cur = conn.execute(
+            "SELECT story FROM species WHERE korean_name = ?",
+            (korean_name,),
+        )
+        row = cur.fetchone()
+        return row[0] if row and row[0] else None
+    finally:
+        conn.close()
+
+
+def set_story(korean_name: str, story: str) -> bool:
+    """species.story 업데이트. 행이 없으면 INSERT (UPSERT 패턴).
+    성공 시 True, 실패 시 False."""
+    try:
+        conn = _connect()
+        try:
+            conn.execute(
+                """
+                INSERT INTO species (korean_name, story)
+                VALUES (?, ?)
+                ON CONFLICT(korean_name) DO UPDATE SET story = excluded.story
+                """,
+                (korean_name, story),
+            )
+            conn.commit()
+        finally:
+            conn.close()
+        return True
+    except Exception as exc:
+        import logging
+        logging.getLogger(__name__).warning("[story] set_story 실패: %s", exc)
+        return False

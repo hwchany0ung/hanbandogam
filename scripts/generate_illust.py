@@ -28,14 +28,15 @@ def load_token() -> str:
     if env_token:
         return env_token
     if not ENV_PATH.exists():
-        print(f"[ERROR] REPLICATE_API_TOKEN not in env, .env not found: {ENV_PATH}")
-        sys.exit(1)
+        # module-level import 환경 (pytest, backend) 에서 sys.exit 방지 — 빈 문자열 반환
+        print(f"[WARN] REPLICATE_API_TOKEN not in env, .env not found: {ENV_PATH}")
+        return ""
     for line in ENV_PATH.read_text(encoding="utf-8").splitlines():
         line = line.strip()
         if line.startswith("REPLICATE_API_TOKEN="):
             return line.split("=", 1)[1].strip().strip('"').strip("'")
-    print("[ERROR] REPLICATE_API_TOKEN not found in env or .env")
-    sys.exit(1)
+    print("[WARN] REPLICATE_API_TOKEN not found in env or .env")
+    return ""
 
 
 TOKEN = load_token()
