@@ -368,6 +368,11 @@ function CollectionCard({ item, onDelete }) {
       <div style={{position:"absolute",top:"5px",left:"5px",width:"18px",height:"18px",borderRadius:"5px",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Space Mono',monospace",fontSize:"8px",fontWeight:"700",background:rc.bg,border:`1px solid ${rc.bd}`,color:rc.color,backdropFilter:"blur(4px)",zIndex:2}}>
         {rarity}
       </div>
+      {item.observation_count > 1 && (
+        <div style={{position:"absolute",top:"5px",right:"5px",padding:"2px 6px",borderRadius:"999px",background:"rgba(31,26,18,0.72)",color:"#fff",fontFamily:"'Space Mono',monospace",fontSize:"8px",fontWeight:"700",zIndex:2}}>
+          x{item.observation_count}
+        </div>
+      )}
       {/* 종명 오버레이 */}
       <div style={{position:"absolute",bottom:0,left:0,right:0,padding:"4px 3px",background:"linear-gradient(0deg,rgba(0,0,0,0.65),transparent)",fontSize:"9px",color:"#fff",textAlign:"center",fontWeight:"600",zIndex:3}}>
         {item.korean_name}

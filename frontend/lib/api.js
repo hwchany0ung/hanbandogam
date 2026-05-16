@@ -90,6 +90,60 @@ function getRarity(koreanName) {
   return RARITY_MAP[koreanName] || "C";
 }
 
+function cleanSpeciesText(value) {
+  return (value || "").toString().trim();
+}
+
+function normalizeSpeciesText(value) {
+  return cleanSpeciesText(value).toLowerCase();
+}
+
+function isSameSpecies(a, b) {
+  var aKorean = cleanSpeciesText(a && a.korean_name);
+  var bKorean = cleanSpeciesText(b && b.korean_name);
+  if (aKorean && bKorean && aKorean === bKorean) return true;
+
+  var aScientific = normalizeSpeciesText(a && a.scientific_name);
+  var bScientific = normalizeSpeciesText(b && b.scientific_name);
+  return !!(aScientific && bScientific && aScientific === bScientific);
+}
+
+function getCreatedTime(item) {
+  var time = Date.parse(item && item.created_at ? item.created_at : "");
+  return Number.isNaN(time) ? 0 : time;
+}
+
+function getUniqueCollectionItems(items) {
+  var groups = [];
+  (items || []).forEach(function(item) {
+    var index = groups.findIndex(function(group) {
+      return isSameSpecies(group.item, item);
+    });
+
+    if (index === -1) {
+      groups.push({ item:Object.assign({}, item), count:1 });
+      return;
+    }
+
+    groups[index].count += 1;
+    if (getCreatedTime(item) >= getCreatedTime(groups[index].item)) {
+      groups[index].item = Object.assign({}, item);
+    }
+  });
+
+  return groups.map(function(group) {
+    return Object.assign({}, group.item, { observation_count:group.count });
+  }).sort(function(a, b) {
+    return (getCreatedTime(b) - getCreatedTime(a)) || ((b.id || 0) - (a.id || 0));
+  });
+}
+
+function findCollectedItem(items, candidate) {
+  return getUniqueCollectionItems(items).find(function(item) {
+    return isSameSpecies(item, candidate);
+  }) || null;
+}
+
 // ── 데모 데이터 ───────────────────────────────────────────────
 var DEMO_RESULTS = [
   { korean_name:"구상나무",   scientific_name:"Abies koreana",              native_status:"토종",   confidence:0.95, ecology_summary:"한국 특산종으로 한라산·지리산·덕유산 고산지대에 서식합니다. 기후변화로 개체수가 급감하고 있으며 크리스마스트리의 원조 수종입니다.", conservation_status:"취약(VU) — IUCN 적색목록", morphological_clues:"잎 끝이 두 갈래로 오목하고, 솔방울이 자주색~보라색으로 위를 향해 달립니다." },

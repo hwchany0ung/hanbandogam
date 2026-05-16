@@ -14,6 +14,7 @@ function CollectionView({ isActive, onBack }) {
     catch(e) { alert("삭제 실패: "+e.message); }
   }
 
+  var uniqueItems = getUniqueCollectionItems(items);
   var [sortBy,    setSortBy]    = React.useState("name");     // "name" | "rarity"
   var [sortOrder, setSortOrder] = React.useState("asc");      // "asc" | "desc"
 
@@ -21,7 +22,7 @@ function CollectionView({ isActive, onBack }) {
   var RARITY_RANK = { L:5, E:4, R:3, U:2, C:1 };
 
   var sortedItems = React.useMemo(function() {
-    var arr = items.slice();
+    var arr = uniqueItems.slice();
     arr.sort(function(a, b) {
       var cmp;
       if (sortBy === "name") {
@@ -37,21 +38,21 @@ function CollectionView({ isActive, onBack }) {
       return sortOrder === "asc" ? cmp : -cmp;
     });
     return arr;
-  }, [items, sortBy, sortOrder]);
+  }, [uniqueItems, sortBy, sortOrder]);
 
   function calcTopPct(count) {
     if (count === 0) return null;
     return Math.max(0.1, +(45 * Math.exp(-count * 0.08)).toFixed(1));
   }
-  var topPct = calcTopPct(items.length);
+  var topPct = calcTopPct(uniqueItems.length);
   var moreNeeded = topPct
-    ? Math.max(1, Math.ceil(-Math.log(topPct * 0.6 / 45) / 0.08) - items.length)
+    ? Math.max(1, Math.ceil(-Math.log(topPct * 0.6 / 45) / 0.08) - uniqueItems.length)
     : null;
 
   // 희귀도별 카운트
   var rarCount = {L:0,E:0,R:0,U:0,C:0};
   var rarTotal  = {L:5,E:6,R:35,U:28,C:28};
-  items.forEach(item=>{ var r=getRarity(item.korean_name); rarCount[r]=(rarCount[r]||0)+1; });
+  uniqueItems.forEach(item=>{ var r=getRarity(item.korean_name); rarCount[r]=(rarCount[r]||0)+1; });
 
   return (
     <div className="flex flex-col flex-1 overflow-hidden" style={{background:"var(--paper)"}}>
@@ -66,7 +67,7 @@ function CollectionView({ isActive, onBack }) {
         <div className="mb-3 px-5 py-4 rounded-xl" style={{background:"var(--surface)",border:"1px solid var(--gold-bd)",boxShadow:"0 4px 14px rgba(45,30,10,0.06)"}}>
           <div style={{display:"flex",alignItems:"center",gap:"8px",flexWrap:"wrap"}}>
             <div style={{fontFamily:"'Black Han Sans',sans-serif",fontSize:"30px",letterSpacing:"1px",color:"var(--ink-1)",lineHeight:1}}>
-              {items.length}<span style={{fontSize:"16px",color:"var(--ink-3)",fontFamily:"'Noto Sans KR',sans-serif",fontWeight:"500",letterSpacing:"0"}}>종 수집!</span>
+              {uniqueItems.length}<span style={{fontSize:"16px",color:"var(--ink-3)",fontFamily:"'Noto Sans KR',sans-serif",fontWeight:"500",letterSpacing:"0"}}>종 수집!</span>
             </div>
             {topPct && (
               <div style={{display:"inline-flex",alignItems:"center",padding:"4px 12px",borderRadius:"20px",background:"linear-gradient(135deg,rgba(184,144,47,0.12),rgba(184,144,47,0.18))",border:"1px solid var(--gold-bd)"}}>
@@ -103,7 +104,7 @@ function CollectionView({ isActive, onBack }) {
         {/* 본문 */}
         {loading ? (
           <div className="flex justify-center items-center h-32" style={{color:"var(--ink-3)"}}>불러오는 중…</div>
-        ) : items.length === 0 ? (
+        ) : uniqueItems.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-40 gap-3" style={{color:"var(--ink-3)"}}>
             <Icon name="BookOpen" size={40} strokeWidth={1.7} />
             <p style={{fontSize:"13px"}}>아직 도감이 비어있어요</p>
@@ -112,7 +113,7 @@ function CollectionView({ isActive, onBack }) {
           <>
             {/* 정렬 + 발견한 종 라벨 */}
             <div style={{padding:"6px 0 8px",display:"flex",alignItems:"center",justifyContent:"space-between",gap:"8px"}}>
-              <div style={{fontFamily:"'Space Mono',monospace",fontSize:"10px",color:"var(--ink-3)",letterSpacing:"2px",fontWeight:"700",flexShrink:0}}>발견한 종 · {items.length}</div>
+              <div style={{fontFamily:"'Space Mono',monospace",fontSize:"10px",color:"var(--ink-3)",letterSpacing:"2px",fontWeight:"700",flexShrink:0}}>발견한 종 · {uniqueItems.length}</div>
               <div style={{display:"flex",alignItems:"center",gap:"6px"}}>
                 {/* 정렬 기준 토글 */}
                 <div style={{display:"flex",gap:"2px",background:"rgba(45,30,10,0.05)",borderRadius:"7px",padding:"2px"}}>
@@ -137,7 +138,7 @@ function CollectionView({ isActive, onBack }) {
               {sortedItems.map(item=>(
                 <CollectionCard key={item.id} item={item} onDelete={handleDelete}/>
               ))}
-              {Array.from({length:Math.max(0,102-items.length)},(_,i)=>(
+              {Array.from({length:Math.max(0,102-uniqueItems.length)},(_,i)=>(
                 <div key={"lock-"+i} style={{aspectRatio:"1",borderRadius:"12px",background:"rgba(31,26,18,0.04)",border:"1.5px dashed rgba(31,26,18,0.10)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:"3px"}}>
                   <Icon name="Lock" size={16} strokeWidth={1.8} style={{opacity:0.25}} />
                   <span style={{fontFamily:"'Space Mono',monospace",fontSize:"7px",color:"var(--ink-3)",letterSpacing:"1px",opacity:0.4}}>???</span>

@@ -1,7 +1,8 @@
-function ResultCard({ result, imageFile, onSave, onRetry, onCollection }) {
+function ResultCard({ result, imageFile, onSave, onRetry, onCollection, alreadyCollected, existingItem, onCloseExisting }) {
   var [saving, setSaving] = React.useState(false);
   var [saved,  setSaved]  = React.useState(false);
   var [previewErr, setPreviewErr] = React.useState(false);
+
   // 우선순위:
   //  1) result.image_url — 백엔드가 영구 저장한 /assets/uploads/{uuid}.jpg (다른 세션에서도 유효)
   //  2) imageFile — 사용자가 방금 업로드한 File (blob URL, 현재 세션만)
@@ -15,6 +16,7 @@ function ResultCard({ result, imageFile, onSave, onRetry, onCollection }) {
   var nc = NATIVE_CONFIG[result.native_status] || NATIVE_CONFIG["불명확"];
   var pct = Math.round(result.confidence * 100);
   var morphTags = result.morphological_clues ? result.morphological_clues.split(/[,，、]+/).map(s=>s.trim()).filter(Boolean) : [];
+  var isAlreadyCollected = alreadyCollected && !saved;
 
   // 식별 불가 판정 (해당 없음 / N/A / 빈 결과 → 저장 차단)
   var notIdentified =
@@ -25,37 +27,42 @@ function ResultCard({ result, imageFile, onSave, onRetry, onCollection }) {
     result.confidence < 0.3;
 
   async function handleSave() {
-    if (saved || notIdentified) return;
+    if (saved || notIdentified || alreadyCollected) return;
     setSaving(true);
     try {
       // blob URL 은 다른 세션에서 무효이므로 저장 X
       // 영구 URL (result.image_url 또는 사전 정의 image_path) 우선
       var pathToSave = result.image_url || (result.image_path && !result.image_path.startsWith("blob:") ? result.image_path : "");
-      await addToCollection(result, pathToSave);
+      var savedItem = await addToCollection(result, pathToSave);
       // 캐시 무효화 (api.js 가 처리하지만 방어적으로 한번 더)
       if (typeof window !== "undefined" && typeof window.invalidateCollectionCache === "function") {
         window.invalidateCollectionCache();
       }
       setSaved(true);
-      if (onSave) onSave();
+      if (onSave) onSave(savedItem);
     }
     catch(e) { alert("저장 실패: "+e.message); }
     finally { setSaving(false); }
   }
 
-  return (
-    <div className="flex flex-col flex-1" style={{background:"var(--paper)",minHeight:0}}>
-      {/* 스크롤 영역 */}
-      <div className="flex-1 overflow-y-auto" style={{minHeight:0}}>
-        {/* 탑바 */}
-        <div className="flex items-center gap-3 px-4 pt-4 pb-3">
-          <button onClick={onRetry} style={{width:"36px",height:"36px",borderRadius:"50%",background:"var(--surface)",border:"1px solid var(--gold-bd)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"16px",color:"var(--ink-1)",boxShadow:"0 2px 6px rgba(45,30,10,0.06)",flexShrink:0,cursor:"pointer"}}><Icon name="ArrowLeft" size={17} /></button>
-          <div style={{fontSize:"13px",color:"var(--ink-2)",fontWeight:"500"}}>AI 판별 결과</div>
-          <div style={{marginLeft:"auto",display:"inline-flex",alignItems:"center",gap:"5px",padding:"4px 10px",background:"var(--E-bg)",border:"1px solid var(--E-bd)",borderRadius:"20px",fontFamily:"'Space Mono',monospace",fontSize:"9px",color:"var(--E)",fontWeight:"700"}}><Icon name="Sparkles" size={12} /> CLAUDE</div>
-        </div>
+  function handleCloseExisting() {
+    if (onCloseExisting) onCloseExisting();
+    else if (onRetry) onRetry();
+  }
 
+  return (
+    <div className="flex flex-col flex-1 overflow-hidden" style={{background:"var(--paper)",height:"100%",minHeight:0}}>
+      {/* 탑바 */}
+      <div className="flex items-center gap-3 px-4 pt-4 pb-3" style={{flexShrink:0}}>
+        <button onClick={onRetry} style={{width:"36px",height:"36px",borderRadius:"50%",background:"var(--surface)",border:"1px solid var(--gold-bd)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"16px",color:"var(--ink-1)",boxShadow:"0 2px 6px rgba(45,30,10,0.06)",flexShrink:0,cursor:"pointer"}}><Icon name="ArrowLeft" size={17} /></button>
+        <div style={{fontSize:"13px",color:"var(--ink-2)",fontWeight:"500"}}>AI 판별 결과</div>
+        <div style={{marginLeft:"auto",display:"inline-flex",alignItems:"center",gap:"5px",padding:"4px 10px",background:"var(--E-bg)",border:"1px solid var(--E-bd)",borderRadius:"20px",fontFamily:"'Space Mono',monospace",fontSize:"9px",color:"var(--E)",fontWeight:"700"}}><Icon name="Sparkles" size={12} /> CLAUDE</div>
+      </div>
+
+      {/* 스크롤 영역 */}
+      <div style={{flex:"1 1 auto",minHeight:0,overflowY:"auto",WebkitOverflowScrolling:"touch",overscrollBehavior:"contain",paddingBottom:"14px"}}>
         {/* 카드 */}
-        <div className="mx-4 mb-4 rounded-2xl overflow-hidden" style={{background:"var(--surface)",border:"1px solid rgba(45,30,10,0.06)",boxShadow:rc?`0 0 0 1.5px ${rc.bd},0 16px 48px rgba(45,30,10,0.12)`:""}}>
+        <div className="mx-4 mb-2 rounded-2xl overflow-hidden" style={{background:"var(--surface)",border:"1px solid rgba(45,30,10,0.06)",boxShadow:rc?`0 0 0 1.5px ${rc.bd},0 16px 48px rgba(45,30,10,0.12)`:""}}>
 
           {/* 사진 */}
           <div style={{height:"300px",position:"relative",overflow:"hidden",background:"linear-gradient(145deg,#F4EDDC,#FAF5E6)"}}>
@@ -115,41 +122,51 @@ function ResultCard({ result, imageFile, onSave, onRetry, onCollection }) {
         </div>
       </div>
 
-      {/* 고정 저장 버튼 (하단 sticky) */}
-      <div style={{flexShrink:0,padding:"10px 16px 14px",background:"var(--paper)",borderTop:"1px solid rgba(45,30,10,0.06)",boxShadow:"0 -4px 14px rgba(45,30,10,0.04)"}}>
-        {notIdentified && (
-          <div style={{marginBottom:"8px",padding:"8px 12px",borderRadius:"8px",background:"rgba(220,38,38,0.06)",border:"1px solid rgba(220,38,38,0.18)",fontSize:"11px",color:"var(--invasive)",textAlign:"center"}}>
-            <span style={{display:"inline-flex",alignItems:"center",justifyContent:"center",gap:"6px"}}><Icon name="TriangleAlert" size={13} /> 한국 토종 생물이 아닙니다 · 도감에 저장할 수 없어요</span>
-          </div>
+      {/* 고정 액션 영역 */}
+      <div style={{flex:"0 0 auto",padding:"12px 16px calc(14px + env(safe-area-inset-bottom, 0px))",background:"rgba(244,237,220,0.96)",borderTop:"1px solid var(--gold-bd)",boxShadow:"0 -10px 26px rgba(45,30,10,0.08)",backdropFilter:"blur(18px)"}}>
+        {isAlreadyCollected ? (
+          <>
+            <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:"5px",padding:"10px 12px",borderRadius:"12px",background:"var(--gold-dim)",border:"1px solid var(--gold-bd)",color:"var(--ink-2)",fontSize:"12px",lineHeight:"1.45",marginBottom:"10px",textAlign:"center"}}>
+              <Icon name="CircleCheck" size={16} strokeWidth={2.2} style={{color:"var(--gold)",flexShrink:0}} />
+              <div>
+                <div style={{fontWeight:"700",color:"var(--ink-1)"}}>이미 내 도감에 등록된 종이에요.</div>
+                {existingItem && existingItem.observation_count > 1 && (
+                  <div style={{fontSize:"11px",color:"var(--ink-3)",marginTop:"2px"}}>현재 도감 기록 {existingItem.observation_count}회</div>
+                )}
+              </div>
+            </div>
+            <button
+              onClick={handleCloseExisting}
+              className="w-full rounded-xl"
+              style={{height:"50px",background:"var(--ink-1)",border:"none",color:"#fff",fontFamily:"'Black Han Sans',sans-serif",fontSize:"15px",letterSpacing:"2px",cursor:"pointer",boxShadow:"0 6px 20px rgba(31,26,18,0.18)"}}
+            >
+              <span style={{display:"inline-flex",alignItems:"center",justifyContent:"center",gap:"8px"}}><Icon name="Check" size={17} strokeWidth={2.5} /> 도감에 있는 식물입니다</span>
+            </button>
+          </>
+        ) : (
+          <>
+            {notIdentified && (
+              <div style={{marginBottom:"8px",padding:"8px 12px",borderRadius:"8px",background:"rgba(220,38,38,0.06)",border:"1px solid rgba(220,38,38,0.18)",fontSize:"11px",color:"var(--invasive)",textAlign:"center"}}>
+                <span style={{display:"inline-flex",alignItems:"center",justifyContent:"center",gap:"6px"}}><Icon name="TriangleAlert" size={13} /> 한국 토종 생물이 아닙니다 · 도감에 저장할 수 없어요</span>
+              </div>
+            )}
+            <button
+              onClick={handleSave}
+              disabled={saving||saved||notIdentified}
+              className={notIdentified?"":"btn-shine"}
+              style={{width:"100%",height:"50px",borderRadius:"12px",border:"none",background:notIdentified?"rgba(45,30,10,0.08)":saved?"var(--ink-3)":"linear-gradient(135deg,#1D4ED8,var(--R))",color:notIdentified?"var(--ink-3)":"#fff",fontFamily:"'Black Han Sans',sans-serif",fontSize:"15px",letterSpacing:"3px",cursor:(saved||notIdentified)?"not-allowed":"pointer",boxShadow:(saved||notIdentified)?"none":"0 6px 20px rgba(37,99,235,0.3)",opacity:notIdentified?0.7:1}}
+            >
+              {notIdentified
+                ? <span style={{display:"inline-flex",alignItems:"center",justifyContent:"center",gap:"8px"}}><Icon name="XCircle" size={17} /> 도감 추가 불가</span>
+                : saved
+                  ? <span style={{display:"inline-flex",alignItems:"center",justifyContent:"center",gap:"8px"}}><Icon name="Check" size={17} strokeWidth={2.5} /> 도감에 저장됨</span>
+                  : saving
+                    ? "저장 중…"
+                    : <span style={{display:"inline-flex",alignItems:"center",justifyContent:"center",gap:"8px"}}><Icon name="BookOpen" size={17} strokeWidth={2.4} /> 도감에 추가! +1</span>
+              }
+            </button>
+          </>
         )}
-        <button
-          onClick={handleSave}
-          disabled={saving||saved||notIdentified}
-          className={notIdentified?"":"btn-shine"}
-          style={{
-            width:"100%",
-            padding:"14px 0",
-            borderRadius:"12px",
-            border:"none",
-            background:notIdentified?"rgba(45,30,10,0.08)":saved?"var(--ink-3)":"linear-gradient(135deg,#1D4ED8,var(--R))",
-            color:notIdentified?"var(--ink-3)":"#fff",
-            fontFamily:"'Black Han Sans',sans-serif",
-            fontSize:"15px",
-            letterSpacing:"3px",
-            cursor:(saved||notIdentified)?"not-allowed":"pointer",
-            boxShadow:(saved||notIdentified)?"none":"0 6px 20px rgba(37,99,235,0.3)",
-            opacity:notIdentified?0.7:1
-          }}
-        >
-          {notIdentified
-            ? <span style={{display:"inline-flex",alignItems:"center",justifyContent:"center",gap:"8px"}}><Icon name="XCircle" size={17} /> 도감 추가 불가</span>
-            : saved
-              ? <span style={{display:"inline-flex",alignItems:"center",justifyContent:"center",gap:"8px"}}><Icon name="Check" size={17} strokeWidth={2.5} /> 도감에 저장됨</span>
-              : saving
-                ? "저장 중…"
-                : <span style={{display:"inline-flex",alignItems:"center",justifyContent:"center",gap:"8px"}}><Icon name="BookOpen" size={17} strokeWidth={2.4} /> 도감에 추가! +1</span>
-          }
-        </button>
 
         {saved && (
           <button onClick={onCollection} style={{display:"flex",alignItems:"center",justifyContent:"center",gap:"5px",width:"100%",textAlign:"center",marginTop:"8px",fontSize:"13px",color:"var(--gold)",textDecoration:"underline",background:"none",border:"none",cursor:"pointer"}}>
