@@ -1,0 +1,65 @@
+# Environment & Secrets
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+설정.txt
+*설정*.txt
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+.venv/
+*.egg-info/
+.pytest_cache/
+
+# Node
+node_modules/
+.next/
+dist/
+build/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# PoC 결과 (개인정보·로그 포함될 수 있음)
+poc/results/
+poc/test_photos/*.jpg
+poc/test_photos/*.png
+poc/test_photos/*.jpeg
+!poc/test_photos/README.md
+!poc/test_photos/.gitkeep
+
+# Video 산출물 (대용량 + 저작권 포함)
+video/assets/clips/*.mp4
+video/assets/cards/*.png
+video/assets/audio/*.mp3
+video/assets/output/*.mp4
+!video/assets/.gitkeep
+
+# bkit (이미 존재)
+.bkit/runtime/
+.bkit/audit/
+
+# Terraform
+infra/terraform/.terraform/
+infra/terraform/.terraform.lock.hcl
+infra/terraform/terraform.tfstate
+infra/terraform/terraform.tfstate.backup
+infra/terraform/terraform.tfvars
