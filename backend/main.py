@@ -52,17 +52,17 @@ def health():
 
 # 한반도감 카드 공유용 OG 메타태그 페이지
 SHARE_SPECIES_PHOTOS = {
-    "구상나무":"/assets/photos/구상나무.jpg","미선나무":"/assets/photos/미선나무.jpg",
-    "금강초롱꽃":"/assets/photos/금강초롱꽃.jpg","동강할미꽃":"/assets/photos/동강할미꽃.jpg",
-    "노랑붓꽃":"/assets/photos/노랑붓꽃.jpg","개느삼":"/assets/photos/개느삼.jpg",
-    "고려엉겅퀴":"/assets/photos/고려엉겅퀴.jpg","곰취":"/assets/photos/곰취.jpg",
-    "노랑무늬붓꽃":"/assets/photos/노랑무늬붓꽃.jpg","금꿩의다리":"/assets/photos/금꿩의다리.jpg",
-    "개족도리풀":"/assets/photos/개족도리풀.jpg","좀민들레":"/assets/photos/좀민들레.jpg",
-    "가시딸기":"/assets/photos/가시딸기.jpg","나도승마":"/assets/photos/나도승마.jpg",
-    "서양민들레":"/assets/photos/서양민들레.jpg","돼지풀":"/assets/photos/돼지풀.jpg",
-    "단풍잎돼지풀":"/assets/photos/단풍잎돼지풀.jpg","미국쑥부쟁이":"/assets/photos/미국쑥부쟁이.jpg",
-    "양미역취":"/assets/photos/양미역취.jpg","가시박":"/assets/photos/가시박.jpg",
-    "따오기":"/assets/photos/따오기.jpg","수달":"/assets/photos/수달.jpg",
+    "구상나무":"/assets/photos/구상나무.png","미선나무":"/assets/photos/미선나무.png",
+    "금강초롱꽃":"/assets/photos/금강초롱꽃.png","동강할미꽃":"/assets/photos/동강할미꽃.png",
+    "노랑붓꽃":"/assets/photos/노랑붓꽃.png","개느삼":"/assets/photos/개느삼.png",
+    "고려엉겅퀴":"/assets/photos/고려엉겅퀴.png","곰취":"/assets/photos/곰취.png",
+    "노랑무늬붓꽃":"/assets/photos/노랑무늬붓꽃.png","금꿩의다리":"/assets/photos/금꿩의다리.png",
+    "개족도리풀":"/assets/photos/개족도리풀.png","좀민들레":"/assets/photos/좀민들레.png",
+    "가시딸기":"/assets/photos/가시딸기.png","나도승마":"/assets/photos/나도승마.png",
+    "서양민들레":"/assets/photos/서양민들레.png","돼지풀":"/assets/photos/돼지풀.png",
+    "단풍잎돼지풀":"/assets/photos/단풍잎돼지풀.png","미국쑥부쟁이":"/assets/photos/미국쑥부쟁이.png",
+    "양미역취":"/assets/photos/양미역취.png","가시박":"/assets/photos/가시박.png",
+    "따오기":"/assets/photos/따오기.jpg","수달":"/assets/photos/수달.png",
 }
 
 SHARE_RARITY_KR = {

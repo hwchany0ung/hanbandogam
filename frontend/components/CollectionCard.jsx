@@ -1,29 +1,3 @@
-// PR#10 cherry-pick: 실제 종 사진 22장 (illustration 보다 우선 표시)
-var REAL_PHOTO_MAP = {
-  "가시딸기":     "/assets/photos/가시딸기.png",
-  "가시박":       "/assets/photos/가시박.png",
-  "개느삼":       "/assets/photos/개느삼.png",
-  "개족도리풀":   "/assets/photos/개족도리풀.png",
-  "고려엉겅퀴":   "/assets/photos/고려엉겅퀴.png",
-  "곰취":         "/assets/photos/곰취.png",
-  "구상나무":     "/assets/photos/구상나무.png",
-  "금강초롱꽃":   "/assets/photos/금강초롱꽃.png",
-  "금꿩의다리":   "/assets/photos/금꿩의다리.png",
-  "나도승마":     "/assets/photos/나도승마.png",
-  "노랑무늬붓꽃": "/assets/photos/노랑무늬붓꽃.png",
-  "노랑붓꽃":     "/assets/photos/노랑붓꽃.png",
-  "단풍잎돼지풀": "/assets/photos/단풍잎돼지풀.png",
-  "동강할미꽃":   "/assets/photos/동강할미꽃.png",
-  "돼지풀":       "/assets/photos/돼지풀.png",
-  "따오기":       "/assets/photos/따오기.jpg",
-  "미국쑥부쟁이": "/assets/photos/미국쑥부쟁이.png",
-  "미선나무":     "/assets/photos/미선나무.png",
-  "서양민들레":   "/assets/photos/서양민들레.png",
-  "수달":         "/assets/photos/수달.png",
-  "양미역취":     "/assets/photos/양미역취.png",
-  "좀민들레":     "/assets/photos/좀민들레.png",
-};
-
 var ILLUSTRATION_MAP = {
   // PNG 수묵화 (manifest 식물)
   "가시딸기":       "/assets/illustrations/plant_001_가시딸기.png",
@@ -196,7 +170,6 @@ function CollectionCard({ item, onDelete }) {
   var [showDetail,   setShowDetail]   = React.useState(false);
   var [illustErr,    setIllustErr]    = React.useState(false);
   var [conventionErr,setConventionErr]= React.useState(false);
-  var [realPhotoErr, setRealPhotoErr] = React.useState(false);
   var [photoErr,     setPhotoErr]     = React.useState(false);
   var [sharing,      setSharing]      = React.useState(false);
   var modalRef = React.useRef(null);
@@ -205,14 +178,12 @@ function CollectionCard({ item, onDelete }) {
   var rc = RARITY_CONFIG[rarity];
   var nc = NATIVE_CONFIG[item.native_status] || NATIVE_CONFIG["불명확"];
 
-  // 4단계 폴백 체인 (PR#10 cherry-pick: REAL_PHOTO 추가):
-  //  0) REAL_PHOTO_MAP 에 실제 사진이 있으면 → JPG/PNG (최우선)
+  // 3단계 폴백 체인:
   //  1) ILLUSTRATION_MAP 에 명시적 매핑이 있으면 → 그 PNG
   //  2) 없으면 convention 경로 `/assets/illustrations/{name}.png` 시도 (GH Actions가 자동 생성)
-  //  3) 모두 실패하면 → 자동생성 SVG (수묵화풍)
+  //  3) 둘 다 실패하면 → 자동생성 SVG (수묵화풍)
   var autoIllust = generateIllustration(item.korean_name, rarity);
   var conventionPath = "/assets/illustrations/" + encodeURIComponent(item.korean_name) + ".png";
-  var realPhotoPath = REAL_PHOTO_MAP[item.korean_name] || null;
 
   var illustSrc;
   if (illustErr && conventionErr) {
@@ -224,14 +195,11 @@ function CollectionCard({ item, onDelete }) {
   } else {
     illustSrc = autoIllust;
   }
-
-  // 그리드/모달 표시 우선순위: real photo > illust 체인
-  var primarySrc = (realPhotoPath && !realPhotoErr) ? realPhotoPath : illustSrc;
   var isIllustPath = item.image_path && item.image_path.startsWith("/assets/illustrations/");
   var hasUserPhoto  = item.image_path && !isIllustPath;
   var userSrc = hasUserPhoto ? (photoErr ? FALLBACK : item.image_path) : FALLBACK;
 
-  var displaySrc = (showPhoto && hasUserPhoto) ? userSrc : primarySrc;
+  var displaySrc = (showPhoto && hasUserPhoto) ? userSrc : illustSrc;
 
   var story = STORY_MAP[item.korean_name] || item.ecology_summary;
 
@@ -294,8 +262,6 @@ function CollectionCard({ item, onDelete }) {
               style={{width:"100%",height:"100%",objectFit:"contain",padding:"16px",transition:"opacity 0.25s"}}
               onError={() => {
                 if (showPhoto) { setPhotoErr(true); return; }
-                // real photo 실패 → illust 체인으로 폴백
-                if (realPhotoPath && !realPhotoErr) { setRealPhotoErr(true); return; }
                 if (!illustErr) setIllustErr(true);
                 else if (!conventionErr) setConventionErr(true);
               }}
@@ -394,12 +360,10 @@ function CollectionCard({ item, onDelete }) {
       style={{aspectRatio:"1",boxShadow:rarityBorderStyle,borderRadius:"12px",overflow:"hidden",position:"relative",cursor:"pointer",background:"var(--surface)"}}
     >
       <img
-        src={primarySrc}
+        src={illustSrc}
         alt={item.korean_name}
         style={{width:"100%",height:"100%",objectFit:"cover"}}
         onError={() => {
-          // real photo 실패 → illust 체인으로 폴백
-          if (realPhotoPath && !realPhotoErr) { setRealPhotoErr(true); return; }
           // ILLUSTRATION_MAP → convention → SVG 자동생성
           if (!illustErr) setIllustErr(true);
           else if (!conventionErr) setConventionErr(true);
