@@ -3,13 +3,18 @@ function ResultCard({ result, imageFile, onSave, onRetry, onCollection, alreadyC
   var [saved,  setSaved]  = React.useState(false);
   var [previewErr, setPreviewErr] = React.useState(false);
 
+  // Design Ref: §5.5 — S3 image_url 우선, blob/image_path 폴백
   // 우선순위:
-  //  1) result.image_url — 백엔드가 영구 저장한 /assets/uploads/{uuid}.jpg (다른 세션에서도 유효)
+  //  1) result.image_url — 백엔드가 영구 저장한 S3 URL 또는 /assets/uploads/{uuid}.jpg (다른 세션에서도 유효)
   //  2) imageFile — 사용자가 방금 업로드한 File (blob URL, 현재 세션만)
   //  3) result.image_path — 데모 캡처의 사전 정의 경로
-  var previewUrl = result.image_url || (imageFile ? URL.createObjectURL(imageFile) : (result.image_path || null));
+  var previewUrl = result.image_url
+                || (imageFile ? URL.createObjectURL(imageFile) : null)
+                || result.image_path
+                || null;
   var fallbackPng = result.korean_name ? "/assets/illustrations/" + encodeURIComponent(result.korean_name) + ".png" : null;
-  var imgSrc = previewErr && fallbackPng ? fallbackPng : previewUrl;
+  // previewErr 발생 시: fallbackPng 있으면 그것, 없으면 null → <img> 자체 숨김 처리
+  var imgSrc = previewErr ? (fallbackPng || null) : previewUrl;
 
   var rarity = getRarity(result.korean_name);
   var rc = RARITY_CONFIG[rarity];
@@ -71,7 +76,13 @@ function ResultCard({ result, imageFile, onSave, onRetry, onCollection, alreadyC
                   src={imgSrc}
                   alt="업로드"
                   style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}}
-                  onError={() => { if (!previewErr) setPreviewErr(true); }}
+                  onError={(e) => {
+                    // 1차 실패 → fallbackPng 시도 (previewErr 토글로 imgSrc 재계산)
+                    if (!previewErr) { setPreviewErr(true); return; }
+                    // 2차 실패 (fallbackPng 도 깨짐) → 깨진 placeholder 숨기기
+                    e.target.onerror = null;
+                    e.target.style.display = "none";
+                  }}
                 />
               : <div className="flex items-center justify-center h-full" style={{color:"var(--U)"}}><Icon name="Sprout" size={48} strokeWidth={1.6} /></div>
             }

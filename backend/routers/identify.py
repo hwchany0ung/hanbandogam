@@ -19,6 +19,13 @@ try:
 except ImportError:
     from services.s3_uploader import upload_image as s3_upload_image, is_enabled as s3_enabled
 
+import asyncio
+
+try:
+    from backend.services import illust_sync, story_sync
+except ImportError:
+    from services import illust_sync, story_sync  # type: ignore
+
 
 router = APIRouter(tags=["identify"])
 
@@ -84,6 +91,24 @@ async def identify(
             detail="이미지 식별 서비스 호출 중 오류가 발생했습니다.",
         ) from exc
 
+    # 콜드스타트 UX: 일러스트 + 이야기 동기 생성 (asyncio.gather 병렬)
+    # Design Ref: §5.4 — 신규 종 첫 식별 시 ~3분 콜드스타트 해소
+    illust_url = None
+    story_text = None
+    korean_name = getattr(result, "korean_name", None)
+    if korean_name and korean_name != "해당 없음":
+        try:
+            illust_url, story_text = await asyncio.gather(
+                illust_sync.get_or_create_illustration(
+                    korean_name,
+                    getattr(result, "native_status", "토종") or "토종",
+                ),
+                story_sync.get_or_create_story(korean_name),
+                return_exceptions=False,
+            )
+        except Exception as exc:
+            logger.warning("[cold-start] 일러스트/이야기 병렬 호출 실패: %s", exc)
+
     final_url = image_path
     try:
         if s3_enabled():
@@ -100,15 +125,23 @@ async def identify(
         # S3 실패 시 로컬 image_path 로 폴백 (메인 흐름 유지, 모니터링용 로깅)
         logger.warning("[s3] upload failed, falling back to local: %s: %s", type(exc).__name__, exc)
 
+    update_dict: dict = {}
     if final_url:
+        update_dict["image_path"] = final_url
+        update_dict["image_url"] = final_url
+    if illust_url:
+        update_dict["illustration_url"] = illust_url
+    if story_text:
+        update_dict["story"] = story_text
+
+    if update_dict:
         if hasattr(result, "model_copy"):
-            return result.model_copy(update={"image_path": final_url, "image_url": final_url})
+            return result.model_copy(update=update_dict)
         if isinstance(result, dict):
             merged = dict(result)
-            merged["image_path"] = final_url
-            merged["image_url"] = final_url
+            merged.update(update_dict)
             return merged
-        setattr(result, "image_path", final_url)
-        setattr(result, "image_url", final_url)
+        for k, v in update_dict.items():
+            setattr(result, k, v)
 
     return result
