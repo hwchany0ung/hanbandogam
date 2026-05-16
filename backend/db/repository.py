@@ -1,7 +1,10 @@
 import sqlite3
 from pathlib import Path
 
-from domain.types import CollectionAddRequest, CollectionItem, MapPoint
+try:
+    from backend.domain.types import CollectionAddRequest, CollectionItem, MapPoint
+except ImportError:
+    from domain.types import CollectionAddRequest, CollectionItem, MapPoint
 
 DB_PATH = Path(__file__).parent.parent / "hanbando.db"
 SCHEMA_PATH = Path(__file__).parent / "schema.sql"

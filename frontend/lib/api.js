@@ -1,14 +1,24 @@
-window.DEMO_MODE = true;
-var BASE_URL = "http://localhost:8000";
+window.DEMO_MODE = false;
+var BASE_URL = "";
 
 // ── 희귀도 맵 (korean_name → L/E/R/U/C) ─────────────────────
 var RARITY_MAP = {
-  "미선나무":"L","한라솜다리":"L","미호종개":"L","꼬치동자개":"L","따오기":"L",
+  // L (전설/멸종위기 1급)
+  "미선나무":"L","한라솜다리":"L","미호종개":"L","꼬치동자개":"L","따오기":"L","개느삼":"L",
+  // E (특산/지역한정)
   "구상나무":"E","반달가슴곰":"E","수달":"E","황새":"E","두루미":"E","금개구리":"E",
+  "가시딸기":"E",
+  // R (희귀/멸종위기 2급/한국 특산)
   "금강초롱꽃":"R","맹꽁이":"R","삵":"R","참수리":"R","수리부엉이":"R","분홍바늘꽃":"R",
-  "꽃사슴":"R","동강할미꽃":"R","노랑무늬붓꽃":"R","곰취":"R","고려엉겅퀴":"U",
-  "왜가리":"U","너구리":"U","고라니":"U","좀민들레":"U","은행나무":"U","진달래":"U",
+  "꽃사슴":"R","동강할미꽃":"R","노랑무늬붓꽃":"R","곰취":"R",
+  "노랑갈퀴":"R","가시복분자딸기":"R","각시서덜취":"R",
+  "노랑붓꽃":"R","나도승마":"R","금꿩의다리":"R",
+  // U (비범/지역흔함)
+  "갈퀴아재비":"U","고려엉겅퀴":"U","왜가리":"U","너구리":"U","고라니":"U",
+  "좀민들레":"U","은행나무":"U","진달래":"U","개족도리풀":"U",
+  // C (평범/외래종/흔함)
   "개나리":"C","철쭉":"C","무궁화":"C","소나무":"C","참나무":"C","황소개구리":"C",
+  "서양민들레":"C","돼지풀":"C","단풍잎돼지풀":"C","미국쑥부쟁이":"C","양미역취":"C","가시박":"C",
 };
 
 var RARITY_CONFIG = {
@@ -20,9 +30,9 @@ var RARITY_CONFIG = {
 };
 
 var NATIVE_CONFIG = {
-  "토종":   { bg:"rgba(231,245,236,0.95)", bd:"var(--U-bd)", color:"var(--native)", label:"🇰🇷 토종" },
-  "외래종": { bg:"rgba(254,231,231,0.95)", bd:"rgba(220,38,38,0.35)", color:"var(--invasive)", label:"🚨 외래종" },
-  "불명확": { bg:"rgba(239,241,244,0.95)", bd:"var(--C-bd)", color:"var(--ink-3)", label:"❓ 불명확" },
+  "토종":   { bg:"rgba(231,245,236,0.95)", bd:"var(--U-bd)", color:"var(--native)", label:"토종" },
+  "외래종": { bg:"rgba(254,231,231,0.95)", bd:"rgba(220,38,38,0.35)", color:"var(--invasive)", label:"외래종" },
+  "불명확": { bg:"rgba(239,241,244,0.95)", bd:"var(--C-bd)", color:"var(--ink-3)", label:"불명확" },
 };
 
 function getRarity(koreanName) {
@@ -99,11 +109,13 @@ var RARITY_POINTS = { L:500, E:300, R:150, U:75, C:25 };
 function getTotalPoints() {
   return parseInt(localStorage.getItem("hanbando_pts") || "0", 10);
 }
+
 function addPoints(pts) {
   var total = getTotalPoints() + pts;
   localStorage.setItem("hanbando_pts", String(total));
   return total;
 }
+
 function calcEarnedPoints(rarityKey, isNew) {
   var base = RARITY_POINTS[rarityKey] || 25;
   return isNew ? base * 2 : Math.round(base * 0.3);

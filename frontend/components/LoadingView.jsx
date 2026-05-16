@@ -5,7 +5,7 @@ function LoadingView() {
       <div style={{fontFamily:"'Noto Serif KR',serif",fontSize:"16px",fontWeight:"700",color:"var(--ink-1)"}}>Claude Vision 분석 중…</div>
       <div style={{fontFamily:"'Space Mono',monospace",fontSize:"9px",color:"var(--ink-3)",letterSpacing:"3px"}}>IDENTIFYING · CLAUDE-SONNET-4-6</div>
       <div style={{display:"inline-flex",alignItems:"center",gap:"5px",padding:"4px 10px",background:"var(--E-bg)",border:"1px solid var(--E-bd)",borderRadius:"20px",fontFamily:"'Space Mono',monospace",fontSize:"9px",color:"var(--E)",fontWeight:"700"}}>
-        ✦ AI POWERED
+        <Icon name="Sparkles" size={12} /> AI POWERED
       </div>
     </div>
   );

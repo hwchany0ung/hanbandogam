@@ -54,6 +54,9 @@ var ILLUSTRATION_MAP = {
   "돼지풀":         "/assets/illustrations/plant_104_돼지풀.png",
   "미국쑥부쟁이":   "/assets/illustrations/plant_105_미국쑥부쟁이.png",
   "양미역취":       "/assets/illustrations/plant_106_양미역취.png",
+  // Replicate flux-schnell 실시간 생성 (신규 발견 종)
+  "마삭줄":         "/assets/illustrations/마삭줄.png",
+  "산딸기":         "/assets/illustrations/산딸기.png",
   // SVG (기존 유지)
   "황소개구리":"/assets/illustrations/황소개구리.svg",
   "왜가리":"/assets/illustrations/왜가리.svg",
@@ -95,6 +98,95 @@ var STORY_MAP = {
 
 var FALLBACK = "/assets/illustrations/fallback.svg";
 
+// 도감에 없는 새 종은 자동으로 식물도감풍 일러스트 생성
+var RARITY_HEX    = { L:"#C99227", E:"#8B5CF6", R:"#2563EB", U:"#16A34A", C:"#6B7280" };
+var RARITY_BG_HEX = { L:"#FBF3DC", E:"#F3EDFE", R:"#E8F0FE", U:"#E7F5EC", C:"#EFF1F4" };
+
+function generateIllustration(name, rarity) {
+  var flower    = RARITY_HEX[rarity] || RARITY_HEX.C;
+  var paperBg   = "#FBF7EC";   // 한지 크림
+  var leafLight = "#9DB87A";   // 연한 잎
+  var leafDark  = "#6B8E4E";   // 진한 잎
+  var stem      = "#7A6549";   // 줄기 갈색
+  var ink       = "#5C5345";   // 잉크
+
+  // 종명 해시로 변이 (같은 종은 항상 같은 모양, 다른 종은 다른 모양)
+  var seed = 0;
+  for (var i = 0; i < (name||"").length; i++) seed = (seed * 31 + name.charCodeAt(i)) % 10000;
+  var flip       = (seed % 2) === 0 ? 1 : -1;
+  var stemBend   = ((seed >> 1) % 5) - 2;
+  var flowerYOff = ((seed >> 3) % 4);
+  var leafScale  = (1 + ((seed >> 5) % 3) * 0.08).toFixed(2);
+  var bendL      = 8 + ((seed >> 7) % 6);
+  var bendR      = 8 + ((seed >> 11) % 6);
+
+  var svg =
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">' +
+      // 한지 배경
+      '<rect width="100" height="100" fill="' + paperBg + '"/>' +
+      // 한지 텍스처 점
+      '<circle cx="14" cy="22" r="0.7" fill="#C8BDA8" opacity="0.45"/>' +
+      '<circle cx="85" cy="18" r="0.6" fill="#C8BDA8" opacity="0.4"/>' +
+      '<circle cx="20" cy="78" r="0.7" fill="#C8BDA8" opacity="0.4"/>' +
+      '<circle cx="82" cy="75" r="0.5" fill="#C8BDA8" opacity="0.45"/>' +
+      '<circle cx="48" cy="10" r="0.4" fill="#C8BDA8" opacity="0.4"/>' +
+      '<circle cx="10" cy="50" r="0.5" fill="#C8BDA8" opacity="0.35"/>' +
+      '<circle cx="92" cy="48" r="0.6" fill="#C8BDA8" opacity="0.4"/>' +
+      // 메인 줄기 (자연스러운 S 곡선)
+      '<path d="M50 92 Q ' + (48 + stemBend) + ' 72 ' + (52 + stemBend*flip) + ' 52 Q ' + (48 + stemBend) + ' 28 50 16" stroke="' + stem + '" stroke-width="1.5" fill="none" opacity="0.7" stroke-linecap="round"/>' +
+      // 좌측 분기 줄기
+      '<path d="M' + (49 + stemBend) + ' 62 Q 40 56 ' + (30 - bendL*0.3) + ' 47" stroke="' + stem + '" stroke-width="1" fill="none" opacity="0.55" stroke-linecap="round"/>' +
+      // 우측 분기 줄기
+      '<path d="M' + (51 + stemBend) + ' 47 Q 62 42 ' + (72 + bendR*0.3) + ' 32" stroke="' + stem + '" stroke-width="1" fill="none" opacity="0.55" stroke-linecap="round"/>' +
+      // 좌측 큰 잎 (분기 끝, 길쭉)
+      '<g transform="translate(' + (30 - bendL*0.3) + ' 47) rotate(-' + bendL + ')">' +
+        '<ellipse rx="' + (8.5*leafScale) + '" ry="' + (3.8*leafScale) + '" fill="' + leafLight + '" opacity="0.78"/>' +
+        '<line x1="-' + (7.5*leafScale) + '" y1="0" x2="' + (7.5*leafScale) + '" y2="0" stroke="' + leafDark + '" stroke-width="0.4" opacity="0.7"/>' +
+      '</g>' +
+      // 우측 큰 잎 (분기 끝)
+      '<g transform="translate(' + (72 + bendR*0.3) + ' 32) rotate(' + bendR + ')">' +
+        '<ellipse rx="' + (8.5*leafScale) + '" ry="' + (3.8*leafScale) + '" fill="' + leafLight + '" opacity="0.78"/>' +
+        '<line x1="-' + (7.5*leafScale) + '" y1="0" x2="' + (7.5*leafScale) + '" y2="0" stroke="' + leafDark + '" stroke-width="0.4" opacity="0.7"/>' +
+      '</g>' +
+      // 좌측 중간 잎
+      '<g transform="translate(38 56) rotate(-30)">' +
+        '<ellipse rx="6" ry="3" fill="' + leafLight + '" opacity="0.62"/>' +
+        '<line x1="-5" y1="0" x2="5" y2="0" stroke="' + leafDark + '" stroke-width="0.3" opacity="0.6"/>' +
+      '</g>' +
+      // 우측 중간 잎
+      '<g transform="translate(62 38) rotate(22)">' +
+        '<ellipse rx="6" ry="3" fill="' + leafLight + '" opacity="0.62"/>' +
+        '<line x1="-5" y1="0" x2="5" y2="0" stroke="' + leafDark + '" stroke-width="0.3" opacity="0.6"/>' +
+      '</g>' +
+      // 좌측 하단 작은 잎
+      '<g transform="translate(36 76) rotate(-42)">' +
+        '<ellipse rx="5" ry="2.5" fill="' + leafLight + '" opacity="0.55"/>' +
+      '</g>' +
+      // 우측 하단 작은 잎
+      '<g transform="translate(64 78) rotate(38)">' +
+        '<ellipse rx="5" ry="2.5" fill="' + leafLight + '" opacity="0.55"/>' +
+      '</g>' +
+      // 메인 꽃 (5장 꽃잎 + 노란 꽃술)
+      '<g transform="translate(50 ' + (16 + flowerYOff) + ')">' +
+        '<circle cx="-4" cy="-2" r="3.3" fill="' + flower + '" opacity="0.8"/>' +
+        '<circle cx="4" cy="-2" r="3.3" fill="' + flower + '" opacity="0.8"/>' +
+        '<circle cx="-3" cy="4" r="3.3" fill="' + flower + '" opacity="0.8"/>' +
+        '<circle cx="3" cy="4" r="3.3" fill="' + flower + '" opacity="0.8"/>' +
+        '<circle cx="0" cy="-5.5" r="3.3" fill="' + flower + '" opacity="0.8"/>' +
+        '<circle cx="0" cy="0" r="2.3" fill="#FCEEA8"/>' +
+      '</g>' +
+      // 좌측 분기 끝 작은 꽃
+      '<circle cx="' + (30 - bendL*0.3) + '" cy="47" r="2.6" fill="' + flower + '" opacity="0.68"/>' +
+      '<circle cx="' + (30 - bendL*0.3) + '" cy="47" r="1.2" fill="#FCEEA8"/>' +
+      // 우측 분기 끝 작은 꽃
+      '<circle cx="' + (72 + bendR*0.3) + '" cy="32" r="2.6" fill="' + flower + '" opacity="0.68"/>' +
+      '<circle cx="' + (72 + bendR*0.3) + '" cy="32" r="1.2" fill="#FCEEA8"/>' +
+      // 종명 라벨
+      '<text x="50" y="97" text-anchor="middle" font-family="Noto Serif KR, serif" font-size="5" font-weight="600" fill="' + ink + '" opacity="0.85">' + (name||"") + '</text>' +
+    '</svg>';
+  return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+}
+
 function CollectionCard({ item, onDelete }) {
   var [zoomed,       setZoomed]       = React.useState(false);
   var [showPhoto,    setShowPhoto]    = React.useState(false);
@@ -108,13 +200,14 @@ function CollectionCard({ item, onDelete }) {
   var rc = RARITY_CONFIG[rarity];
   var nc = NATIVE_CONFIG[item.native_status] || NATIVE_CONFIG["불명확"];
 
-  var illustSrc = illustErr ? FALLBACK : (ILLUSTRATION_MAP[item.korean_name] || FALLBACK);
+  var autoIllust = generateIllustration(item.korean_name, rarity);
+  var illustSrc = illustErr ? autoIllust : (ILLUSTRATION_MAP[item.korean_name] || autoIllust);
   var realPhotoSrc = REAL_PHOTO_MAP[item.korean_name] || null;
   var isIllustPath = item.image_path && item.image_path.startsWith("/assets/illustrations/");
   var hasUserPhoto  = item.image_path && !isIllustPath;
-  var userSrc = hasUserPhoto ? (photoErr ? FALLBACK : item.image_path) : null;
+  var userSrc = hasUserPhoto ? (photoErr ? null : item.image_path) : null;
 
-  // 우선순위: 사용자 직접 업로드 > 실제 사진(REAL_PHOTO_MAP) > 수묵 일러스트
+  // 우선순위: 사용자 직접 업로드 > 실제 사진 > 수묵 일러스트
   var displaySrc = (showPhoto && hasUserPhoto) ? userSrc : (realPhotoSrc || illustSrc);
 
   var story = STORY_MAP[item.korean_name] || item.ecology_summary;
@@ -144,7 +237,7 @@ function CollectionCard({ item, onDelete }) {
       }).then(function(){ setSharing(false); }).catch(function(){ setSharing(false); });
     } else if (navigator.clipboard) {
       navigator.clipboard.writeText(fullText).then(function(){
-        alert("📋 링크가 복사됐어요!\n카톡·문자에 붙여넣으면 미리보기가 나타나요");
+        alert("링크가 복사됐어요!\n카톡·문자에 붙여넣으면 미리보기가 나타나요");
       }).catch(function(){ alert(fullText); });
     } else {
       alert(fullText);
@@ -181,14 +274,14 @@ function CollectionCard({ item, onDelete }) {
 
             {/* 희귀도 배지 */}
             <div style={{position:"absolute",top:"12px",left:"12px",padding:"4px 10px",borderRadius:"20px",fontFamily:"'Space Mono',monospace",fontSize:"9px",fontWeight:"700",letterSpacing:"1px",background:rc.bg,border:`1px solid ${rc.bd}`,color:rc.color}}>
-              ★ {rc.label}
+              <span style={{display:"inline-flex",alignItems:"center",gap:"5px"}}><Icon name="Star" size={10} strokeWidth={2.4} /> {rc.label}</span>
             </div>
 
             {/* 닫기 */}
             <button
               onClick={() => setZoomed(false)}
               style={{position:"absolute",top:"10px",right:"10px",width:"28px",height:"28px",borderRadius:"50%",background:"rgba(0,0,0,0.35)",border:"none",color:"#fff",fontSize:"14px",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}
-            >✕</button>
+            ><Icon name="X" size={15} /></button>
 
             {/* 사진 전환 토글 (사용자 사진 있을 때만) */}
             {hasUserPhoto && (
@@ -225,7 +318,7 @@ function CollectionCard({ item, onDelete }) {
               /* 이야기 */
               <div>
                 <div style={{fontSize:"14px",lineHeight:"1.85",color:"var(--ink-1)",fontFamily:"'Noto Serif KR',serif",letterSpacing:"-0.01em"}}>{story}</div>
-                <div style={{marginTop:"14px",fontSize:"10px",color:"var(--ink-3)",textAlign:"right"}}>탭하면 상세정보 →</div>
+                <div style={{marginTop:"14px",fontSize:"10px",color:"var(--ink-3)",display:"flex",alignItems:"center",justifyContent:"flex-end",gap:"4px"}}>탭하면 상세정보 <Icon name="ArrowRight" size={12} /></div>
               </div>
             ) : (
               /* 상세정보 */
@@ -239,7 +332,7 @@ function CollectionCard({ item, onDelete }) {
                     {item.district && <div><span style={{fontWeight:"700",color:"var(--ink-1)"}}>발견지</span><br/><span style={{color:"var(--ink-3)"}}>{item.district}</span></div>}
                   </div>
                 </div>
-                <div style={{marginTop:"8px",fontSize:"10px",color:"var(--ink-3)",textAlign:"right"}}>← 탭하면 이야기</div>
+                <div style={{marginTop:"8px",fontSize:"10px",color:"var(--ink-3)",display:"flex",alignItems:"center",justifyContent:"flex-end",gap:"4px"}}><Icon name="ArrowLeft" size={12} /> 탭하면 이야기</div>
               </div>
             )}
           </div>
@@ -248,7 +341,7 @@ function CollectionCard({ item, onDelete }) {
           <div style={{borderTop:"1px solid rgba(45,30,10,0.06)",padding:"12px 20px 14px"}}>
             {/* 보유 희귀도 표시 */}
             <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:"8px",marginBottom:"10px",padding:"8px 14px",borderRadius:"12px",background:rc.bg,border:`1px solid ${rc.bd}`}}>
-              <span style={{fontFamily:"'Space Mono',monospace",fontSize:"11px",fontWeight:"700",color:rc.color}}>★ {rc.label}</span>
+              <span style={{fontFamily:"'Space Mono',monospace",fontSize:"11px",fontWeight:"700",color:rc.color,display:"inline-flex",alignItems:"center",gap:"5px"}}><Icon name="Star" size={11} strokeWidth={2.4} /> {rc.label}</span>
               <span style={{fontSize:"11px",color:"rgba(45,30,10,0.2)"}}>|</span>
               <span style={{fontFamily:"'Space Mono',monospace",fontSize:"13px",fontWeight:"700",color:rc.color}}>상위 {RARITY_OWNERSHIP_PCT[rarity]}%</span>
               <span style={{fontSize:"10px",color:"var(--ink-3)"}}>만 보유</span>
@@ -258,7 +351,8 @@ function CollectionCard({ item, onDelete }) {
               disabled={sharing}
               style={{width:"100%",padding:"11px",borderRadius:"12px",border:`1.5px solid ${rc.bd}`,background:sharing?"rgba(45,30,10,0.06)":rc.bg,color:sharing?"var(--ink-3)":rc.color,fontFamily:"'Black Han Sans',sans-serif",fontSize:"15px",letterSpacing:"2px",cursor:sharing?"default":"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:"8px",transition:"all 0.2s"}}
             >
-              <span>{sharing?"⏳":"📤"}</span><span>{sharing?"캡처 중…":"자랑하기"}</span>
+              {sharing ? <Icon name="LoaderCircle" size={16} /> : <Icon name="Share2" size={16} />}
+              <span>{sharing?"캡처 중…":"자랑하기"}</span>
             </button>
           </div>
         </div>

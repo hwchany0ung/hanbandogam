@@ -170,10 +170,6 @@
       0%,100% { box-shadow:0 0 0px rgba(255,255,255,0); }
       50%      { box-shadow:0 0 24px rgba(255,255,255,0.5); }
     }
-    @keyframes slide-down-pts {
-      from { transform:translateY(-20px); opacity:0; }
-      to   { transform:translateY(0); opacity:1; }
-    }
     @keyframes pts-pop {
       0%   { transform:scale(0.4) translateY(8px); opacity:0; }
       65%  { transform:scale(1.12) translateY(-4px); opacity:1; }
@@ -183,6 +179,19 @@
       0%   { transform:translate(-50%,-50%) scale(1.2); opacity:1; }
       100% { transform:translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(0); opacity:0; }
     }
+    @keyframes slide-down-pts {
+      from { transform:translateY(-20px); opacity:0; }
+      to   { transform:translateY(0); opacity:1; }
+    }
+
+    .lucide-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 0;
+      flex-shrink: 0;
+    }
+    .lucide-icon svg { display:block; }
   </style>
 </head>
 <body>
@@ -195,6 +204,28 @@
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://unpkg.com/lucide@1.16.0/dist/umd/lucide.js"></script>
+  <script>
+    function Icon(props) {
+      props = props || {};
+      var name = props.name;
+      var iconNode = window.lucide && (window.lucide[name] || (window.lucide.icons && window.lucide.icons[name]));
+      if (!iconNode || !window.React) return null;
+
+      var svg = window.lucide.createElement(iconNode, {
+        width: props.size || 18,
+        height: props.size || 18,
+        "stroke-width": props.strokeWidth || 2,
+      });
+      svg.setAttribute("aria-hidden", "true");
+
+      return React.createElement("span", {
+        className: "lucide-icon" + (props.className ? " " + props.className : ""),
+        style: props.style,
+        dangerouslySetInnerHTML: { __html: svg.outerHTML },
+      });
+    }
+  </script>
 
   <script type="text/babel" src="lib/api.js"></script>
   <script type="text/babel" src="components/CollectionCard.jsx"></script>

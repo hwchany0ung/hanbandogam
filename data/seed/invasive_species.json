@@ -1,0 +1,329 @@
+{
+  "_meta": {
+    "source": "환경부 생태계교란 생물 지정 고시 (제2024-212호, 2024-10-31) + 일반 귀화식물",
+    "note": "한국에 정착한 대표적 외래종/귀화식물. 토종 시드와 비교 대조용. 본선 데모 시 토종 vs 외래 구분 시연에 활용.",
+    "extracted_at": "2026-05-04",
+    "total_count": 12
+  },
+  "species": [
+    {
+      "id": 101,
+      "korean_name": "서양민들레",
+      "scientific_name": "Taraxacum officinale",
+      "family": "국화과 (Asteraceae)",
+      "native_status": "외래종",
+      "category": "식물",
+      "origin": "유럽",
+      "ecology_summary": "유럽 원산 귀화식물. 도시 길가·잔디밭 등에서 흔히 보이며 한국 토종 민들레(좀민들레, 흰민들레)를 압도하고 있다.",
+      "distinguishing_feature": "총포(꽃받침) 외편이 뒤로 젖혀짐. 토종은 곧게 서 있음.",
+      "is_invasive": false,
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 102,
+      "korean_name": "가시박",
+      "scientific_name": "Sicyos angulatus",
+      "family": "박과 (Cucurbitaceae)",
+      "native_status": "외래종",
+      "category": "식물",
+      "origin": "북아메리카",
+      "ecology_summary": "환경부 생태계교란 생물. 강가·하천 변에서 다른 식물을 덮어 죽일 정도로 번성. 1년생 덩굴식물.",
+      "is_invasive": true,
+      "conservation_status": "해당없음",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 103,
+      "korean_name": "단풍잎돼지풀",
+      "scientific_name": "Ambrosia trifida",
+      "family": "국화과 (Asteraceae)",
+      "native_status": "외래종",
+      "category": "식물",
+      "origin": "북아메리카",
+      "ecology_summary": "환경부 생태계교란 생물. 키 1~3m로 자라며 강한 알레르기 유발 꽃가루 배출. 농경지·하천변 잠식.",
+      "is_invasive": true,
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 104,
+      "korean_name": "돼지풀",
+      "scientific_name": "Ambrosia artemisiifolia",
+      "family": "국화과 (Asteraceae)",
+      "native_status": "외래종",
+      "category": "식물",
+      "origin": "북아메리카",
+      "ecology_summary": "환경부 생태계교란 생물. 단풍잎돼지풀과 함께 알레르기 주범. 길가·공터에 흔히 자란다.",
+      "is_invasive": true,
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 105,
+      "korean_name": "미국쑥부쟁이",
+      "scientific_name": "Symphyotrichum pilosum",
+      "family": "국화과 (Asteraceae)",
+      "native_status": "외래종",
+      "category": "식물",
+      "origin": "북아메리카",
+      "ecology_summary": "환경부 생태계교란 생물. 9~10월 흰 꽃이 피며 한국 토종 쑥부쟁이류와 경쟁.",
+      "is_invasive": true,
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        9,
+        10
+      ]
+    },
+    {
+      "id": 106,
+      "korean_name": "양미역취",
+      "scientific_name": "Solidago altissima",
+      "family": "국화과 (Asteraceae)",
+      "native_status": "외래종",
+      "category": "식물",
+      "origin": "북아메리카",
+      "ecology_summary": "환경부 생태계교란 생물. 9~10월 노란 원추꽃차례. 강한 번식력으로 빈터 점령.",
+      "is_invasive": true,
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        9,
+        10
+      ]
+    },
+    {
+      "id": 107,
+      "korean_name": "가시상추",
+      "scientific_name": "Lactuca scariola",
+      "family": "국화과 (Asteraceae)",
+      "native_status": "외래종",
+      "category": "식물",
+      "origin": "유럽·서아시아",
+      "ecology_summary": "환경부 생태계교란 생물. 길가·공터에 흔하며 잎 가장자리에 가시가 있다.",
+      "is_invasive": true,
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 108,
+      "korean_name": "도깨비가지",
+      "scientific_name": "Solanum carolinense",
+      "family": "가지과 (Solanaceae)",
+      "native_status": "외래종",
+      "category": "식물",
+      "origin": "북아메리카",
+      "ecology_summary": "환경부 생태계교란 생물. 줄기와 잎에 가시가 있고, 농경지에서 번성하며 토양 점유.",
+      "is_invasive": true,
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 109,
+      "korean_name": "망초",
+      "scientific_name": "Conyza canadensis",
+      "family": "국화과 (Asteraceae)",
+      "native_status": "외래종",
+      "category": "식물",
+      "origin": "북아메리카",
+      "ecology_summary": "오래된 귀화식물. 빈터·공터·밭둑 등 도시 변두리에 흔하다. 7~9월 작은 흰꽃이 핀다.",
+      "is_invasive": false,
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        7,
+        8,
+        9
+      ]
+    },
+    {
+      "id": 110,
+      "korean_name": "개망초",
+      "scientific_name": "Erigeron annuus",
+      "family": "국화과 (Asteraceae)",
+      "native_status": "외래종",
+      "category": "식물",
+      "origin": "북아메리카",
+      "ecology_summary": "북아메리카 원산 귀화식물. 5~7월 흰색 또는 연분홍색 꽃이 핀다. 들판·길가 흔하다.",
+      "is_invasive": false,
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": 111,
+      "korean_name": "토끼풀",
+      "scientific_name": "Trifolium repens",
+      "family": "콩과 (Fabaceae)",
+      "native_status": "외래종",
+      "category": "식물",
+      "origin": "유럽",
+      "ecology_summary": "유럽 원산 귀화식물. 잔디밭·공원에 흔하며 흰색 둥근 꽃이 5~10월에 핀다. 네잎클로버로 알려져 있다.",
+      "is_invasive": false,
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 112,
+      "korean_name": "환삼덩굴",
+      "scientific_name": "Humulus japonicus",
+      "family": "삼과 (Cannabaceae)",
+      "native_status": "외래종",
+      "category": "식물",
+      "origin": "동아시아 (일부 지역에서 침입종 분류)",
+      "ecology_summary": "환경부 생태계교란 생물. 줄기와 잎에 가시가 있고 빠르게 다른 식물을 덮어 죽인다. 알레르기 유발.",
+      "is_invasive": true,
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    }
+  ]
+}

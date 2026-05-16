@@ -1,8 +1,14 @@
 from fastapi import APIRouter, HTTPException, status
 
-from db import repository
-from domain.types import CollectionAddRequest, CollectionItem, MapPoint
-from services.geocode import reverse_geocode
+try:
+    from backend.db import repository
+    from backend.domain.types import CollectionAddRequest, CollectionItem, MapPoint
+    from backend.services.geocode import reverse_geocode
+except ImportError:
+    from db import repository
+    from domain.types import CollectionAddRequest, CollectionItem, MapPoint
+    from services.geocode import reverse_geocode
+
 
 router = APIRouter(prefix="/api/collection", tags=["collection"])
 
@@ -35,4 +41,9 @@ def get_item(item_id: int):
 
 @router.delete("/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_item(item_id: int):
+    try:
+        repository.get_by_id(item_id)
+    except KeyError:
+        raise HTTPException(status_code=404, detail="item not found")
+
     repository.delete_by_id(item_id)

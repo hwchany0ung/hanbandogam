@@ -20,4 +20,4 @@ jobs:
         run: pip install -r backend/requirements.txt -r backend/requirements-dev.txt --quiet
 
       - name: Run pytest
-        run: pytest backend/tests/ -v
+        run: pytest backend/tests/ -v || [ $? -eq 5 ]

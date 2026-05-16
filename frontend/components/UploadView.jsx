@@ -1,18 +1,18 @@
 var DAILY_MISSIONS = [
-  { icon:"🌿", title:"흰초록 조화를 발견하라!", sub:"흰색과 초록색이 공존하는 식물을 찾아보세요" },
-  { icon:"🌼", title:"길가의 들꽃을 찾아라!",   sub:"길가에서 발견한 들꽃을 촬영해보세요" },
-  { icon:"🌳", title:"공원의 나무를 탐색하라!", sub:"가장 가까운 공원에서 나무를 찾아보세요" },
-  { icon:"🌻", title:"노란 꽃을 발견하라!",     sub:"노란색 꽃이 피어있는 식물을 찍어보세요" },
-  { icon:"🍃", title:"독특한 잎을 찾아라!",     sub:"잎 모양이 독특한 식물을 발견해보세요" },
-  { icon:"💧", title:"물가 생물을 탐색하라!",   sub:"물가 주변의 생물을 촬영해보세요" },
-  { icon:"🌲", title:"산속의 식물을 찾아라!",   sub:"산이나 숲에서 특이한 식물을 탐색해보세요" },
-  { icon:"💜", title:"보라 꽃을 발견하라!",     sub:"자주색 또는 보라색 꽃을 찾아보세요" },
-  { icon:"🌵", title:"가시 식물을 찾아라!",     sub:"줄기나 가시가 특이한 식물을 촬영해보세요" },
-  { icon:"🍀", title:"잎의 아름다움을 담아라!", sub:"꽃보다 잎이 인상적인 식물을 탐색해보세요" },
-  { icon:"🍎", title:"빨간 열매를 발견하라!",   sub:"빨간 열매를 맺은 식물을 찾아보세요" },
-  { icon:"🔍", title:"미지의 식물을 만나라!",   sub:"이름을 모르는 식물을 사진으로 찍어보세요" },
-  { icon:"🌿", title:"넓은 잎을 찾아라!",       sub:"넓은 잎사귀를 가진 식물을 발견해보세요" },
-  { icon:"🪨", title:"바위틈 생명을 찾아라!",   sub:"돌이나 바위 틈에서 자라는 식물을 발견해보세요" },
+  { icon:"Leaf", title:"흰초록 조화를 발견하라!", sub:"흰색과 초록색이 공존하는 식물을 찾아보세요" },
+  { icon:"Flower2", title:"길가의 들꽃을 찾아라!",   sub:"길가에서 발견한 들꽃을 촬영해보세요" },
+  { icon:"TreeDeciduous", title:"공원의 나무를 탐색하라!", sub:"가장 가까운 공원에서 나무를 찾아보세요" },
+  { icon:"Flower", title:"노란 꽃을 발견하라!",     sub:"노란색 꽃이 피어있는 식물을 찍어보세요" },
+  { icon:"Leaf", title:"독특한 잎을 찾아라!",     sub:"잎 모양이 독특한 식물을 발견해보세요" },
+  { icon:"Droplets", title:"물가 생물을 탐색하라!",   sub:"물가 주변의 생물을 촬영해보세요" },
+  { icon:"Trees", title:"산속의 식물을 찾아라!",   sub:"산이나 숲에서 특이한 식물을 탐색해보세요" },
+  { icon:"Flower2", title:"보라 꽃을 발견하라!",     sub:"자주색 또는 보라색 꽃을 찾아보세요" },
+  { icon:"Sprout", title:"가시 식물을 찾아라!",     sub:"줄기나 가시가 특이한 식물을 촬영해보세요" },
+  { icon:"Leaf", title:"잎의 아름다움을 담아라!", sub:"꽃보다 잎이 인상적인 식물을 탐색해보세요" },
+  { icon:"Flower", title:"빨간 열매를 발견하라!",   sub:"빨간 열매를 맺은 식물을 찾아보세요" },
+  { icon:"Search", title:"미지의 식물을 만나라!",   sub:"이름을 모르는 식물을 사진으로 찍어보세요" },
+  { icon:"Leaf", title:"넓은 잎을 찾아라!",       sub:"넓은 잎사귀를 가진 식물을 발견해보세요" },
+  { icon:"Mountain", title:"바위틈 생명을 찾아라!",   sub:"돌이나 바위 틈에서 자라는 식물을 발견해보세요" },
 ];
 
 function UploadView({ onUpload, onDemoCapture, collectionCount, missionCompleted }) {
@@ -71,7 +71,7 @@ function UploadView({ onUpload, onDemoCapture, collectionCount, missionCompleted
           <div className="ring ring-1"/><div className="ring ring-2"/><div className="ring ring-3"/>
           <div className="aperture-core" style={{opacity:dragging?0.7:1}}>
             <div className="scan-bar"/>
-            <div style={{fontSize:"36px"}}>🔭</div>
+            <Icon name="ScanSearch" size={36} strokeWidth={1.8} style={{color:"var(--ink-2)"}} />
             <div style={{fontFamily:"'Space Mono',monospace",fontSize:"8px",color:"var(--ink-3)",letterSpacing:"2px"}}>TAP TO SCAN</div>
           </div>
         </div>
@@ -94,49 +94,40 @@ function UploadView({ onUpload, onDemoCapture, collectionCount, missionCompleted
             transition: "all 0.4s",
           }}
         >
-          <div style={{fontSize:"30px",flexShrink:0,lineHeight:1}}>{mission.icon}</div>
+          <div style={{width:"36px",height:"36px",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,background:missionCompleted?"rgba(22,163,74,0.10)":"var(--gold-dim)",color:missionCompleted?"var(--native)":"var(--gold)"}}>
+            <Icon name={mission.icon} size={20} strokeWidth={1.9} />
+          </div>
 
           <div style={{flex:1,minWidth:0}}>
             <div style={{fontFamily:"'Space Mono',monospace",fontSize:"9px",fontWeight:"700",letterSpacing:"1.5px",color:missionCompleted?"var(--native)":"var(--gold)",marginBottom:"3px"}}>
-              {missionCompleted ? "✓ 오늘의 미션 완료" : "오늘의 탐사 미션"}
+              {missionCompleted ? "오늘의 미션 완료" : "오늘의 탐사 미션"}
             </div>
             <div style={{fontFamily:"'Noto Serif KR',serif",fontSize:"15px",fontWeight:"800",color:"var(--ink-1)",lineHeight:1.25,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>
-              {missionCompleted ? "🎉 미션 달성!" : mission.title}
+              {missionCompleted ? "미션 달성!" : mission.title}
             </div>
             <div style={{fontSize:"11px",color:"var(--ink-3)",marginTop:"2px",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>
               {mission.sub}
             </div>
           </div>
 
-          <div style={{fontSize:"18px",color:missionCompleted?"var(--native)":"var(--ink-3)",flexShrink:0,fontWeight:"300"}}>→</div>
-        </div>
-      </div>
-
-      {/* 산책 미션 */}
-      <div className="mx-5 mt-2 relative" style={{zIndex:2}}>
-        <div className="flex items-center gap-3 px-4 py-3 rounded-xl" style={{background:"var(--surface)",border:"1px solid rgba(45,30,10,0.06)",boxShadow:"0 2px 10px rgba(45,30,10,0.06)"}}>
-          <span style={{fontSize:"26px",flexShrink:0}}>🚶</span>
-          <div style={{flex:1}}>
-            <div style={{fontFamily:"'Space Mono',monospace",fontSize:"8px",color:"var(--gold)",letterSpacing:"2px",fontWeight:"700",marginBottom:"3px"}}>오늘의 산책 미션</div>
-            <div style={{fontSize:"13px",fontWeight:"700",color:"var(--ink-1)"}}>2,000보 산책하기</div>
-            <div style={{fontSize:"11px",color:"var(--ink-2)",marginTop:"2px"}}>산책하며 생물을 발견하세요</div>
+          <div style={{color:missionCompleted?"var(--native)":"var(--ink-3)",flexShrink:0,lineHeight:0}}>
+            <Icon name={missionCompleted ? "BadgeCheck" : "ArrowRight"} size={18} strokeWidth={2} />
           </div>
-          <div style={{fontFamily:"'Space Mono',monospace",fontSize:"11px",color:"var(--ink-3)",fontWeight:"700",flexShrink:0}}>0 / 2000</div>
         </div>
       </div>
 
       {/* 카메라 버튼 */}
       <div className="px-6 mt-4 flex flex-col gap-3 relative" style={{zIndex:2}}>
         <button
-          onClick={function(){ inputRef.current.click(); }}
+          onClick={() => onDemoCapture ? onDemoCapture() : inputRef.current.click()}
           className="btn-shine w-full py-4 rounded-xl flex items-center justify-center gap-3"
           style={{background:"linear-gradient(135deg,var(--ink-1),#2C261B)",color:"#FBF7EC",fontFamily:"'Black Han Sans',sans-serif",fontSize:"15px",letterSpacing:"3px",boxShadow:"0 8px 24px rgba(45,30,10,0.25)",border:"none"}}
         >
-          📷&nbsp;&nbsp;카메라로 촬영
+          <Icon name="Camera" size={18} strokeWidth={2.3} /> <span>카메라로 촬영</span>
         </button>
       </div>
 
-      <input ref={inputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={function(e){ handleFile(e.target.files[0]); }}/>
+      <input ref={inputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={e=>handleFile(e.target.files[0])}/>
     </div>
   );
 }

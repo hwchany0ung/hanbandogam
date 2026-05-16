@@ -1,5 +1,6 @@
-function ResultCard({ result, imageFile, onRetry, onCollection }) {
-  var [reported, setReported] = React.useState(false);
+function ResultCard({ result, imageFile, onSave, onRetry, onCollection }) {
+  var [saving, setSaving] = React.useState(false);
+  var [saved,  setSaved]  = React.useState(false);
   var previewUrl = imageFile ? URL.createObjectURL(imageFile) : (result.image_path || null);
 
   var rarity = getRarity(result.korean_name);
@@ -8,15 +9,31 @@ function ResultCard({ result, imageFile, onRetry, onCollection }) {
   var pct = Math.round(result.confidence * 100);
   var morphTags = result.morphological_clues ? result.morphological_clues.split(/[,，、]+/).map(s=>s.trim()).filter(Boolean) : [];
 
+  // 식별 불가 판정 (해당 없음 / N/A / 빈 결과 → 저장 차단)
+  var notIdentified =
+    !result.korean_name ||
+    result.korean_name === "해당 없음" ||
+    result.korean_name === "N/A" ||
+    result.scientific_name === "N/A" ||
+    result.confidence < 0.3;
+
+  async function handleSave() {
+    if (saved || notIdentified) return;
+    setSaving(true);
+    try { await addToCollection(result, previewUrl||""); setSaved(true); if (onSave) onSave(); }
+    catch(e) { alert("저장 실패: "+e.message); }
+    finally { setSaving(false); }
+  }
+
   return (
     <div className="flex flex-col flex-1" style={{background:"var(--paper)",minHeight:0}}>
       {/* 스크롤 영역 */}
       <div className="flex-1 overflow-y-auto" style={{minHeight:0}}>
         {/* 탑바 */}
         <div className="flex items-center gap-3 px-4 pt-4 pb-3">
-          <button onClick={onRetry} style={{width:"36px",height:"36px",borderRadius:"50%",background:"var(--surface)",border:"1px solid var(--gold-bd)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"16px",color:"var(--ink-1)",boxShadow:"0 2px 6px rgba(45,30,10,0.06)",flexShrink:0,cursor:"pointer"}}>←</button>
+          <button onClick={onRetry} style={{width:"36px",height:"36px",borderRadius:"50%",background:"var(--surface)",border:"1px solid var(--gold-bd)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"16px",color:"var(--ink-1)",boxShadow:"0 2px 6px rgba(45,30,10,0.06)",flexShrink:0,cursor:"pointer"}}><Icon name="ArrowLeft" size={17} /></button>
           <div style={{fontSize:"13px",color:"var(--ink-2)",fontWeight:"500"}}>AI 판별 결과</div>
-          <div style={{marginLeft:"auto",display:"inline-flex",alignItems:"center",gap:"5px",padding:"4px 10px",background:"var(--E-bg)",border:"1px solid var(--E-bd)",borderRadius:"20px",fontFamily:"'Space Mono',monospace",fontSize:"9px",color:"var(--E)",fontWeight:"700"}}>✦ CLAUDE</div>
+          <div style={{marginLeft:"auto",display:"inline-flex",alignItems:"center",gap:"5px",padding:"4px 10px",background:"var(--E-bg)",border:"1px solid var(--E-bd)",borderRadius:"20px",fontFamily:"'Space Mono',monospace",fontSize:"9px",color:"var(--E)",fontWeight:"700"}}><Icon name="Sparkles" size={12} /> CLAUDE</div>
         </div>
 
         {/* 카드 */}
@@ -26,12 +43,12 @@ function ResultCard({ result, imageFile, onRetry, onCollection }) {
           <div style={{height:"300px",position:"relative",overflow:"hidden",background:"linear-gradient(145deg,#F4EDDC,#FAF5E6)"}}>
             {previewUrl
               ? <img src={previewUrl} alt="업로드" style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}}/>
-              : <div className="flex items-center justify-center h-full" style={{fontSize:"48px"}}>🌿</div>
+              : <div className="flex items-center justify-center h-full" style={{color:"var(--U)"}}><Icon name="Sprout" size={48} strokeWidth={1.6} /></div>
             }
             <div className="holo"/>
             {/* 희귀도 배지 */}
             <div style={{position:"absolute",top:"12px",left:"12px",padding:"5px 12px",borderRadius:"20px",fontFamily:"'Space Mono',monospace",fontSize:"10px",fontWeight:"700",letterSpacing:"1.5px",background:rc.bg,border:`1px solid ${rc.bd}`,color:rc.color,backdropFilter:"blur(8px)"}}>
-              ★ {rc.label}
+              <span style={{display:"inline-flex",alignItems:"center",gap:"5px"}}><Icon name="Star" size={11} strokeWidth={2.4} /> {rc.label}</span>
             </div>
             {/* 토종 배지 */}
             <div style={{position:"absolute",top:"12px",right:"12px",padding:"5px 11px",borderRadius:"20px",fontSize:"11px",fontWeight:"600",background:nc.bg,border:`1px solid ${nc.bd}`,color:nc.color,backdropFilter:"blur(8px)"}}>
@@ -75,19 +92,47 @@ function ResultCard({ result, imageFile, onRetry, onCollection }) {
         </div>
       </div>
 
-      {/* 하단 고정 바 */}
-      <div style={{flexShrink:0,padding:"10px 16px 14px",background:"var(--paper)",borderTop:"1px solid rgba(45,30,10,0.06)",boxShadow:"0 -4px 14px rgba(45,30,10,0.04)",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-        <div style={{display:"inline-flex",alignItems:"center",gap:"6px",padding:"6px 14px",borderRadius:"20px",background:"rgba(22,163,74,0.08)",border:"1px solid rgba(22,163,74,0.25)"}}>
-          <span style={{color:"var(--native)",fontSize:"12px"}}>✓</span>
-          <span style={{fontFamily:"'Space Mono',monospace",fontSize:"10px",fontWeight:"700",color:"var(--native)"}}>자동 저장됨</span>
-        </div>
-        <div style={{display:"flex",gap:"12px",alignItems:"center"}}>
-          <button onClick={onCollection} style={{fontSize:"12px",color:"var(--gold)",textDecoration:"underline",background:"none",border:"none",cursor:"pointer"}}>내 도감 →</button>
-          {reported
-            ? <span style={{fontSize:"11px",color:"var(--ink-3)"}}>신고 접수됨</span>
-            : <button onClick={function(){setReported(true);}} style={{fontSize:"11px",color:"var(--ink-3)",textDecoration:"underline",background:"none",border:"none",cursor:"pointer"}}>틀렸나요?</button>
+      {/* 고정 저장 버튼 (하단 sticky) */}
+      <div style={{flexShrink:0,padding:"10px 16px 14px",background:"var(--paper)",borderTop:"1px solid rgba(45,30,10,0.06)",boxShadow:"0 -4px 14px rgba(45,30,10,0.04)"}}>
+        {notIdentified && (
+          <div style={{marginBottom:"8px",padding:"8px 12px",borderRadius:"8px",background:"rgba(220,38,38,0.06)",border:"1px solid rgba(220,38,38,0.18)",fontSize:"11px",color:"var(--invasive)",textAlign:"center"}}>
+            <span style={{display:"inline-flex",alignItems:"center",justifyContent:"center",gap:"6px"}}><Icon name="TriangleAlert" size={13} /> 한국 토종 생물이 아닙니다 · 도감에 저장할 수 없어요</span>
+          </div>
+        )}
+        <button
+          onClick={handleSave}
+          disabled={saving||saved||notIdentified}
+          className={notIdentified?"":"btn-shine"}
+          style={{
+            width:"100%",
+            padding:"14px 0",
+            borderRadius:"12px",
+            border:"none",
+            background:notIdentified?"rgba(45,30,10,0.08)":saved?"var(--ink-3)":"linear-gradient(135deg,#1D4ED8,var(--R))",
+            color:notIdentified?"var(--ink-3)":"#fff",
+            fontFamily:"'Black Han Sans',sans-serif",
+            fontSize:"15px",
+            letterSpacing:"3px",
+            cursor:(saved||notIdentified)?"not-allowed":"pointer",
+            boxShadow:(saved||notIdentified)?"none":"0 6px 20px rgba(37,99,235,0.3)",
+            opacity:notIdentified?0.7:1
+          }}
+        >
+          {notIdentified
+            ? <span style={{display:"inline-flex",alignItems:"center",justifyContent:"center",gap:"8px"}}><Icon name="XCircle" size={17} /> 도감 추가 불가</span>
+            : saved
+              ? <span style={{display:"inline-flex",alignItems:"center",justifyContent:"center",gap:"8px"}}><Icon name="Check" size={17} strokeWidth={2.5} /> 도감에 저장됨</span>
+              : saving
+                ? "저장 중…"
+                : <span style={{display:"inline-flex",alignItems:"center",justifyContent:"center",gap:"8px"}}><Icon name="BookOpen" size={17} strokeWidth={2.4} /> 도감에 추가! +1</span>
           }
-        </div>
+        </button>
+
+        {saved && (
+          <button onClick={onCollection} style={{display:"flex",alignItems:"center",justifyContent:"center",gap:"5px",width:"100%",textAlign:"center",marginTop:"8px",fontSize:"13px",color:"var(--gold)",textDecoration:"underline",background:"none",border:"none",cursor:"pointer"}}>
+            내 도감 보기 <Icon name="ArrowRight" size={14} />
+          </button>
+        )}
       </div>
     </div>
   );
