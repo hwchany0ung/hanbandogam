@@ -255,7 +255,7 @@ function CollectionCard({ item, onDelete, isNew, onSeen }) {
     var ownerPct = RARITY_OWNERSHIP_PCT[rarity];
     var shareUrl = window.location.origin + "/share/" + encodeURIComponent(item.korean_name);
     var promo = item.korean_name + " (" + rc.label + ") 발견!\n전국민 중 상위 " + ownerPct + "%만 보유한 카드\n#한반도감 #한국토종생물";
-    var fullText = promo + "\n\n" + shareUrl;
+    var fullText = promo + "\n" + shareUrl;
 
     if (navigator.share) {
       setSharing(true);
