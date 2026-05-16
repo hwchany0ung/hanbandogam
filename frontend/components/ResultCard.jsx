@@ -43,7 +43,8 @@ function ResultCard({ result, imageFile, onSave, onRetry, onCollection, alreadyC
     result.korean_name === "N/A" ||
     result.scientific_name === "N/A" ||
     result.confidence <= minConfidence;
-  var decisiveReason = result.ecology_summary || result.morphological_clues || "사진의 핵심 형태 단서가 부족해 신뢰도 기준을 넘지 못했어요.";
+  var lowConfidenceSummary = result.ecology_summary || "사진만으로 종을 안정적으로 판별하기 어려워요.";
+  var decisiveReason = result.morphological_clues || ("신뢰도 " + pct + "%로 도감 추가 기준인 " + Math.round(minConfidence * 100) + "%를 넘지 못했어요.");
 
   async function handleSave() {
     if (saved || notIdentified || alreadyCollected) return;
@@ -130,24 +131,32 @@ function ResultCard({ result, imageFile, onSave, onRetry, onCollection, alreadyC
 
             {/* 생태 요약 / 저신뢰도 이유 */}
             <div style={{fontFamily:"'Space Mono',monospace",fontSize:"9px",color:notIdentified?"var(--invasive)":"var(--gold)",letterSpacing:"2px",marginBottom:"6px",fontWeight:"700"}}>
-              {notIdentified ? "DECISIVE REASON" : "생태 요약"}
+              {notIdentified ? "판별 안내" : "생태 요약"}
             </div>
             {notIdentified ? (
-              <div style={{
-                marginBottom:"14px",
-                padding:"12px 13px",
-                borderRadius:"10px",
-                background:"linear-gradient(135deg,rgba(31,26,18,0.92),rgba(58,45,28,0.9))",
-                border:"1px solid rgba(184,144,47,0.28)",
-                boxShadow:"inset 3px 0 0 var(--invasive),0 8px 22px rgba(31,26,18,0.12)",
-                color:"#FFF7E8",
-                fontSize:"14.5px",
-                lineHeight:"1.72",
-                fontWeight:"700",
-                letterSpacing:"-0.01em",
-                wordBreak:"keep-all"
-              }}>
-                {decisiveReason}
+              <div style={{marginBottom:"14px"}}>
+                <div style={{fontSize:"13px",lineHeight:"1.75",color:"var(--ink-2)",marginBottom:"9px"}}>
+                  {lowConfidenceSummary}
+                </div>
+                <div style={{fontFamily:"'Space Mono',monospace",fontSize:"9px",color:"var(--invasive)",letterSpacing:"1.5px",fontWeight:"700",marginBottom:"5px"}}>
+                  결정적인 이유
+                </div>
+                <div style={{
+                  padding:"9px 11px",
+                  borderRadius:"8px",
+                  background:"rgba(31,26,18,0.92)",
+                  border:"1px solid rgba(184,144,47,0.24)",
+                  boxShadow:"inset 3px 0 0 var(--invasive)",
+                  color:"#FFF7E8",
+                  fontFamily:"'Space Mono','Noto Sans KR',monospace",
+                  fontSize:"14px",
+                  lineHeight:"1.65",
+                  fontWeight:"700",
+                  letterSpacing:"-0.01em",
+                  wordBreak:"keep-all"
+                }}>
+                  {decisiveReason}
+                </div>
               </div>
             ) : (
               <div style={{fontSize:"13px",lineHeight:"1.75",color:"var(--ink-2)",marginBottom:"14px"}}>{result.ecology_summary}</div>
