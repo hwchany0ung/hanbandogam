@@ -1,3 +1,19 @@
+var RARITY_PTS  = { L:50, E:30, R:20, U:10, C:5 };
+var LEVEL_STEPS = [0, 50, 150, 300, 550, 900, 1400, 2000]; // 각 레벨의 시작 포인트
+
+function calcLevel(pts) {
+  var lv = 0;
+  for (var i = 0; i < LEVEL_STEPS.length; i++) { if (pts >= LEVEL_STEPS[i]) lv = i + 1; }
+  return Math.min(lv, LEVEL_STEPS.length);
+}
+function calcLevelProgress(pts) {
+  var lv = calcLevel(pts);
+  var start = LEVEL_STEPS[lv - 1] || 0;
+  var end   = LEVEL_STEPS[lv] || LEVEL_STEPS[LEVEL_STEPS.length - 1];
+  if (lv >= LEVEL_STEPS.length) return 1;
+  return Math.min(1, (pts - start) / (end - start));
+}
+
 function CollectionView({ isActive, onBack }) {
   var [items,   setItems]   = React.useState([]);
   var [loading, setLoading] = React.useState(true);
@@ -15,6 +31,12 @@ function CollectionView({ isActive, onBack }) {
   }
 
   var uniqueItems = getUniqueCollectionItems(items);
+
+  var totalPts   = uniqueItems.reduce(function(acc, item) { return acc + (RARITY_PTS[getRarity(item.korean_name)] || 5); }, 0);
+  var currentLv  = calcLevel(totalPts);
+  var lvProgress = calcLevelProgress(totalPts);
+  var nextLvPts  = LEVEL_STEPS[currentLv] || null;
+
   var [sortBy,    setSortBy]    = React.useState("latest");   // "latest" | "rarity" | "name"
   var [sortOrder, setSortOrder] = React.useState("asc");      // "asc" | "desc"
 
@@ -61,9 +83,27 @@ function CollectionView({ isActive, onBack }) {
     <div className="flex flex-col flex-1 overflow-hidden" style={{background:"var(--paper)"}}>
       <div className="flex-1 overflow-y-auto px-4 pb-4">
         {/* 헤더 */}
-        <div className="pt-3 pb-3">
-          <div style={{fontFamily:"'Black Han Sans',sans-serif",fontSize:"28px",letterSpacing:"3px",color:"var(--ink-1)"}}>내 도감</div>
-          <div style={{fontSize:"12px",color:"var(--ink-2)",marginTop:"4px"}}>발견한 한국 토종 생물 수집</div>
+        <div className="pt-3 pb-3" style={{display:"flex",alignItems:"flex-end",justifyContent:"space-between",gap:"12px"}}>
+          <div>
+            <div style={{fontFamily:"'Black Han Sans',sans-serif",fontSize:"28px",letterSpacing:"3px",color:"var(--ink-1)"}}>내 도감</div>
+            <div style={{fontSize:"12px",color:"var(--ink-2)",marginTop:"4px"}}>발견한 한국 토종 생물 수집</div>
+          </div>
+          {/* 포인트 누적바 */}
+          <div style={{flexShrink:0,minWidth:"110px",display:"flex",flexDirection:"column",alignItems:"flex-end",gap:"5px",paddingBottom:"2px"}}>
+            <div style={{display:"flex",alignItems:"center",gap:"5px"}}>
+              <Icon name="Zap" size={12} strokeWidth={2.5} style={{color:"var(--gold)"}} />
+              <span style={{fontFamily:"'Space Mono',monospace",fontSize:"11px",fontWeight:"700",color:"var(--gold)",letterSpacing:"0.5px"}}>{totalPts}pt</span>
+              <div style={{padding:"1px 7px",borderRadius:"8px",background:"linear-gradient(135deg,var(--gold),#b8902f)",fontFamily:"'Space Mono',monospace",fontSize:"9px",fontWeight:"700",color:"#fff",letterSpacing:"1px"}}>Lv.{currentLv}</div>
+            </div>
+            <div style={{width:"110px",height:"6px",background:"rgba(45,30,10,0.08)",borderRadius:"4px",overflow:"hidden"}}>
+              <div style={{height:"100%",borderRadius:"4px",background:"linear-gradient(90deg,var(--gold),#e8b84b)",width:(lvProgress*100)+"%",transition:"width 0.6s ease"}}/>
+            </div>
+            {nextLvPts && (
+              <div style={{fontFamily:"'Space Mono',monospace",fontSize:"8px",color:"var(--ink-4)",letterSpacing:"0.5px"}}>
+                {nextLvPts - totalPts}pt → Lv.{currentLv+1}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* 수집 현황 카드 */}

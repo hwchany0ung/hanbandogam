@@ -1,3 +1,19 @@
+var EVENTS = [
+  {
+    tag:"NEW", color:"var(--R)", bg:"var(--R-bg)", bd:"var(--R-bd)", icon:"Flame",
+    title:"5월 생태 챌린지", sub:"희귀종 5종 수집하면 특별 배지 지급", period:"~5.31",
+  },
+  {
+    tag:"이벤트", color:"var(--L)", bg:"var(--L-bg)", bd:"var(--L-bd)", icon:"MapPin",
+    title:"서식지 제보 이벤트", sub:"미발견 자생지 제보로 생태 지도를 채워요", period:"상시",
+  },
+  {
+    tag:"공지", color:"var(--C)", bg:"var(--C-bg)", bd:"var(--C-bd)", icon:"Bell",
+    title:"앱 업데이트 안내", sub:"도감 정렬·저신뢰도 UI가 새로워졌어요", period:"2026.05",
+    action:"notice",
+  },
+];
+
 var DAILY_MISSIONS = [
   { icon:"Leaf", title:"흰초록 조화를 발견하라!", sub:"흰색과 초록색이 공존하는 식물을 찾아보세요" },
   { icon:"Flower2", title:"길가의 들꽃을 찾아라!",   sub:"길가에서 발견한 들꽃을 촬영해보세요" },
@@ -15,8 +31,32 @@ var DAILY_MISSIONS = [
   { icon:"Mountain", title:"바위틈 생명을 찾아라!",   sub:"돌이나 바위 틈에서 자라는 식물을 발견해보세요" },
 ];
 
+var NOTICE_CONTENT = {
+  tag:"공지", color:"var(--C)", bg:"var(--C-bg)", bd:"var(--C-bd)",
+  title:"포인트 후원 기부 제도",
+  period:"2026.05",
+  sections: [
+    {
+      icon:"Heart",
+      heading:"포인트로 자연을 지킬 수 있어요",
+      body:"한반도감에서 생물을 발견하고 모은 포인트를 국내 생태 보전 단체에 기부할 수 있습니다. 내 탐사가 실제 자연 보호로 이어집니다.",
+    },
+    {
+      icon:"Building2",
+      heading:"참여 단체",
+      list:["국립생태원 — 멸종위기종 복원 연구","한국자연환경보전협회 — 생태 서식지 보전","습지와 새들의 친구 — 철새 도래지 보호","녹색연합 — 백두대간 생태 감시"],
+    },
+    {
+      icon:"Zap",
+      heading:"기부 방법",
+      body:"도감 > 포인트 탭에서 원하는 단체를 선택하고 기부할 포인트를 입력하세요. 최소 10pt부터 기부 가능하며, 기부 내역은 마이페이지에서 확인할 수 있습니다.",
+    },
+  ],
+};
+
 function UploadView({ onUpload, onDemoCapture, collectionCount, missionCompleted }) {
   var [dragging, setDragging] = React.useState(false);
+  var [showNotice, setShowNotice] = React.useState(false);
   var inputRef = React.useRef(null);
   var bokehRef = React.useRef(null);
 
@@ -52,6 +92,58 @@ function UploadView({ onUpload, onDemoCapture, collectionCount, missionCompleted
 
   return (
     <div className="home-screen flex flex-col flex-1 relative overflow-hidden" style={{background:"var(--paper)"}}>
+
+      {/* 공지 모달 */}
+      {showNotice && (
+        <div
+          onClick={function(){setShowNotice(false);}}
+          style={{position:"fixed",inset:0,zIndex:500,background:"rgba(31,26,18,0.55)",display:"flex",alignItems:"flex-end",justifyContent:"center",padding:"0 0 24px"}}
+        >
+          <div
+            onClick={function(e){e.stopPropagation();}}
+            style={{width:"100%",maxWidth:"420px",borderRadius:"20px 20px 16px 16px",background:"var(--C-bg)",border:"1px solid var(--C-bd)",boxShadow:"0 -4px 32px rgba(31,26,18,0.18)",overflow:"hidden"}}
+          >
+            {/* 모달 헤더 */}
+            <div style={{padding:"16px 18px 12px",borderBottom:"1px solid var(--C-bd)",display:"flex",alignItems:"center",gap:"8px"}}>
+              <div style={{padding:"2px 9px",background:"rgba(255,255,255,0.55)",border:"1px solid var(--C-bd)",borderRadius:"8px",fontFamily:"'Space Mono',monospace",fontSize:"8px",fontWeight:"700",color:"var(--C)",letterSpacing:"1px"}}>{NOTICE_CONTENT.tag}</div>
+              <div style={{fontFamily:"'Noto Serif KR',serif",fontSize:"15px",fontWeight:"900",color:"var(--ink-1)",flex:1}}>{NOTICE_CONTENT.title}</div>
+              <button onClick={function(){setShowNotice(false);}} style={{background:"none",border:"none",cursor:"pointer",color:"var(--ink-3)",padding:"2px",lineHeight:0}}>
+                <Icon name="X" size={18} strokeWidth={2} />
+              </button>
+            </div>
+            {/* 모달 본문 */}
+            <div style={{padding:"14px 18px 18px",display:"flex",flexDirection:"column",gap:"14px",maxHeight:"60vh",overflowY:"auto"}}>
+              {NOTICE_CONTENT.sections.map(function(sec, si) {
+                return (
+                  <div key={si} style={{padding:"12px 14px",borderRadius:"14px",background:"rgba(255,255,255,0.55)",border:"1px solid var(--C-bd)"}}>
+                    <div style={{display:"flex",alignItems:"center",gap:"7px",marginBottom:"7px"}}>
+                      <div style={{width:"26px",height:"26px",borderRadius:"8px",background:"var(--C-bg)",border:"1px solid var(--C-bd)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                        <Icon name={sec.icon} size={14} strokeWidth={2} style={{color:"var(--C)"}} />
+                      </div>
+                      <div style={{fontFamily:"'Noto Serif KR',serif",fontSize:"12px",fontWeight:"800",color:"var(--ink-1)",lineHeight:"1.3"}}>{sec.heading}</div>
+                    </div>
+                    {sec.body && <div style={{fontSize:"11px",color:"var(--ink-3)",lineHeight:"1.6"}}>{sec.body}</div>}
+                    {sec.list && (
+                      <ul style={{margin:0,padding:0,listStyle:"none",display:"flex",flexDirection:"column",gap:"5px"}}>
+                        {sec.list.map(function(item, li) {
+                          return (
+                            <li key={li} style={{display:"flex",alignItems:"flex-start",gap:"6px",fontSize:"11px",color:"var(--ink-3)",lineHeight:"1.5"}}>
+                              <span style={{color:"var(--C)",fontWeight:"700",flexShrink:0,marginTop:"1px"}}>·</span>
+                              <span>{item}</span>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    )}
+                  </div>
+                );
+              })}
+              <div style={{textAlign:"center",fontFamily:"'Space Mono',monospace",fontSize:"9px",color:"var(--C)",letterSpacing:"1px",opacity:0.7}}>{NOTICE_CONTENT.period} 시행</div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div ref={bokehRef} className="absolute inset-0 pointer-events-none overflow-hidden" style={{zIndex:0}}/>
 
       {/* 헤더 */}
@@ -84,6 +176,28 @@ function UploadView({ onUpload, onDemoCapture, collectionCount, missionCompleted
       </div>
 
       <div className="home-bottom-stack relative" style={{zIndex:2}}>
+
+        {/* 이벤트 게시판 */}
+        <div style={{paddingLeft:"var(--home-x-pad)",paddingRight:"0",marginBottom:"var(--mission-button-gap)"}}>
+          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:"8px",paddingRight:"var(--home-x-pad)"}}>
+            <div style={{fontFamily:"'Space Mono',monospace",fontSize:"9px",fontWeight:"700",letterSpacing:"2px",color:"var(--ink-3)"}}>이벤트 · 공지</div>
+          </div>
+          <div style={{display:"flex",gap:"8px",overflowX:"auto",paddingBottom:"4px",paddingRight:"var(--home-x-pad)",scrollbarWidth:"none",WebkitOverflowScrolling:"touch"}}>
+            {EVENTS.map(function(ev, i) {
+              return (
+                <div key={i} onClick={function(){if(ev.action==="notice") setShowNotice(true);}} style={{flexShrink:0,width:"188px",padding:"12px 14px",borderRadius:"14px",background:ev.bg,border:"1px solid "+ev.bd,boxShadow:"0 2px 10px rgba(45,30,10,0.06)",cursor:ev.action?"pointer":"default"}}>
+                  <div style={{display:"flex",alignItems:"center",gap:"6px",marginBottom:"7px"}}>
+                    <div style={{padding:"2px 7px",background:"rgba(255,255,255,0.55)",border:"1px solid "+ev.bd,borderRadius:"8px",fontFamily:"'Space Mono',monospace",fontSize:"8px",fontWeight:"700",color:ev.color,letterSpacing:"1px"}}>{ev.tag}</div>
+                    <span style={{fontFamily:"'Space Mono',monospace",fontSize:"8px",color:ev.color,marginLeft:"auto",opacity:0.8}}>{ev.period}</span>
+                  </div>
+                  <div style={{fontFamily:"'Noto Serif KR',serif",fontSize:"13px",fontWeight:"800",color:"var(--ink-1)",marginBottom:"3px",lineHeight:"1.3"}}>{ev.title}</div>
+                  <div style={{fontSize:"10px",color:"var(--ink-3)",lineHeight:"1.45"}}>{ev.sub}</div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
         {/* 일일 미션 카드 (카메라 바로 위) */}
         <div className="home-mission-wrap">
           <div

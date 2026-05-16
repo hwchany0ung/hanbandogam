@@ -3,8 +3,18 @@ function ResultCard({ result, imageFile, onSave, onRetry, onCollection, alreadyC
   var [saved,  setSaved]  = React.useState(false);
   var [previewErr, setPreviewErr] = React.useState(false);
   var [blobPreviewUrl, setBlobPreviewUrl] = React.useState(null);
+  var [pointPhase, setPointPhase] = React.useState("hidden"); // "hidden" | "in" | "out"
   var [reported, setReported] = React.useState(false);
   var [showReportToast, setShowReportToast] = React.useState(false);
+
+  // 포인트 토스트: 결과 진입 후 0.7s 슬라이드업 → 2.5s 유지 → 페이드아웃
+  React.useEffect(function() {
+    if (notIdentified) return;
+    var t1 = setTimeout(function() { setPointPhase("in"); }, 700);
+    var t2 = setTimeout(function() { setPointPhase("out"); }, 3200);
+    var t3 = setTimeout(function() { setPointPhase("hidden"); }, 3800);
+    return function() { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
+  }, []);
 
   React.useEffect(function() {
     if (!imageFile || result.image_url || result.image_path) {
@@ -29,6 +39,8 @@ function ResultCard({ result, imageFile, onSave, onRetry, onCollection, alreadyC
   var fallbackPng = result.korean_name ? "/assets/illustrations/" + encodeURIComponent(result.korean_name) + ".png" : null;
   // previewErr 발생 시: fallbackPng 있으면 그것, 없으면 null → <img> 자체 숨김 처리
   var imgSrc = previewErr ? (fallbackPng || null) : previewUrl;
+
+  var RARITY_POINTS = { L:50, E:30, R:20, U:10, C:5 };
 
   var rarity = getRarity(result.korean_name);
   var rc = RARITY_CONFIG[rarity];
@@ -122,8 +134,41 @@ function ResultCard({ result, imageFile, onSave, onRetry, onCollection, alreadyC
     setTimeout(function() { setShowReportToast(false); }, 4000);
   }
 
+  var earnedPts = RARITY_POINTS[rarity] || 5;
+
   return (
     <div className="flex flex-col flex-1 overflow-hidden" style={{background:"var(--paper)",height:"100%",minHeight:0}}>
+
+      {/* 포인트 적립 토스트 */}
+      {pointPhase !== "hidden" && (
+        <div style={{
+          position:"fixed",
+          top:"60px",
+          left:"50%",
+          zIndex:200,
+          display:"flex",
+          alignItems:"center",
+          gap:"8px",
+          padding:"11px 20px",
+          borderRadius:"28px",
+          background:"linear-gradient(135deg,"+rc.color+",var(--ink-1))",
+          color:"#fff",
+          fontFamily:"'Black Han Sans',sans-serif",
+          fontSize:"14px",
+          letterSpacing:"2px",
+          whiteSpace:"nowrap",
+          boxShadow:"0 8px 28px rgba(45,30,10,0.35)",
+          animation: pointPhase === "in"
+            ? "toastUp 0.45s cubic-bezier(0.34,1.56,0.64,1) forwards"
+            : "toastFade 0.5s ease forwards",
+          pointerEvents:"none",
+        }}>
+          <Icon name="Zap" size={15} strokeWidth={2.5} />
+          <span>+{earnedPts} 포인트 적립!</span>
+          <span style={{fontFamily:"'Space Mono',monospace",fontSize:"9px",opacity:0.75,letterSpacing:"1px"}}>{rc.label}</span>
+        </div>
+      )}
+
       {/* 탑바 */}
       <div className="flex items-center gap-3 px-4 pt-4 pb-3" style={{flexShrink:0}}>
         <button onClick={onRetry} style={{width:"36px",height:"36px",borderRadius:"50%",background:"var(--surface)",border:"1px solid var(--gold-bd)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"16px",color:"var(--ink-1)",boxShadow:"0 2px 6px rgba(45,30,10,0.06)",flexShrink:0,cursor:"pointer"}}><Icon name="ArrowLeft" size={17} /></button>
