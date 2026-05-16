@@ -182,7 +182,7 @@ function UploadView({ onUpload, onDemoCapture, collectionCount, missionCompleted
           <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:"8px",paddingRight:"var(--home-x-pad)"}}>
             <div style={{fontFamily:"'Space Mono',monospace",fontSize:"9px",fontWeight:"700",letterSpacing:"2px",color:"var(--ink-3)"}}>이벤트 · 공지</div>
           </div>
-          <div style={{display:"flex",gap:"8px",overflowX:"auto",paddingBottom:"4px",paddingRight:"var(--home-x-pad)",scrollbarWidth:"none",WebkitOverflowScrolling:"touch"}}>
+          <div style={{display:"flex",gap:"8px",overflowX:"auto",paddingBottom:"4px",scrollbarWidth:"none",WebkitOverflowScrolling:"touch"}}>
             {EVENTS.map(function(ev, i) {
               return (
                 <div key={i} onClick={function(){if(ev.action==="notice") setShowNotice(true);}} style={{flexShrink:0,width:"188px",padding:"12px 14px",borderRadius:"14px",background:ev.bg,border:"1px solid "+ev.bd,boxShadow:"0 2px 10px rgba(45,30,10,0.06)",cursor:ev.action?"pointer":"default"}}>
@@ -195,6 +195,8 @@ function UploadView({ onUpload, onDemoCapture, collectionCount, missionCompleted
                 </div>
               );
             })}
+            {/* 스크롤 끝 여백 스페이서 — paddingRight가 WebKit 수평 스크롤에서 무시되는 버그 우회 */}
+            <div style={{flexShrink:0,width:"var(--home-x-pad)",minWidth:"var(--home-x-pad)"}} />
           </div>
         </div>
 
