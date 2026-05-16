@@ -2,71 +2,172 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
   <title>한반도감</title>
 
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet" />
-
-  <!-- TailwindCSS CDN -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Serif+KR:wght@400;600;700;900&family=Noto+Sans+KR:wght@300;400;500;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- 플립 카드 CSS -->
   <style>
-    body { font-family: 'Noto Serif KR', serif; }
-
-    .card-flip-container {
-      perspective: 1000px;
+    :root {
+      --paper:    #F4EDDC;
+      --paper-2:  #FAF5E6;
+      --surface:  #FFFFFF;
+      --surface-2:#FBF7EC;
+      --lift:     #F0E8D4;
+      --ink-1:    #1F1A12;
+      --ink-2:    #5C5345;
+      --ink-3:    #9C907E;
+      --ink-4:    #C8BDA8;
+      --gold:     #B8902F;
+      --gold-2:   #D4A93D;
+      --gold-dim: rgba(184,144,47,0.10);
+      --gold-bd:  rgba(184,144,47,0.30);
+      --native:   #16A34A;
+      --invasive: #DC2626;
+      --L: #C99227; --L-bg: #FBF3DC; --L-bd: rgba(201,146,39,0.45);
+      --E: #8B5CF6; --E-bg: #F3EDFE; --E-bd: rgba(139,92,246,0.35);
+      --R: #2563EB; --R-bg: #E8F0FE; --R-bd: rgba(37,99,235,0.30);
+      --U: #16A34A; --U-bg: #E7F5EC; --U-bd: rgba(22,163,74,0.30);
+      --C: #6B7280; --C-bg: #EFF1F4; --C-bd: rgba(107,114,128,0.25);
     }
-    .card-flip-inner {
+
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+    html, body {
+      background: #ECE3CC;
+      min-height: 100vh;
+      font-family: 'Noto Sans KR', sans-serif;
+      color: var(--ink-1);
+    }
+
+    #root {
+      max-width: 390px;
+      margin: 0 auto;
+      min-height: 100vh;
+      background: var(--paper);
       position: relative;
-      width: 100%;
-      height: 100%;
-      transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── 한지 텍스처 ── */
+    .paper-tex {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-image:
+        radial-gradient(circle at 25% 35%, rgba(184,144,47,0.04) 1px, transparent 1.5px),
+        radial-gradient(circle at 70% 60%, rgba(92,83,69,0.03) 1px, transparent 1.5px);
+      background-size: 40px 40px, 35px 35px;
+      max-width: 390px;
+    }
+
+    /* ── 플립 카드 ── */
+    .card-flip-container { perspective: 1000px; }
+    .card-flip-inner {
+      position: relative; width: 100%; height: 100%;
+      transition: transform 0.55s cubic-bezier(0.4,0,0.2,1);
       transform-style: preserve-3d;
     }
-    .card-flip-inner.is-flipped {
-      transform: rotateY(180deg);
-    }
+    .card-flip-inner.is-flipped { transform: rotateY(180deg); }
     .card-face {
-      position: absolute;
-      inset: 0;
+      position: absolute; inset: 0;
       backface-visibility: hidden;
       -webkit-backface-visibility: hidden;
     }
-    .card-face-back {
-      transform: rotateY(180deg);
+    .card-face-back { transform: rotateY(180deg); }
+
+    /* ── 조리개 애니메이션 ── */
+    .ring { position:absolute; inset:0; border-radius:50%; border:2px solid transparent; }
+    .ring-1 { border-top-color:var(--gold); border-right-color:rgba(184,144,47,0.18); animation:spin 5s linear infinite; }
+    .ring-2 { inset:10px; border-bottom-color:rgba(184,144,47,0.45); animation:spin 7s linear infinite reverse; }
+    .ring-3 { inset:20px; border-top-color:rgba(184,144,47,0.18); animation:spin 11s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    .aperture-core {
+      position:absolute; inset:30px; border-radius:50%;
+      background:radial-gradient(circle at 40% 35%, #FFFEF8, #F0E8D4 70%);
+      border:1px solid rgba(184,144,47,0.3);
+      display:flex; align-items:center; justify-content:center;
+      flex-direction:column; gap:4px; overflow:hidden;
+      animation:pulse 4s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%,100% { box-shadow:0 0 24px rgba(184,144,47,0.15),inset 0 0 30px rgba(184,144,47,0.06); }
+      50%      { box-shadow:0 0 50px rgba(184,144,47,0.3),inset 0 0 20px rgba(184,144,47,0.04); }
+    }
+    .scan-bar {
+      position:absolute; left:0; right:0; height:1.5px;
+      background:linear-gradient(90deg,transparent,rgba(184,144,47,0.85),transparent);
+      animation:scan 3.5s ease-in-out infinite;
+    }
+    @keyframes scan { 0%{top:0%;opacity:0} 5%{opacity:1} 95%{opacity:1} 100%{top:100%;opacity:0} }
+
+    /* ── 보케 ── */
+    .bokeh-dot {
+      position:absolute; border-radius:50%;
+      filter:blur(20px); animation:rise linear infinite;
+    }
+    @keyframes rise {
+      0%   { transform:translateY(110%) scale(0.4); opacity:0; }
+      15%  { opacity:0.8; }
+      85%  { opacity:0.3; }
+      100% { transform:translateY(-10%) scale(1.6); opacity:0; }
     }
 
+    /* ── 홀로 ── */
+    .holo {
+      position:absolute; inset:0; pointer-events:none;
+      background:linear-gradient(135deg,transparent 20%,rgba(255,255,255,0.18) 35%,transparent 50%,rgba(255,255,255,0.22) 65%,transparent 80%);
+      background-size:200% 200%;
+      animation:holo 5s linear infinite;
+      mix-blend-mode:overlay;
+    }
+    @keyframes holo { 0%{background-position:0% 0%} 100%{background-position:200% 200%} }
+
+    /* ── 버튼 샤인 ── */
+    .btn-shine { position:relative; overflow:hidden; }
+    .btn-shine::after {
+      content:''; position:absolute; inset:0;
+      background:linear-gradient(90deg,transparent,rgba(184,144,47,0.25),transparent);
+      transform:translateX(-100%); animation:shine 4s ease infinite;
+    }
+    @keyframes shine { 0%{transform:translateX(-100%)} 30%,100%{transform:translateX(200%)} }
+
+    /* ── 토스트 ── */
+    .toast {
+      position:fixed; bottom:90px; left:50%; transform:translateX(-50%);
+      background:linear-gradient(135deg,#16A34A,#15803d);
+      color:#fff; padding:11px 22px; border-radius:26px;
+      font-family:'Black Han Sans',sans-serif; font-size:13px; letter-spacing:1px;
+      white-space:nowrap; z-index:50; opacity:0; transition:opacity 0.3s;
+      pointer-events:none; box-shadow:0 8px 24px rgba(22,163,74,0.35);
+    }
+    .toast.show { opacity:1; }
+
     /* 스크롤바 */
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-thumb { background: #d6d3d1; border-radius: 4px; }
+    ::-webkit-scrollbar { width:3px; }
+    ::-webkit-scrollbar-thumb { background:var(--gold-bd); border-radius:3px; }
   </style>
 </head>
-<body class="bg-stone-100 min-h-screen flex items-center justify-center">
-
+<body>
   <div id="root"></div>
 
-  <!-- React 18 CDN -->
   <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-
-  <!-- Babel Standalone (JSX 실시간 컴파일) -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-  <!-- 1. 전역 상수 & API -->
   <script type="text/babel" src="lib/api.js"></script>
-
-  <!-- 2. 리프 컴포넌트 먼저 -->
   <script type="text/babel" src="components/CollectionCard.jsx"></script>
   <script type="text/babel" src="components/UploadView.jsx"></script>
   <script type="text/babel" src="components/LoadingView.jsx"></script>
   <script type="text/babel" src="components/ResultCard.jsx"></script>
   <script type="text/babel" src="components/ErrorView.jsx"></script>
   <script type="text/babel" src="components/CollectionView.jsx"></script>
-
-  <!-- 3. App (마지막 — createRoot 호출) -->
   <script type="text/babel" src="components/App.jsx"></script>
-
 </body>
 </html>

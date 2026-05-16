@@ -1,12 +1,13 @@
 function ErrorView({ message, onRetry }) {
   return (
-    <div className="flex flex-col items-center justify-center h-full gap-4 px-6 text-center">
-      <span className="text-5xl">😥</span>
-      <p className="text-stone-700 font-medium">식별에 실패했어요</p>
-      <p className="text-sm text-stone-400">{message || "잠시 후 다시 시도해주세요"}</p>
+    <div className="flex flex-col items-center justify-center flex-1 gap-4 px-6 text-center" style={{background:"var(--paper)"}}>
+      <span style={{fontSize:"48px"}}>😥</span>
+      <p style={{fontFamily:"'Noto Serif KR',serif",fontSize:"16px",fontWeight:"700",color:"var(--ink-1)"}}>식별에 실패했어요</p>
+      <p style={{fontSize:"13px",color:"var(--ink-3)"}}>{message||"잠시 후 다시 시도해주세요"}</p>
       <button
         onClick={onRetry}
-        className="mt-2 px-6 py-2 bg-green-700 text-white rounded-full text-sm hover:bg-green-800"
+        className="btn-shine px-8 py-3 rounded-xl"
+        style={{background:"linear-gradient(135deg,var(--ink-1),#2C261B)",color:"#FBF7EC",fontFamily:"'Black Han Sans',sans-serif",fontSize:"14px",letterSpacing:"2px",border:"none",cursor:"pointer",marginTop:"8px"}}
       >
         다시 시도
       </button>
