@@ -44,6 +44,14 @@ var ILLUSTRATION_MAP = {
   "미호종개":"/assets/illustrations/미호종개.svg",
 };
 
+// 시연용 실사진 매핑 — DB에 옛 일러스트 경로로 저장된 카드도 사진 전환 가능하게 함
+var PHOTO_MAP = {
+  "한라솜다리":     "/assets/photos/한라솜다리.jpg",
+  "노랑갈퀴":       "/assets/photos/노랑갈퀴.jpg",
+  "가시복분자딸기": "/assets/photos/가시복분자딸기.jpg",
+  "분홍바늘꽃":     "/assets/photos/분홍바늘꽃.jpg",
+};
+
 var RARITY_OWNERSHIP_PCT = { L:"0.3", E:"1.2", R:"4.5", U:"15", C:"40" };
 
 // 이야기 데이터는 frontend/data/stories.json 에서 사전 로드 (window.STORIES_DATA).
@@ -177,8 +185,13 @@ function CollectionCard({ item, onDelete }) {
     illustSrc = autoIllust;
   }
   var isIllustPath = item.image_path && item.image_path.startsWith("/assets/illustrations/");
-  var hasUserPhoto  = item.image_path && !isIllustPath;
-  var userSrc = hasUserPhoto ? (photoErr ? FALLBACK : item.image_path) : FALLBACK;
+  // 우선순위: DB의 실사진 경로 > 시연 종 PHOTO_MAP 매핑 (옛 일러스트 경로 카드 보완)
+  var realUserPhoto = item.image_path && !isIllustPath;
+  var fallbackPhoto = PHOTO_MAP[item.korean_name] || null;
+  var hasUserPhoto  = !!(realUserPhoto || fallbackPhoto);
+  var userSrc = realUserPhoto
+    ? (photoErr ? FALLBACK : item.image_path)
+    : (fallbackPhoto ? (photoErr ? FALLBACK : fallbackPhoto) : FALLBACK);
 
   var displaySrc = (showPhoto && hasUserPhoto) ? userSrc : illustSrc;
 
