@@ -17,3 +17,9 @@ CREATE TABLE IF NOT EXISTS collection (
 );
 
 -- 인덱스는 _migrate_user_id_column()에서 생성 (기존 DB에 컬럼 없는 상태에서 schema 재실행 시 안전)
+
+-- 콜드스타트 캐시: 신규 종 이야기를 한 번만 생성하고 재사용
+CREATE TABLE IF NOT EXISTS species (
+    korean_name TEXT PRIMARY KEY,
+    story       TEXT  -- 콜드스타트: 신규 종 이야기 캐시
+);

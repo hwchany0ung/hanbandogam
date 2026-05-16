@@ -59,6 +59,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_S3_BUCKET_NAME: ${{ secrets.AWS_S3_BUCKET_NAME }}
           AWS_REGION: ap-northeast-2
+          REPLICATE_API_TOKEN: ${{ secrets.REPLICATE_API_TOKEN }}
         run: |
           # umask 077 + chmod 600 → /tmp/.env 가 다른 러너 프로세스에 노출되지 않도록
           # echo 블록: printf 포맷 스트링 취약점 회피 (값에 % 가 있어도 안전, YAML 들여쓰기 무관)
@@ -76,6 +77,7 @@ jobs:
             echo "AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY"
             echo "AWS_S3_BUCKET_NAME=$AWS_S3_BUCKET_NAME"
             echo "AWS_REGION=$AWS_REGION"
+            echo "REPLICATE_API_TOKEN=$REPLICATE_API_TOKEN"
           } > /tmp/.env
           chmod 600 /tmp/.env
           scp -i /tmp/hanbando.pem -o StrictHostKeyChecking=no \
@@ -110,6 +112,7 @@ jobs:
           sqlite3 "$DB" "ALTER TABLE collection ADD COLUMN lat REAL" 2>/dev/null || true
           sqlite3 "$DB" "ALTER TABLE collection ADD COLUMN lng REAL" 2>/dev/null || true
           sqlite3 "$DB" "ALTER TABLE collection ADD COLUMN district TEXT" 2>/dev/null || true
+          sqlite3 "$DB" "ALTER TABLE species ADD COLUMN story TEXT" 2>/dev/null || true
 
           # 실사진 경로 마이그레이션: /assets/photos/*.jpg → *.png (따오기 제외, PNG 없음)
           sqlite3 "$DB" "UPDATE collection SET image_path = REPLACE(image_path, '.jpg', '.png') WHERE image_path LIKE '/assets/photos/%.jpg' AND korean_name != '따오기';" 2>/dev/null || true

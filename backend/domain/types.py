@@ -19,6 +19,8 @@ class IdentifyResult(BaseModel):
     image_path: Optional[str] = None
     image_url: Optional[str] = None  # /assets/uploads/{uuid}.jpg (영구 저장 경로)
     plant_type: Optional[str] = None  # tree | flower | herb | vine | fern | shrub | grass | other
+    illustration_url: Optional[str] = None  # 콜드스타트: S3 일러스트 URL
+    story: Optional[str] = None              # 콜드스타트: 이야기 텍스트 (DB or Claude Haiku)
 
 
 class CollectionAddRequest(BaseModel):

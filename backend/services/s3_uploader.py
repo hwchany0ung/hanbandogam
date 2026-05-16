@@ -102,3 +102,80 @@ def upload_image(
     except Exception as e:
         logger.error(f"[s3] unexpected: {type(e).__name__}: {e}")
         return None
+
+
+def upload_illustration_bytes(korean_name: str, png_bytes: bytes) -> Optional[str]:
+    """일러스트는 한국명 기준 단일 키 (illustrations/{korean_name}.png).
+
+    캐시 효율 + 종별 1장 보장.
+    실패 시 None.
+    """
+    if not _BUCKET:
+        logger.info("[s3] bucket not configured, skip illust upload")
+        return None
+
+    try:
+        import boto3
+        from botocore.exceptions import BotoCoreError, ClientError
+    except ImportError:
+        logger.warning("[s3] boto3 not installed")
+        return None
+
+    # 한국명 정규화 (path traversal 방지)
+    safe_name = (korean_name or "").strip().replace("/", "").replace("..", "").replace("\\", "")
+    if not safe_name:
+        logger.warning("[s3] empty korean_name, skip illust upload")
+        return None
+
+    key = f"illustrations/{safe_name}.png"
+
+    try:
+        client = boto3.client("s3", region_name=_REGION)
+        client.put_object(
+            Bucket=_BUCKET,
+            Key=key,
+            Body=png_bytes,
+            ContentType="image/png",
+            CacheControl="public, max-age=86400",
+        )
+        url = f"https://{_BUCKET}.s3.{_REGION}.amazonaws.com/{key}"
+        logger.info(f"[s3] illust uploaded {safe_name} → {key}")
+        return url
+    except (BotoCoreError, ClientError) as e:
+        logger.error(f"[s3] illust upload failed: {type(e).__name__}: {e}")
+        return None
+    except Exception as e:
+        logger.error(f"[s3] illust unexpected: {type(e).__name__}: {e}")
+        return None
+
+
+def illustration_exists(korean_name: str) -> Optional[str]:
+    """S3 에 일러스트 캐시 존재 여부 확인. 있으면 URL, 없으면 None."""
+    if not _BUCKET:
+        return None
+
+    try:
+        import boto3
+        from botocore.exceptions import ClientError
+    except ImportError:
+        return None
+
+    safe_name = (korean_name or "").strip().replace("/", "").replace("..", "").replace("\\", "")
+    if not safe_name:
+        return None
+
+    key = f"illustrations/{safe_name}.png"
+
+    try:
+        client = boto3.client("s3", region_name=_REGION)
+        client.head_object(Bucket=_BUCKET, Key=key)
+        return f"https://{_BUCKET}.s3.{_REGION}.amazonaws.com/{key}"
+    except ClientError as e:
+        # 404 (NoSuchKey/NotFound) → 캐시 없음
+        if e.response.get("Error", {}).get("Code") in ("404", "NoSuchKey", "NotFound"):
+            return None
+        logger.warning("[s3] head_object 오류: %s", e)
+        return None
+    except Exception as e:
+        logger.warning("[s3] head_object 예외: %s", e)
+        return None
