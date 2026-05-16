@@ -1,7 +1,16 @@
-function ResultCard({ result, imageFile, onSave, onRetry, onCollection, autoSaved }) {
+function ResultCard({ result, imageFile, onSave, onRetry, onCollection }) {
   var [saving, setSaving] = React.useState(false);
-  var [saved,  setSaved]  = React.useState(autoSaved||false);
+  var [saved,  setSaved]  = React.useState(false);
   var previewUrl = imageFile ? URL.createObjectURL(imageFile) : null;
+
+  // 이미 수집한 종인지 확인
+  React.useEffect(function() {
+    getCollection().then(function(list) {
+      if (list.some(function(i) { return i.korean_name === result.korean_name; })) {
+        setSaved(true);
+      }
+    }).catch(function() {});
+  }, [result.korean_name]);
 
   var rarity = getRarity(result.korean_name);
   var rc = RARITY_CONFIG[rarity];

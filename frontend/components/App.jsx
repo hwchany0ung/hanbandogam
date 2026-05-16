@@ -18,19 +18,7 @@ function App() {
 
   async function handleUpload(file) {
     setImageFile(file); setView("loading");
-    try {
-      var res = await identifySpecies(file);
-      setResult(res);
-      // 판별 즉시 자동 저장
-      try {
-        await addToCollection(res, "");
-        setColCount(c=>c+1);
-        showToast("📚 도감 +1! "+res.korean_name+" 수집 완료");
-      } catch(saveErr) {
-        showToast("⚠️ 저장 실패: "+saveErr.message);
-      }
-      setView("result");
-    }
+    try { var res=await identifySpecies(file); setResult(res); setView("result"); }
     catch(e) { setErrMsg(e.message); setView("error"); }
   }
 
@@ -57,7 +45,7 @@ function App() {
       <div style={{flex:1,overflow:"hidden",display:"flex",flexDirection:"column",position:"relative",zIndex:1}}>
         {view==="upload"     && <UploadView onUpload={handleUpload} collectionCount={colCount}/>}
         {view==="loading"    && <LoadingView/>}
-        {view==="result"     && <ResultCard result={result} imageFile={imageFile} onRetry={handleRetry} onSave={handleSaved} onCollection={()=>setView("collection")} autoSaved={true}/>}
+        {view==="result"     && <ResultCard result={result} imageFile={imageFile} onRetry={handleRetry} onSave={handleSaved} onCollection={()=>setView("collection")}/>}
         {view==="collection" && <CollectionView onBack={()=>setView("upload")}/>}
         {view==="error"      && <ErrorView message={errMsg} onRetry={handleRetry}/>}
       </div>
