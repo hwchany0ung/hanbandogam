@@ -1,5 +1,8 @@
 window.DEMO_MODE = false;
 var BASE_URL = "";
+var MAX_UPLOAD_IMAGE_BYTES = 15 * 1024 * 1024;
+var MAX_UPLOAD_IMAGE_LABEL = "15MB";
+var COLLECTION_MIN_CONFIDENCE = 0.6;
 
 // Design Ref: §5.1 — 사용자 식별자 부트스트랩 (URL ?u= > localStorage > 신규 UUID 16자)
 var USER_ID = (function () {
@@ -29,6 +32,7 @@ var _collectionCache = null;
 var _collectionCacheAt = 0;
 var _inflightCollection = null;  // 동시 호출 dedup (race condition 방지)
 var COLLECTION_CACHE_TTL_MS = 30000;  // 30초
+var _imagePreloadCache = {};
 
 function invalidateCollectionCache() {
   _collectionCache = null;
@@ -36,20 +40,62 @@ function invalidateCollectionCache() {
   _inflightCollection = null;
 }
 
+function preloadImagePath(path) {
+  if (!path || typeof path !== "string") return;
+  if (!(/^\/assets\//.test(path) || /^data:image\//.test(path))) return;
+  if (_imagePreloadCache[path]) return;
+
+  var img = new Image();
+  img.decoding = "async";
+  img.loading = "eager";
+  img.src = path;
+  _imagePreloadCache[path] = img;
+}
+
+function getCollectionImagePreloadPaths(item) {
+  if (!item) return [];
+
+  var paths = [];
+  var name = item.korean_name || "";
+  var encodedName = encodeURIComponent(name);
+
+  if (item.image_path) paths.push(item.image_path);
+
+  if (typeof ILLUSTRATION_MAP !== "undefined" && ILLUSTRATION_MAP[name]) {
+    paths.push(ILLUSTRATION_MAP[name]);
+  }
+
+  if (encodedName) {
+    paths.push(
+      "/assets/illustrations/" + encodedName + ".png",
+      "/assets/photos/" + encodedName + ".jpg",
+      "/assets/photos/" + encodedName + ".png",
+      "/assets/photos/" + encodedName + ".jpeg",
+      "/assets/photos/" + encodedName + ".webp"
+    );
+  }
+
+  return paths.filter(function(path, index) {
+    return path && paths.indexOf(path) === index;
+  });
+}
+
 // 이미지 프리로드 (브라우저 캐시 워밍업)
 function preloadCollectionImages(items) {
   if (!Array.isArray(items)) return;
   items.forEach(function(it) {
-    if (it && it.image_path && /^\/assets\//.test(it.image_path)) {
-      var img = new Image();
-      img.src = it.image_path;
-    }
+    getCollectionImagePreloadPaths(it).forEach(preloadImagePath);
   });
 }
 
 // 전역 노출 (다른 컴포넌트에서 invalidate 호출용)
 if (typeof window !== "undefined") {
   window.invalidateCollectionCache = invalidateCollectionCache;
+  window.preloadImagePath = preloadImagePath;
+  window.preloadCollectionImages = preloadCollectionImages;
+  window.MAX_UPLOAD_IMAGE_BYTES = MAX_UPLOAD_IMAGE_BYTES;
+  window.MAX_UPLOAD_IMAGE_LABEL = MAX_UPLOAD_IMAGE_LABEL;
+  window.COLLECTION_MIN_CONFIDENCE = COLLECTION_MIN_CONFIDENCE;
 }
 
 // ── 희귀도 맵 (korean_name → L/E/R/U/C) ─────────────────────
@@ -177,14 +223,41 @@ async function identifySpecies(imageFile) {
     await new Promise(r=>setTimeout(r,1800));
     return DEMO_RESULTS[Math.floor(Math.random()*DEMO_RESULTS.length)];
   }
-  var form = new FormData(); form.append("file", imageFile);
-  var res = await fetch(BASE_URL+"/api/identify",{method:"POST",body:form});
-  if (!res.ok) throw new Error("식별 실패: "+res.status);
-  return res.json();
+
+  var lastError = null;
+  for (var attempt = 0; attempt < 2; attempt++) {
+    try {
+      var form = new FormData();
+      form.append("file", imageFile);
+      var res = await fetch(BASE_URL+"/api/identify",{method:"POST",body:form});
+
+      if (res.ok) return res.json();
+
+      var detail = "";
+      try {
+        var errBody = await res.json();
+        detail = errBody.detail || errBody.message || "";
+      } catch (_) {}
+
+      lastError = new Error(detail ? ("식별 실패: " + detail) : ("식별 실패: " + res.status));
+      lastError.status = res.status;
+
+      if (res.status !== 502 && res.status !== 503) break;
+    } catch (error) {
+      lastError = error;
+    }
+
+    if (attempt === 0) await new Promise(r=>setTimeout(r,600));
+  }
+
+  throw lastError || new Error("식별 실패");
 }
 
 async function getCollection() {
-  if (window.DEMO_MODE) return DEMO_COLLECTION;
+  if (window.DEMO_MODE) {
+    try { preloadCollectionImages(DEMO_COLLECTION); } catch(_) {}
+    return DEMO_COLLECTION;
+  }
   // 캐시 hit
   if (_collectionCache && (Date.now() - _collectionCacheAt) < COLLECTION_CACHE_TTL_MS) {
     return _collectionCache;
@@ -220,7 +293,14 @@ async function addToCollection(result, imageUrl) {
     method:"POST", headers:{"Content-Type":"application/json"},
     body:JSON.stringify(Object.assign({},result,{image_path:imageUrl||"",image_url:userPhotoUrl})),
   });
-  if (!res.ok) throw new Error("저장 실패");
+  if (!res.ok) {
+    var detail = "";
+    try {
+      var errBody = await res.json();
+      detail = errBody.detail || errBody.message || "";
+    } catch (_) {}
+    throw new Error(detail || "저장 실패");
+  }
   var saved = await res.json();
   invalidateCollectionCache();  // 신규 종 추가됨 → 캐시 무효화
   return saved;

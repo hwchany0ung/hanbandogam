@@ -182,7 +182,7 @@
       display:flex;
       flex-direction:column;
       position:relative;
-      z-index:1;
+      z-index:20;
     }
     .bottom-tabs {
       flex:0 0 auto;
@@ -432,6 +432,146 @@
       .home-primary-button { padding:0 12px; }
     }
 
+    .collection-modal-panel {
+      min-height:min(760px, calc(100dvh - clamp(54px, 9vh, 96px)));
+      max-height:calc(100dvh - clamp(12px, 3vh, 28px));
+    }
+    .collection-modal-hero {
+      height:262px;
+    }
+    .collection-modal-info {
+      padding:74px 20px 16px;
+    }
+    .collection-modal-story {
+      font-size:13.5px;
+      line-height:1.72;
+    }
+    .collection-modal-footer {
+      padding:10px 20px 12px;
+    }
+    .collection-modal-ownership {
+      gap:5px 8px;
+      margin-bottom:8px;
+      padding:7px 10px;
+    }
+    .collection-modal-share {
+      height:42px;
+    }
+
+    @media (max-height: 880px) {
+      .collection-modal-panel {
+        min-height:min(720px, calc(100dvh - 58px)) !important;
+        max-height:calc(100dvh - 12px) !important;
+      }
+      .collection-modal-hero {
+        height:252px !important;
+      }
+      .collection-modal-info {
+        padding:73px 19px 14px !important;
+      }
+      .collection-modal-story {
+        display:-webkit-box;
+        -webkit-box-orient:vertical;
+        -webkit-line-clamp:6;
+        overflow:hidden;
+        line-height:1.64 !important;
+      }
+      .collection-modal-footer {
+        padding:9px 19px 11px !important;
+      }
+    }
+
+    @media (max-height: 760px) {
+      .collection-modal-panel {
+        min-height:min(650px, calc(100dvh - 44px)) !important;
+        max-height:calc(100dvh - 10px) !important;
+      }
+      .collection-modal-hero {
+        height:230px !important;
+      }
+      .collection-modal-info {
+        padding:72px 18px 12px !important;
+      }
+      .collection-modal-story {
+        display:-webkit-box;
+        -webkit-box-orient:vertical;
+        -webkit-line-clamp:6;
+        overflow:hidden;
+        font-size:13px !important;
+        line-height:1.6 !important;
+      }
+      .collection-modal-footer {
+        padding:8px 18px 10px !important;
+      }
+      .collection-modal-ownership {
+        margin-bottom:7px !important;
+        padding:6px 9px !important;
+      }
+      .collection-modal-share {
+        height:40px !important;
+      }
+    }
+
+    @media (max-height: 680px) {
+      .collection-modal-hero {
+        height:196px !important;
+      }
+      .collection-modal-info {
+        padding:71px 17px 10px !important;
+      }
+      .collection-modal-title {
+        font-size:19px !important;
+      }
+      .collection-modal-story {
+        -webkit-line-clamp:5;
+        font-size:12.5px !important;
+        line-height:1.55 !important;
+      }
+      .collection-modal-tip {
+        margin-top:7px !important;
+      }
+      .collection-modal-footer {
+        padding:7px 17px 9px !important;
+      }
+      .collection-modal-share {
+        height:38px !important;
+        font-size:14px !important;
+      }
+    }
+
+    @media (max-height: 600px) {
+      .collection-modal-panel {
+        border-radius:16px !important;
+        min-height:min(540px, calc(100dvh - 28px)) !important;
+        max-height:calc(100dvh - 8px) !important;
+      }
+      .collection-modal-hero {
+        height:164px !important;
+      }
+      .collection-modal-info {
+        padding:69px 16px 10px !important;
+      }
+      .collection-modal-title {
+        font-size:18px !important;
+      }
+      .collection-modal-story {
+        -webkit-line-clamp:5;
+        font-size:12px !important;
+        line-height:1.52 !important;
+      }
+      .collection-modal-footer {
+        padding:6px 16px 8px !important;
+      }
+      .collection-modal-ownership {
+        margin-bottom:6px !important;
+        padding:5px 8px !important;
+      }
+      .collection-modal-share {
+        height:36px !important;
+        border-radius:10px !important;
+      }
+    }
+
     .lucide-icon {
       display: inline-flex;
       align-items: center;
@@ -485,14 +625,14 @@
     }
   </script>
 
-  <script type="text/babel" src="lib/api.js?v=dedupe-2"></script>
-  <script type="text/babel" src="components/CollectionCard.jsx?v=dedupe-2"></script>
-  <script type="text/babel" src="components/UploadView.jsx?v=integrated-home-layout-1"></script>
+  <script type="text/babel" src="lib/api.js?v=merge-fe-1"></script>
+  <script type="text/babel" src="components/CollectionCard.jsx?v=merge-fe-1"></script>
+  <script type="text/babel" src="components/UploadView.jsx?v=merge-fe-1"></script>
   <script type="text/babel" src="components/LoadingView.jsx"></script>
-  <script type="text/babel" src="components/ResultCard.jsx?v=fixed-action-3"></script>
+  <script type="text/babel" src="components/ResultCard.jsx?v=merge-fe-1"></script>
   <script type="text/babel" src="components/ErrorView.jsx"></script>
-  <script type="text/babel" src="components/CollectionView.jsx?v=integrated-dedupe-1"></script>
+  <script type="text/babel" src="components/CollectionView.jsx?v=merge-fe-1"></script>
   <script type="text/babel" src="components/MapView.jsx"></script>
-  <script type="text/babel" src="components/App.jsx?v=dedupe-2"></script>
+  <script type="text/babel" src="components/App.jsx?v=merge-fe-1"></script>
 </body>
 </html>

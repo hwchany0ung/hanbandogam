@@ -154,7 +154,7 @@ function CollectionCard({ item, onDelete }) {
   var [showDetail,   setShowDetail]   = React.useState(false);
   var [illustErr,    setIllustErr]    = React.useState(false);
   var [conventionErr,setConventionErr]= React.useState(false);
-  var [photoErr,     setPhotoErr]     = React.useState(false);
+  var [photoIndex,   setPhotoIndex]   = React.useState(0);
   var [sharing,      setSharing]      = React.useState(false);
   var modalRef = React.useRef(null);
 
@@ -187,22 +187,46 @@ function CollectionCard({ item, onDelete }) {
     // 모두 실패 → SVG 자동생성
     illustSrc = autoIllust;
   }
-  // Design Ref: §5.6 — 내 사진 탭 우선순위 (S3 image_url 1순위)
-  //  1) item.image_url — S3 URL (NEW, /api/identify 영구 저장 사진)
-  //  2) item.image_path — 로컬/DB 경로 (기존)
-  //  3) PHOTO_MAP[korean_name] — 시연용 정적 매핑
-  //  4) null → "미발견" UI 유지 (FALLBACK 표시)
-  var isIllustPath = item.image_path && item.image_path.startsWith("/assets/illustrations/");
-  var s3UserPhoto = item.image_url || null;                 // S3 (NEW)
-  var localUserPhoto = item.image_path && !isIllustPath ? item.image_path : null;
-  var fallbackPhoto = PHOTO_MAP[item.korean_name] || null;
-  var realUserPhoto = s3UserPhoto || localUserPhoto || null;
-  var hasUserPhoto  = !!(realUserPhoto || fallbackPhoto);
-  var userSrc = realUserPhoto
-    ? (photoErr ? FALLBACK : realUserPhoto)
-    : (fallbackPhoto ? (photoErr ? FALLBACK : fallbackPhoto) : FALLBACK);
+  function uniquePaths(paths) {
+    var seen = {};
+    return paths.filter(function(path) {
+      if (!path || seen[path]) return false;
+      seen[path] = true;
+      return true;
+    });
+  }
+
+  function photoCandidatesFor(item) {
+    var paths = [];
+    var path = item.image_path || "";
+    var encodedName = encodeURIComponent(item.korean_name || "");
+
+    if (item.image_url) paths.push(item.image_url);
+    if (path && !path.startsWith("/assets/illustrations/")) paths.push(path);
+    if (PHOTO_MAP[item.korean_name]) paths.push(PHOTO_MAP[item.korean_name]);
+    if (encodedName) {
+      paths.push(
+        "/assets/photos/" + encodedName + ".jpg",
+        "/assets/photos/" + encodedName + ".png",
+        "/assets/photos/" + encodedName + ".jpeg",
+        "/assets/photos/" + encodedName + ".webp"
+      );
+    }
+    return uniquePaths(paths);
+  }
+
+  var photoCandidates = photoCandidatesFor(item);
+  var hasUserPhoto = photoIndex < photoCandidates.length;
+  var userSrc = hasUserPhoto ? photoCandidates[photoIndex] : FALLBACK;
+  var photoCandidatesKey = photoCandidates.join("|");
 
   var displaySrc = (showPhoto && hasUserPhoto) ? userSrc : illustSrc;
+
+  React.useEffect(function() {
+    if (typeof preloadImagePath !== "function") return;
+    preloadImagePath(illustSrc);
+    photoCandidates.forEach(preloadImagePath);
+  }, [illustSrc, photoCandidatesKey]);
 
   // Design Ref: §5.6 — 이야기 탭 우선순위 (DB story 1순위 → seed → ecology_summary)
   //  1) item.story — DB (NEW, Claude Haiku 자동 생성)
@@ -250,6 +274,7 @@ function CollectionCard({ item, onDelete }) {
   function openModal() {
     setShowPhoto(false);
     setShowDetail(false);
+    setPhotoIndex(0);
     setZoomed(true);
   }
 
@@ -259,58 +284,96 @@ function CollectionCard({ item, onDelete }) {
     {zoomed && (
       <div
         onClick={() => setZoomed(false)}
-        style={{position:"fixed",inset:0,zIndex:1000,background:"rgba(15,10,5,0.82)",display:"flex",alignItems:"center",justifyContent:"center",padding:"24px"}}
+        style={{position:"fixed",inset:0,zIndex:1000,background:"rgba(15,10,5,0.82)",display:"flex",alignItems:"center",justifyContent:"center",padding:"clamp(6px,1.5vh,14px)"}}
       >
-        <div ref={modalRef} onClick={e => e.stopPropagation()} style={{width:"min(340px,90vw)",borderRadius:"20px",overflow:"hidden",boxShadow:"0 24px 80px rgba(0,0,0,0.5)",background:"var(--paper)",maxHeight:"90vh",display:"flex",flexDirection:"column"}}>
+        <div ref={modalRef} className="collection-modal-panel" onClick={e => e.stopPropagation()} style={{width:"min(380px,94vw)",minHeight:"min(760px,calc(100dvh - clamp(54px,9vh,96px)))",borderRadius:"20px",overflowX:"hidden",overflowY:"auto",WebkitOverflowScrolling:"touch",overscrollBehavior:"contain",boxShadow:"0 24px 80px rgba(0,0,0,0.5)",background:"var(--paper)",maxHeight:"calc(100dvh - clamp(12px,3vh,28px))",position:"relative",isolation:"isolate",display:"flex",flexDirection:"column"}}>
 
           {/* 사진 영역 — 클릭 시 일러스트↔사용자사진 */}
           <div
+            className="collection-modal-hero"
             onClick={() => hasUserPhoto && setShowPhoto(p => !p)}
-            style={{height:"240px",position:"relative",background:"var(--surface)",overflow:"hidden",flexShrink:0,cursor:hasUserPhoto?"pointer":"default"}}
+            style={{height:"262px",position:"relative",background:"linear-gradient(180deg,var(--surface) 0%,var(--paper) 100%)",overflow:"visible",cursor:hasUserPhoto?"pointer":"default",flexShrink:0}}
           >
             <img
               src={displaySrc}
               alt={item.korean_name}
-              style={{width:"100%",height:"100%",objectFit:"contain",padding:"16px",transition:"opacity 0.25s"}}
+              loading="eager"
+              decoding="async"
+              style={{
+                position:"absolute",
+                left:"50%",
+                top:showPhoto?"-8px":"-24px",
+                width:showPhoto?"100%":"148%",
+                height:showPhoto?"calc(100% + 72px)":"calc(100% + 132px)",
+                objectFit:"cover",
+                objectPosition:"center top",
+                padding:"0",
+                transition:"opacity 0.25s",
+                transform:"translateX(-50%)",
+                transformOrigin:"50% 20%",
+                zIndex:1,
+                WebkitMaskImage:showPhoto
+                  ? "radial-gradient(ellipse 112% 124% at 50% 34%,#000 0%,#000 62%,rgba(0,0,0,0.78) 76%,rgba(0,0,0,0.30) 91%,transparent 100%)"
+                  : "linear-gradient(180deg,#000 0%,#000 58%,rgba(0,0,0,0.72) 72%,rgba(0,0,0,0.18) 88%,transparent 100%)",
+                maskImage:showPhoto
+                  ? "radial-gradient(ellipse 112% 124% at 50% 34%,#000 0%,#000 62%,rgba(0,0,0,0.78) 76%,rgba(0,0,0,0.30) 91%,transparent 100%)"
+                  : "linear-gradient(180deg,#000 0%,#000 58%,rgba(0,0,0,0.72) 72%,rgba(0,0,0,0.18) 88%,transparent 100%)"
+              }}
               onError={() => {
-                if (showPhoto) { setPhotoErr(true); return; }
+                if (showPhoto) {
+                  setPhotoIndex(function(index) {
+                    return Math.min(index + 1, photoCandidates.length);
+                  });
+                  return;
+                }
                 if (!illustErr) setIllustErr(true);
                 else if (!conventionErr) setConventionErr(true);
               }}
             />
 
             {/* 희귀도 배지 */}
-            <div style={{position:"absolute",top:"12px",left:"12px",padding:"4px 10px",borderRadius:"20px",fontFamily:"'Space Mono',monospace",fontSize:"9px",fontWeight:"700",letterSpacing:"1px",background:rc.bg,border:`1px solid ${rc.bd}`,color:rc.color}}>
+            <div style={{position:"absolute",top:"12px",left:"12px",zIndex:3,padding:"4px 10px",borderRadius:"20px",fontFamily:"'Space Mono',monospace",fontSize:"9px",fontWeight:"700",letterSpacing:"1px",background:rc.bg,border:`1px solid ${rc.bd}`,color:rc.color}}>
               <span style={{display:"inline-flex",alignItems:"center",gap:"5px"}}><Icon name="Star" size={10} strokeWidth={2.4} /> {rc.label}</span>
             </div>
 
             {/* 닫기 */}
             <button
               onClick={() => setZoomed(false)}
-              style={{position:"absolute",top:"10px",right:"10px",width:"28px",height:"28px",borderRadius:"50%",background:"rgba(0,0,0,0.35)",border:"none",color:"#fff",fontSize:"14px",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}
+              style={{position:"absolute",top:"10px",right:"10px",zIndex:3,width:"28px",height:"28px",borderRadius:"50%",background:"rgba(0,0,0,0.35)",border:"none",color:"#fff",fontSize:"14px",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}
             ><Icon name="X" size={15} /></button>
 
-            {/* 사진 전환 토글 (사용자 사진 있을 때만) */}
-            {hasUserPhoto && (
-              <div style={{position:"absolute",bottom:"10px",right:"10px",display:"flex",alignItems:"center",gap:"6px",background:"rgba(0,0,0,0.5)",borderRadius:"20px",padding:"4px 12px",backdropFilter:"blur(4px)"}}>
-                <span style={{fontSize:"9px",fontWeight:showPhoto?"400":"700",color:showPhoto?"rgba(255,255,255,0.4)":"#fff",transition:"all 0.2s"}}>일러스트</span>
-                <span style={{fontSize:"9px",color:"rgba(255,255,255,0.3)"}}>|</span>
-                <span style={{fontSize:"9px",fontWeight:showPhoto?"700":"400",color:showPhoto?"#fff":"rgba(255,255,255,0.4)",transition:"all 0.2s"}}>내 사진</span>
-              </div>
-            )}
           </div>
 
           {/* 정보 영역 — 클릭 시 이야기↔상세정보 */}
           <div
+            className="collection-modal-info"
             onClick={() => setShowDetail(p => !p)}
-            style={{padding:"18px 20px 20px",cursor:"pointer",flex:1,overflowY:"auto"}}
+            style={{padding:"74px 20px 16px",cursor:"pointer",background:"linear-gradient(180deg,rgba(244,237,220,0) 0px,rgba(244,237,220,0) 96px,rgba(244,237,220,0.82) 132px,var(--paper) 176px,var(--paper-2) 100%)",position:"relative",zIndex:2,flex:"1 1 auto"}}
           >
-            {/* 종명 + 토글 탭 */}
-            <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:"8px"}}>
-              <div>
-                <div style={{fontFamily:"'Noto Serif KR',serif",fontSize:"21px",fontWeight:"900",color:"var(--ink-1)",lineHeight:1.2}}>{item.korean_name}</div>
+            {/* 종명 + 사진 전환 토글 */}
+            <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:"10px",marginBottom:"8px"}}>
+              <div style={{minWidth:0}}>
+                <div className="collection-modal-title" style={{fontFamily:"'Noto Serif KR',serif",fontSize:"21px",fontWeight:"900",color:"var(--ink-1)",lineHeight:1.2}}>{item.korean_name}</div>
                 <div style={{fontFamily:"'Space Mono',monospace",fontSize:"9px",fontStyle:"italic",color:"var(--ink-3)",marginTop:"3px"}}>{item.scientific_name}</div>
               </div>
+              {hasUserPhoto && (
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowPhoto(p => !p);
+                  }}
+                  style={{display:"flex",alignItems:"center",gap:"6px",background:"rgba(45,30,10,0.10)",borderRadius:"20px",padding:"5px 12px",border:"1px solid rgba(45,30,10,0.05)",flexShrink:0,marginTop:"3px"}}
+                >
+                  <span style={{fontSize:"9px",fontWeight:showPhoto?"400":"700",color:showPhoto?"var(--ink-3)":"var(--ink-1)",transition:"all 0.2s",whiteSpace:"nowrap"}}>일러스트</span>
+                  <span style={{fontSize:"9px",color:"rgba(45,30,10,0.24)"}}>|</span>
+                  <span style={{fontSize:"9px",fontWeight:showPhoto?"700":"400",color:showPhoto?"var(--ink-1)":"var(--ink-3)",transition:"all 0.2s",whiteSpace:"nowrap"}}>내 사진</span>
+                </div>
+              )}
+            </div>
+
+            {/* 토종/외래 배지 + 토글 탭 */}
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:"10px",marginBottom:"12px"}}>
+              <div style={{display:"inline-block",padding:"3px 10px",borderRadius:"10px",fontSize:"10px",background:nc.bg,color:nc.color,flexShrink:0}}>{item.native_status}</div>
               <div style={{display:"flex",alignItems:"center",gap:"5px",background:"rgba(45,30,10,0.07)",borderRadius:"20px",padding:"5px 12px",flexShrink:0,marginLeft:"8px",marginTop:"2px"}}>
                 <span style={{fontSize:"9px",fontWeight:showDetail?"400":"700",color:showDetail?"var(--ink-3)":"var(--ink-1)",transition:"all 0.2s"}}>이야기</span>
                 <span style={{fontSize:"9px",color:"var(--ink-3)"}}>|</span>
@@ -318,14 +381,11 @@ function CollectionCard({ item, onDelete }) {
               </div>
             </div>
 
-            {/* 토종/외래 배지 */}
-            <div style={{display:"inline-block",padding:"3px 10px",borderRadius:"10px",fontSize:"10px",background:nc.bg,color:nc.color,marginBottom:"12px"}}>{item.native_status}</div>
-
             {!showDetail ? (
               /* 이야기 */
               <div>
-                <div style={{fontSize:"14px",lineHeight:"1.85",color:"var(--ink-1)",fontFamily:"'Noto Serif KR',serif",letterSpacing:"-0.01em"}}>{story}</div>
-                <div style={{marginTop:"14px",fontSize:"10px",color:"var(--ink-3)",display:"flex",alignItems:"center",justifyContent:"flex-end",gap:"4px"}}>탭하면 상세정보 <Icon name="ArrowRight" size={12} /></div>
+                <div className="collection-modal-story" style={{fontSize:"13.5px",lineHeight:"1.72",color:"var(--ink-1)",fontFamily:"'Noto Serif KR',serif",letterSpacing:"-0.01em"}}>{story}</div>
+                <div className="collection-modal-tip" style={{marginTop:"10px",fontSize:"10px",color:"var(--ink-3)",display:"flex",alignItems:"center",justifyContent:"flex-end",gap:"4px"}}>탭하면 상세정보 <Icon name="ArrowRight" size={12} /></div>
               </div>
             ) : (
               /* 상세정보 */
@@ -345,18 +405,19 @@ function CollectionCard({ item, onDelete }) {
           </div>
 
           {/* 공유 버튼 */}
-          <div style={{borderTop:"1px solid rgba(45,30,10,0.06)",padding:"12px 20px 14px"}}>
+          <div className="collection-modal-footer" style={{borderTop:"1px solid rgba(45,30,10,0.06)",padding:"10px 20px 12px",background:"linear-gradient(180deg,var(--paper-2),var(--paper))",flexShrink:0}}>
             {/* 보유 희귀도 표시 */}
-            <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:"8px",marginBottom:"10px",padding:"8px 14px",borderRadius:"12px",background:rc.bg,border:`1px solid ${rc.bd}`}}>
-              <span style={{fontFamily:"'Space Mono',monospace",fontSize:"11px",fontWeight:"700",color:rc.color,display:"inline-flex",alignItems:"center",gap:"5px"}}><Icon name="Star" size={11} strokeWidth={2.4} /> {rc.label}</span>
+            <div className="collection-modal-ownership" style={{display:"flex",alignItems:"center",justifyContent:"center",flexWrap:"wrap",gap:"5px 8px",marginBottom:"8px",padding:"7px 10px",borderRadius:"12px",background:rc.bg,border:`1px solid ${rc.bd}`,textAlign:"center"}}>
+              <span style={{fontFamily:"'Space Mono',monospace",fontSize:"10px",fontWeight:"700",color:rc.color,display:"inline-flex",alignItems:"center",gap:"5px"}}><Icon name="Star" size={11} strokeWidth={2.4} /> {rc.label}</span>
               <span style={{fontSize:"11px",color:"rgba(45,30,10,0.2)"}}>|</span>
-              <span style={{fontFamily:"'Space Mono',monospace",fontSize:"13px",fontWeight:"700",color:rc.color}}>상위 {RARITY_OWNERSHIP_PCT[rarity]}%</span>
+              <span style={{fontFamily:"'Space Mono',monospace",fontSize:"12px",fontWeight:"700",color:rc.color}}>상위 {RARITY_OWNERSHIP_PCT[rarity]}%</span>
               <span style={{fontSize:"10px",color:"var(--ink-3)"}}>만 보유</span>
             </div>
             <button
               onClick={handleShare}
               disabled={sharing}
-              style={{width:"100%",padding:"11px",borderRadius:"12px",border:`1.5px solid ${rc.bd}`,background:sharing?"rgba(45,30,10,0.06)":rc.bg,color:sharing?"var(--ink-3)":rc.color,fontFamily:"'Black Han Sans',sans-serif",fontSize:"15px",letterSpacing:"2px",cursor:sharing?"default":"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:"8px",transition:"all 0.2s"}}
+              className="collection-modal-share"
+              style={{width:"100%",height:"42px",borderRadius:"12px",border:`1.5px solid ${rc.bd}`,background:sharing?"rgba(45,30,10,0.06)":rc.bg,color:sharing?"var(--ink-3)":rc.color,fontFamily:"'Black Han Sans',sans-serif",fontSize:"15px",letterSpacing:"2px",cursor:sharing?"default":"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:"8px",transition:"all 0.2s"}}
             >
               {sharing ? <Icon name="LoaderCircle" size={16} /> : <Icon name="Share2" size={16} />}
               <span>{sharing?"캡처 중…":"자랑하기"}</span>
@@ -374,6 +435,8 @@ function CollectionCard({ item, onDelete }) {
       <img
         src={illustSrc}
         alt={item.korean_name}
+        loading="eager"
+        decoding="async"
         style={{width:"100%",height:"100%",objectFit:"cover"}}
         onError={(e) => {
           // S3 illustration_url → ILLUSTRATION_MAP/convention → SVG 자동생성 폴백 체인

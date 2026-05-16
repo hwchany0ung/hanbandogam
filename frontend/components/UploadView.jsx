@@ -42,7 +42,9 @@ function UploadView({ onUpload, onDemoCapture, collectionCount, missionCompleted
   function handleFile(file) {
     if (!file) return;
     if (!file.type.startsWith("image/")) { alert("이미지 파일만 업로드 가능해요"); return; }
-    if (file.size > 5*1024*1024) { alert("5MB 이하 이미지만 가능해요"); return; }
+    var maxBytes = window.MAX_UPLOAD_IMAGE_BYTES || (15*1024*1024);
+    var maxLabel = window.MAX_UPLOAD_IMAGE_LABEL || "15MB";
+    if (file.size > maxBytes) { alert(maxLabel + " 이하 이미지만 가능해요"); return; }
     onUpload(file);
   }
 

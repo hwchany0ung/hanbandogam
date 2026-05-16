@@ -2,16 +2,28 @@ function ResultCard({ result, imageFile, onSave, onRetry, onCollection, alreadyC
   var [saving, setSaving] = React.useState(false);
   var [saved,  setSaved]  = React.useState(false);
   var [previewErr, setPreviewErr] = React.useState(false);
+  var [blobPreviewUrl, setBlobPreviewUrl] = React.useState(null);
+
+  React.useEffect(function() {
+    if (!imageFile || result.image_url || result.image_path) {
+      setBlobPreviewUrl(null);
+      return;
+    }
+
+    var objectUrl = URL.createObjectURL(imageFile);
+    setBlobPreviewUrl(objectUrl);
+
+    return function() {
+      URL.revokeObjectURL(objectUrl);
+    };
+  }, [imageFile, result.image_url, result.image_path]);
 
   // Design Ref: §5.5 — S3 image_url 우선, blob/image_path 폴백
   // 우선순위:
   //  1) result.image_url — 백엔드가 영구 저장한 S3 URL 또는 /assets/uploads/{uuid}.jpg (다른 세션에서도 유효)
   //  2) imageFile — 사용자가 방금 업로드한 File (blob URL, 현재 세션만)
   //  3) result.image_path — 데모 캡처의 사전 정의 경로
-  var previewUrl = result.image_url
-                || (imageFile ? URL.createObjectURL(imageFile) : null)
-                || result.image_path
-                || null;
+  var previewUrl = result.image_url || blobPreviewUrl || (result.image_path || null);
   var fallbackPng = result.korean_name ? "/assets/illustrations/" + encodeURIComponent(result.korean_name) + ".png" : null;
   // previewErr 발생 시: fallbackPng 있으면 그것, 없으면 null → <img> 자체 숨김 처리
   var imgSrc = previewErr ? (fallbackPng || null) : previewUrl;
@@ -20,6 +32,7 @@ function ResultCard({ result, imageFile, onSave, onRetry, onCollection, alreadyC
   var rc = RARITY_CONFIG[rarity];
   var nc = NATIVE_CONFIG[result.native_status] || NATIVE_CONFIG["불명확"];
   var pct = Math.round(result.confidence * 100);
+  var minConfidence = window.COLLECTION_MIN_CONFIDENCE || 0.6;
   var morphTags = result.morphological_clues ? result.morphological_clues.split(/[,，、]+/).map(s=>s.trim()).filter(Boolean) : [];
   var isAlreadyCollected = alreadyCollected && !saved;
 
@@ -29,7 +42,7 @@ function ResultCard({ result, imageFile, onSave, onRetry, onCollection, alreadyC
     result.korean_name === "해당 없음" ||
     result.korean_name === "N/A" ||
     result.scientific_name === "N/A" ||
-    result.confidence < 0.3;
+    result.confidence <= minConfidence;
 
   async function handleSave() {
     if (saved || notIdentified || alreadyCollected) return;
@@ -158,7 +171,7 @@ function ResultCard({ result, imageFile, onSave, onRetry, onCollection, alreadyC
           <>
             {notIdentified && (
               <div style={{marginBottom:"8px",padding:"8px 12px",borderRadius:"8px",background:"rgba(220,38,38,0.06)",border:"1px solid rgba(220,38,38,0.18)",fontSize:"11px",color:"var(--invasive)",textAlign:"center"}}>
-                <span style={{display:"inline-flex",alignItems:"center",justifyContent:"center",gap:"6px"}}><Icon name="TriangleAlert" size={13} /> 한국 토종 생물이 아닙니다 · 도감에 저장할 수 없어요</span>
+                <span style={{display:"inline-flex",alignItems:"center",justifyContent:"center",gap:"6px"}}><Icon name="TriangleAlert" size={13} /> 식별 신뢰도 60% 이하는 도감에 저장할 수 없어요</span>
               </div>
             )}
             <button
