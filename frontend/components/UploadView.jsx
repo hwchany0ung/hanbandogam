@@ -58,10 +58,10 @@ function UploadView({ onUpload, onDemoCapture, collectionCount, missionCompleted
         <div className="home-subtitle">KOREAN SPECIES FIELD GUIDE</div>
       </div>
 
-      {/* 조리개 */}
+      {/* 조리개 — 실제 카메라 (기능 테스트용, 시연 X) */}
       <div className="home-scan-zone flex flex-col items-center relative" style={{zIndex:2}}>
         <div
-          onClick={() => onDemoCapture ? onDemoCapture() : inputRef.current.click()}
+          onClick={() => inputRef.current.click()}
           onDragOver={e=>{e.preventDefault();setDragging(true);}}
           onDragLeave={()=>setDragging(false)}
           onDrop={e=>{e.preventDefault();setDragging(false);handleFile(e.dataTransfer.files[0]);}}
