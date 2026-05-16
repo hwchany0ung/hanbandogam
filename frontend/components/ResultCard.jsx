@@ -204,8 +204,8 @@ function ResultCard({ result, imageFile, onSave, onRetry, onCollection, alreadyC
             }
             <div className="holo"/>
             {/* 희귀도 배지 */}
-            <div style={{position:"absolute",top:"12px",left:"12px",padding:"5px 12px",borderRadius:"20px",fontFamily:"'Space Mono',monospace",fontSize:"10px",fontWeight:"700",letterSpacing:"1.5px",background:rc.bg,border:`1px solid ${rc.bd}`,color:rc.color,backdropFilter:"blur(8px)"}}>
-              <span style={{display:"inline-flex",alignItems:"center",gap:"5px"}}><Icon name="Star" size={11} strokeWidth={2.4} /> {rc.label}</span>
+            <div style={{position:"absolute",top:"12px",left:"12px",padding:"5px 12px",borderRadius:"20px",fontFamily:"'Space Mono',monospace",fontSize:"10px",fontWeight:"700",letterSpacing:"1.5px",background:rc.bg,border:`1px solid ${rc.bd}`,color:rc.color,backdropFilter:"blur(8px)",display:"flex",alignItems:"center",gap:"5px",lineHeight:"1"}}>
+              <Icon name="Star" size={11} strokeWidth={2.4} /><span style={{lineHeight:"1",display:"block"}}>{rc.label}</span>
             </div>
             {/* 토종 배지 */}
             <div style={{position:"absolute",top:"12px",right:"12px",padding:"5px 11px",borderRadius:"20px",fontSize:"11px",fontWeight:"600",background:nc.bg,border:`1px solid ${nc.bd}`,color:nc.color,backdropFilter:"blur(8px)"}}>
@@ -258,12 +258,21 @@ function ResultCard({ result, imageFile, onSave, onRetry, onCollection, alreadyC
 
             {/* 보전 현황 */}
             <div style={{fontSize:"11px",color:"var(--ink-3)",textAlign:"center"}}>{result.conservation_status}</div>
+
+            {/* 오류 신고 */}
+            <button
+              onClick={handleReport}
+              disabled={reported}
+              style={{display:"flex",alignItems:"center",justifyContent:"center",gap:"4px",width:"100%",marginTop:"10px",fontSize:"9px",color:reported?"var(--ink-4)":"rgba(220,38,38,0.35)",background:"none",border:"none",cursor:reported?"default":"pointer",letterSpacing:"0.3px"}}
+            >
+              <Icon name="Flag" size={9} /> {reported ? "신고 접수됨" : "AI 판별 오류 신고"}
+            </button>
           </div>
         </div>
       </div>
 
       {/* 고정 액션 영역 */}
-      <div style={{flex:"0 0 auto",padding:"12px 16px calc(14px + env(safe-area-inset-bottom, 0px))",background:"rgba(244,237,220,0.96)",borderTop:"1px solid var(--gold-bd)",boxShadow:"0 -10px 26px rgba(45,30,10,0.08)",backdropFilter:"blur(18px)"}}>
+      <div style={{flex:"0 0 auto",padding:"8px 16px calc(8px + env(safe-area-inset-bottom, 0px))",background:"rgba(244,237,220,0.96)",borderTop:"1px solid var(--gold-bd)",boxShadow:"0 -10px 26px rgba(45,30,10,0.08)",backdropFilter:"blur(18px)"}}>
         {showReportToast && (
           <div style={{position:"fixed",bottom:"calc(90px + env(safe-area-inset-bottom,0px))",left:"50%",transform:"translateX(-50%)",padding:"10px 18px",borderRadius:"10px",background:"rgba(31,26,18,0.94)",color:"#FFF7E8",fontSize:"12px",lineHeight:"1.5",textAlign:"center",zIndex:9999,maxWidth:"calc(100vw - 48px)",backdropFilter:"blur(12px)",boxShadow:"0 6px 20px rgba(0,0,0,0.28)",whiteSpace:"nowrap"}}>
             신고가 접수되었습니다. 전문가 검토 후 데이터 개선에 반영됩니다.
@@ -316,15 +325,15 @@ function ResultCard({ result, imageFile, onSave, onRetry, onCollection, alreadyC
                 onClick={handleSave}
                 disabled={saving||saved||notIdentified}
                 className={notIdentified?"":"btn-shine"}
-                style={{flex:"1 1 auto",height:"50px",borderRadius:"12px",border:"none",background:notIdentified?"rgba(45,30,10,0.08)":saved?"var(--ink-3)":"linear-gradient(135deg,#1D4ED8,var(--R))",color:notIdentified?"var(--ink-3)":"#fff",fontFamily:"'Black Han Sans',sans-serif",fontSize:"15px",letterSpacing:"3px",cursor:(saved||notIdentified)?"not-allowed":"pointer",boxShadow:(saved||notIdentified)?"none":"0 6px 20px rgba(37,99,235,0.3)",opacity:notIdentified?0.7:1}}
+                style={{flex:"1 1 auto",height:"50px",borderRadius:"12px",border:"none",background:notIdentified?"rgba(45,30,10,0.08)":saved?"var(--ink-3)":"linear-gradient(135deg,#1D4ED8,var(--R))",color:notIdentified?"var(--ink-3)":"#fff",fontFamily:"'Black Han Sans',sans-serif",fontSize:"18px",letterSpacing:"3px",cursor:(saved||notIdentified)?"not-allowed":"pointer",boxShadow:(saved||notIdentified)?"none":"0 6px 20px rgba(37,99,235,0.3)",opacity:notIdentified?0.7:1,display:"flex",alignItems:"center",justifyContent:"center",gap:"8px",lineHeight:"1"}}
               >
                 {notIdentified
-                  ? <span style={{display:"inline-flex",alignItems:"center",justifyContent:"center",gap:"8px"}}><Icon name="XCircle" size={17} /> 도감 추가 불가</span>
+                  ? <><Icon name="XCircle" size={17} /><span style={{lineHeight:"1"}}>도감 추가 불가</span></>
                   : saved
-                    ? <span style={{display:"inline-flex",alignItems:"center",justifyContent:"center",gap:"8px"}}><Icon name="Check" size={17} strokeWidth={2.5} /> 도감에 저장됨</span>
+                    ? <><Icon name="Check" size={17} strokeWidth={2.5} /><span style={{lineHeight:"1"}}>도감에 저장됨</span></>
                     : saving
                       ? "저장 중…"
-                      : <span style={{display:"inline-flex",alignItems:"center",justifyContent:"center",gap:"8px"}}><Icon name="BookOpen" size={17} strokeWidth={2.4} /> 도감에 추가! +1</span>
+                      : <><Icon name="BookOpen" size={20} strokeWidth={2.4} /><span style={{lineHeight:"1"}}>도감에 추가!</span></>
                 }
               </button>
             </div>
@@ -337,13 +346,6 @@ function ResultCard({ result, imageFile, onSave, onRetry, onCollection, alreadyC
           </button>
         )}
 
-        <button
-          onClick={handleReport}
-          disabled={reported}
-          style={{display:"flex",alignItems:"center",justifyContent:"center",gap:"5px",width:"100%",marginTop:"8px",fontSize:"11px",color:reported?"var(--ink-3)":"rgba(220,38,38,0.55)",background:"none",border:"none",cursor:reported?"default":"pointer",opacity:reported?0.55:1}}
-        >
-          <Icon name="Flag" size={11} /> {reported ? "신고 접수됨" : "AI 판별 오류 신고"}
-        </button>
       </div>
     </div>
   );
