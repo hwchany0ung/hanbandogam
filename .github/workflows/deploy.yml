@@ -54,9 +54,10 @@ jobs:
           UPSTAGE_API_KEY: ${{ secrets.UPSTAGE_API_KEY }}
           DOMAIN: ${{ secrets.DOMAIN }}
           CORS_ORIGINS: ${{ secrets.CORS_ORIGINS }}
+          GITHUB_DISPATCH_TOKEN: ${{ secrets.ADMIN_PUSH_TOKEN }}
         run: |
-          printf 'ANTHROPIC_API_KEY=%s\nUPSTAGE_API_KEY=%s\nDOMAIN=%s\nCORS_ORIGINS=%s\nDATABASE_URL=sqlite:///./hanbando.db\nAPP_DEMO_MODE=0\n' \
-            "$ANTHROPIC_API_KEY" "$UPSTAGE_API_KEY" "$DOMAIN" "$CORS_ORIGINS" > /tmp/.env
+          printf 'ANTHROPIC_API_KEY=%s\nUPSTAGE_API_KEY=%s\nDOMAIN=%s\nCORS_ORIGINS=%s\nDATABASE_URL=sqlite:///./hanbando.db\nAPP_DEMO_MODE=0\nGITHUB_DISPATCH_TOKEN=%s\nGITHUB_REPO=hwchany0ung/hanbandogam\n' \
+            "$ANTHROPIC_API_KEY" "$UPSTAGE_API_KEY" "$DOMAIN" "$CORS_ORIGINS" "$GITHUB_DISPATCH_TOKEN" > /tmp/.env
           scp -i /tmp/hanbando.pem -o StrictHostKeyChecking=no \
             /tmp/hanbando.tar.gz /tmp/.env \
             ec2-user@${{ secrets.EC2_HOST }}:/tmp/
@@ -71,6 +72,10 @@ jobs:
           cd "$APP_DIR"
 
           tar xzf /tmp/hanbando.tar.gz
+
+          # .env 갱신 (GITHUB_DISPATCH_TOKEN 등 최신 키 주입)
+          cp /tmp/.env "$APP_DIR/.env"
+          chmod 600 "$APP_DIR/.env"
 
           if [ ! -d venv ]; then
             python3.11 -m venv venv
