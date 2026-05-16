@@ -38,9 +38,11 @@ app.add_middleware(
 app.include_router(identify.router)
 app.include_router(collection.router)
 
-assets_dir = Path(__file__).parent / "assets"
-if assets_dir.exists():
-    app.mount("/assets", StaticFiles(directory=assets_dir), name="assets")
+# 사용자 업로드 파일만 backend 에서 서빙 (/assets/uploads/*)
+# /assets/illustrations 와 /assets/photos 는 마지막 frontend mount 가 처리
+uploads_dir = Path(__file__).parent / "assets" / "uploads"
+uploads_dir.mkdir(parents=True, exist_ok=True)
+app.mount("/assets/uploads", StaticFiles(directory=uploads_dir), name="uploads")
 
 
 @app.get("/health")
