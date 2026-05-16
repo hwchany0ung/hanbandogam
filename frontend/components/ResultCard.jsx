@@ -4,6 +4,8 @@ function ResultCard({ result, imageFile, onSave, onRetry, onCollection, alreadyC
   var [previewErr, setPreviewErr] = React.useState(false);
   var [blobPreviewUrl, setBlobPreviewUrl] = React.useState(null);
   var [pointPhase, setPointPhase] = React.useState("hidden"); // "hidden" | "in" | "out"
+  var [reported, setReported] = React.useState(false);
+  var [showReportToast, setShowReportToast] = React.useState(false);
 
   // 포인트 토스트: 결과 진입 후 0.7s 슬라이드업 → 2.5s 유지 → 페이드아웃
   React.useEffect(function() {
@@ -123,6 +125,13 @@ function ResultCard({ result, imageFile, onSave, onRetry, onCollection, alreadyC
   function handleCloseExisting() {
     if (onCloseExisting) onCloseExisting();
     else if (onRetry) onRetry();
+  }
+
+  function handleReport() {
+    if (reported) return;
+    setReported(true);
+    setShowReportToast(true);
+    setTimeout(function() { setShowReportToast(false); }, 4000);
   }
 
   var earnedPts = RARITY_POINTS[rarity] || 5;
@@ -251,6 +260,11 @@ function ResultCard({ result, imageFile, onSave, onRetry, onCollection, alreadyC
 
       {/* 고정 액션 영역 */}
       <div style={{flex:"0 0 auto",padding:"12px 16px calc(14px + env(safe-area-inset-bottom, 0px))",background:"rgba(244,237,220,0.96)",borderTop:"1px solid var(--gold-bd)",boxShadow:"0 -10px 26px rgba(45,30,10,0.08)",backdropFilter:"blur(18px)"}}>
+        {showReportToast && (
+          <div style={{position:"fixed",bottom:"calc(90px + env(safe-area-inset-bottom,0px))",left:"50%",transform:"translateX(-50%)",padding:"10px 18px",borderRadius:"10px",background:"rgba(31,26,18,0.94)",color:"#FFF7E8",fontSize:"12px",lineHeight:"1.5",textAlign:"center",zIndex:9999,maxWidth:"calc(100vw - 48px)",backdropFilter:"blur(12px)",boxShadow:"0 6px 20px rgba(0,0,0,0.28)",whiteSpace:"nowrap"}}>
+            신고가 접수되었습니다. 전문가 검토 후 데이터 개선에 반영됩니다.
+          </div>
+        )}
         {isAlreadyCollected ? (
           <>
             <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:"5px",padding:"10px 12px",borderRadius:"12px",background:"var(--gold-dim)",border:"1px solid var(--gold-bd)",color:"var(--ink-2)",fontSize:"12px",lineHeight:"1.45",marginBottom:"10px",textAlign:"center"}}>
@@ -262,13 +276,22 @@ function ResultCard({ result, imageFile, onSave, onRetry, onCollection, alreadyC
                 )}
               </div>
             </div>
-            <button
-              onClick={handleCloseExisting}
-              className="w-full rounded-xl"
-              style={{height:"50px",background:"var(--ink-1)",border:"none",color:"#fff",fontFamily:"'Black Han Sans',sans-serif",fontSize:"15px",letterSpacing:"2px",cursor:"pointer",boxShadow:"0 6px 20px rgba(31,26,18,0.18)"}}
-            >
-              <span style={{display:"inline-flex",alignItems:"center",justifyContent:"center",gap:"8px"}}><Icon name="Check" size={17} strokeWidth={2.5} /> 도감에 있는 식물입니다</span>
-            </button>
+            <div style={{display:"flex",gap:"8px"}}>
+              <button
+                onClick={onRetry}
+                style={{flex:"0 0 50px",height:"50px",borderRadius:"12px",background:"var(--surface)",border:"1px solid var(--gold-bd)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:"2px",cursor:"pointer",color:"var(--ink-2)",flexShrink:0}}
+              >
+                <Icon name="Camera" size={16} />
+                <span style={{fontSize:"8px",fontWeight:"600",letterSpacing:"0.3px"}}>다시찍기</span>
+              </button>
+              <button
+                onClick={handleCloseExisting}
+                className="rounded-xl"
+                style={{flex:"1 1 auto",height:"50px",background:"var(--ink-1)",border:"none",color:"#fff",fontFamily:"'Black Han Sans',sans-serif",fontSize:"15px",letterSpacing:"2px",cursor:"pointer",boxShadow:"0 6px 20px rgba(31,26,18,0.18)"}}
+              >
+                <span style={{display:"inline-flex",alignItems:"center",justifyContent:"center",gap:"8px"}}><Icon name="Check" size={17} strokeWidth={2.5} /> 도감에 있는 식물입니다</span>
+              </button>
+            </div>
           </>
         ) : (
           <>
@@ -277,21 +300,30 @@ function ResultCard({ result, imageFile, onSave, onRetry, onCollection, alreadyC
                 <span style={{display:"inline-flex",alignItems:"center",justifyContent:"center",gap:"6px"}}><Icon name="TriangleAlert" size={13} /> 식별 신뢰도 60% 이하는 도감에 저장할 수 없어요</span>
               </div>
             )}
-            <button
-              onClick={handleSave}
-              disabled={saving||saved||notIdentified}
-              className={notIdentified?"":"btn-shine"}
-              style={{width:"100%",height:"50px",borderRadius:"12px",border:"none",background:notIdentified?"rgba(45,30,10,0.08)":saved?"var(--ink-3)":"linear-gradient(135deg,#1D4ED8,var(--R))",color:notIdentified?"var(--ink-3)":"#fff",fontFamily:"'Black Han Sans',sans-serif",fontSize:"15px",letterSpacing:"3px",cursor:(saved||notIdentified)?"not-allowed":"pointer",boxShadow:(saved||notIdentified)?"none":"0 6px 20px rgba(37,99,235,0.3)",opacity:notIdentified?0.7:1}}
-            >
-              {notIdentified
-                ? <span style={{display:"inline-flex",alignItems:"center",justifyContent:"center",gap:"8px"}}><Icon name="XCircle" size={17} /> 도감 추가 불가</span>
-                : saved
-                  ? <span style={{display:"inline-flex",alignItems:"center",justifyContent:"center",gap:"8px"}}><Icon name="Check" size={17} strokeWidth={2.5} /> 도감에 저장됨</span>
-                  : saving
-                    ? "저장 중…"
-                    : <span style={{display:"inline-flex",alignItems:"center",justifyContent:"center",gap:"8px"}}><Icon name="BookOpen" size={17} strokeWidth={2.4} /> 도감에 추가! +1</span>
-              }
-            </button>
+            <div style={{display:"flex",gap:"8px"}}>
+              <button
+                onClick={onRetry}
+                style={{flex:"0 0 50px",height:"50px",borderRadius:"12px",background:"var(--surface)",border:"1px solid var(--gold-bd)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:"2px",cursor:"pointer",color:"var(--ink-2)",flexShrink:0}}
+              >
+                <Icon name="Camera" size={16} />
+                <span style={{fontSize:"8px",fontWeight:"600",letterSpacing:"0.3px"}}>다시찍기</span>
+              </button>
+              <button
+                onClick={handleSave}
+                disabled={saving||saved||notIdentified}
+                className={notIdentified?"":"btn-shine"}
+                style={{flex:"1 1 auto",height:"50px",borderRadius:"12px",border:"none",background:notIdentified?"rgba(45,30,10,0.08)":saved?"var(--ink-3)":"linear-gradient(135deg,#1D4ED8,var(--R))",color:notIdentified?"var(--ink-3)":"#fff",fontFamily:"'Black Han Sans',sans-serif",fontSize:"15px",letterSpacing:"3px",cursor:(saved||notIdentified)?"not-allowed":"pointer",boxShadow:(saved||notIdentified)?"none":"0 6px 20px rgba(37,99,235,0.3)",opacity:notIdentified?0.7:1}}
+              >
+                {notIdentified
+                  ? <span style={{display:"inline-flex",alignItems:"center",justifyContent:"center",gap:"8px"}}><Icon name="XCircle" size={17} /> 도감 추가 불가</span>
+                  : saved
+                    ? <span style={{display:"inline-flex",alignItems:"center",justifyContent:"center",gap:"8px"}}><Icon name="Check" size={17} strokeWidth={2.5} /> 도감에 저장됨</span>
+                    : saving
+                      ? "저장 중…"
+                      : <span style={{display:"inline-flex",alignItems:"center",justifyContent:"center",gap:"8px"}}><Icon name="BookOpen" size={17} strokeWidth={2.4} /> 도감에 추가! +1</span>
+                }
+              </button>
+            </div>
           </>
         )}
 
@@ -300,6 +332,14 @@ function ResultCard({ result, imageFile, onSave, onRetry, onCollection, alreadyC
             내 도감 보기 <Icon name="ArrowRight" size={14} />
           </button>
         )}
+
+        <button
+          onClick={handleReport}
+          disabled={reported}
+          style={{display:"flex",alignItems:"center",justifyContent:"center",gap:"5px",width:"100%",marginTop:"8px",fontSize:"11px",color:reported?"var(--ink-3)":"rgba(220,38,38,0.55)",background:"none",border:"none",cursor:reported?"default":"pointer",opacity:reported?0.55:1}}
+        >
+          <Icon name="Flag" size={11} /> {reported ? "신고 접수됨" : "AI 판별 오류 신고"}
+        </button>
       </div>
     </div>
   );
