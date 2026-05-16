@@ -28,6 +28,9 @@ var ILLUSTRATION_MAP = {
   "돼지풀":         "/assets/illustrations/plant_104_돼지풀.png",
   "미국쑥부쟁이":   "/assets/illustrations/plant_105_미국쑥부쟁이.png",
   "양미역취":       "/assets/illustrations/plant_106_양미역취.png",
+  // Replicate flux-schnell 실시간 생성 (신규 발견 종)
+  "마삭줄":         "/assets/illustrations/마삭줄.png",
+  "산딸기":         "/assets/illustrations/산딸기.png",
   // SVG (기존 유지)
   "황소개구리":"/assets/illustrations/황소개구리.svg",
   "왜가리":"/assets/illustrations/왜가리.svg",
