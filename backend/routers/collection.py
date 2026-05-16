@@ -7,11 +7,13 @@ try:
     from backend.domain.types import CollectionAddRequest, CollectionItem, MapPoint
     from backend.services.geocode import reverse_geocode
     from backend.services.illust_trigger import trigger_illustration_generation
+    from backend.services.story_trigger import trigger_story_generation
 except ImportError:
     from db import repository
     from domain.types import CollectionAddRequest, CollectionItem, MapPoint
     from services.geocode import reverse_geocode
     from services.illust_trigger import trigger_illustration_generation
+    from services.story_trigger import trigger_story_generation
 
 
 router = APIRouter(prefix="/api/collection", tags=["collection"])
@@ -61,10 +63,16 @@ def add_to_collection(
         and body.korean_name not in ("해당 없음", "N/A")
         and body.scientific_name != "N/A"
     ):
+        # 일러스트 자동생성 (Replicate flux-schnell)
         background_tasks.add_task(
             trigger_illustration_generation,
             body.korean_name,
             body.native_status,
+        )
+        # 이야기 자동생성 (Claude API)
+        background_tasks.add_task(
+            trigger_story_generation,
+            body.korean_name,
         )
 
     return saved

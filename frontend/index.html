@@ -514,6 +514,16 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://unpkg.com/lucide@1.16.0/dist/umd/lucide.js"></script>
+
+  <!-- 이야기 데이터 사전 로드 (data/stories.json) -->
+  <script>
+    window.STORIES_DATA = {};
+    fetch("/data/stories.json")
+      .then(function(r) { return r.ok ? r.json() : {}; })
+      .then(function(d) { window.STORIES_DATA = d || {}; })
+      .catch(function(){ window.STORIES_DATA = {}; });
+  </script>
+
   <script>
     function Icon(props) {
       props = props || {};
