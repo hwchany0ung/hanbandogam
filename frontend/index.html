@@ -160,6 +160,24 @@
     ::-webkit-scrollbar { width:3px; }
     ::-webkit-scrollbar-thumb { background:var(--gold-bd); border-radius:3px; }
 
+    /* ── 스플래시 ── */
+    @keyframes stamp-in {
+      0%   { transform:scale(1.18); opacity:0; filter:blur(4px); }
+      40%  { opacity:1; filter:blur(0); }
+      55%  { transform:scale(0.97); }
+      70%  { transform:scale(1.02); }
+      100% { transform:scale(1); opacity:1; }
+    }
+    @keyframes splash-load {
+      0%   { width:0%; }
+      100% { width:100%; }
+    }
+    @keyframes splash-fade-out {
+      0%   { opacity:1; }
+      100% { opacity:0; pointer-events:none; }
+    }
+    .splash-exit { animation:splash-fade-out 0.5s ease-out forwards; }
+
     /* ── 성공 팝업 ── */
     @keyframes scale-in {
       0%   { transform:scale(0.5) translateY(20px); opacity:0; }
