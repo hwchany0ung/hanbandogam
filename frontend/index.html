@@ -1,26 +1,437 @@
-<style>
-  .card-flip-inner {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    transform-style: preserve-3d;
-    transition: transform 0.6s ease;
-  }
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>한반도감</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@400;500;700;900&family=Noto+Serif+KR:wght@600;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --paper: #f4eddc;
+      --paper-2: #faf5e6;
+      --surface: #fffefa;
+      --surface-2: #fbf7ec;
+      --lift: #f0e8d4;
+      --ink-1: #1f1a12;
+      --ink-2: #5c5345;
+      --ink-3: #9c907e;
+      --ink-4: #c8bda8;
+      --gold: #b8902f;
+      --gold-2: #d4a93d;
+      --gold-dim: rgba(184, 144, 47, 0.1);
+      --gold-bd: rgba(184, 144, 47, 0.3);
+      --native: #16a34a;
+      --invasive: #dc2626;
+      --unknown: #6b7280;
+      --L: #c99227;
+      --E: #8b5cf6;
+      --R: #2563eb;
+      --U: #16a34a;
+      --C: #6b7280;
+    }
 
-  .card-flip-inner.is-flipped {
-    transform: rotateY(180deg);
-  }
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-  .card-face {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-  }
+    html,
+    body {
+      min-height: 100%;
+      margin: 0;
+      background: #ece3cc;
+      color: var(--ink-1);
+      font-family: "Noto Sans KR", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
 
-  .card-face-back {
-    transform: rotateY(180deg);
-  }
-</style>
+    body {
+      background-image:
+        radial-gradient(circle at 20% 20%, rgba(184, 144, 47, 0.06), transparent 34%),
+        radial-gradient(circle at 80% 78%, rgba(92, 83, 69, 0.04), transparent 30%),
+        linear-gradient(135deg, rgba(255, 255, 255, 0.28) 0 1px, transparent 1px);
+      background-size: auto, auto, 28px 28px;
+    }
+
+    button,
+    input,
+    textarea {
+      font: inherit;
+    }
+
+    .app-shell {
+      width: min(100%, 430px);
+      height: 100vh;
+      min-height: 100vh;
+      margin: 0 auto;
+      position: relative;
+      background: var(--paper);
+      overflow: hidden;
+      box-shadow: 0 28px 80px rgba(45, 30, 10, 0.18);
+    }
+
+    @media (min-width: 520px) {
+      .app-shell {
+        height: calc(100vh - 32px);
+        min-height: calc(100vh - 32px);
+        margin: 16px auto;
+        border: 1px solid rgba(184, 144, 47, 0.24);
+        border-radius: 28px;
+      }
+    }
+
+    @media (max-height: 760px) {
+      .aperture {
+        width: 156px;
+        height: 156px;
+      }
+
+      .aperture-core {
+        inset: 26px;
+      }
+
+      .app-content > section:first-child {
+        padding-top: 32px;
+      }
+
+      .app-content > section:first-child .mt-10 {
+        margin-top: 24px;
+      }
+
+      .app-content > section:first-child .mt-8 {
+        margin-top: 20px;
+      }
+
+      .app-content > section:first-child .mt-6 {
+        margin-top: 16px;
+      }
+    }
+
+    .paper-tex {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        radial-gradient(circle at 25% 35%, rgba(184, 144, 47, 0.045) 1px, transparent 1.6px),
+        radial-gradient(circle at 70% 60%, rgba(92, 83, 69, 0.035) 1px, transparent 1.6px);
+      background-size: 38px 38px, 31px 31px;
+      opacity: 0.8;
+      z-index: 0;
+    }
+
+    .app-content {
+      position: relative;
+      z-index: 1;
+      height: 100%;
+      overflow-y: auto;
+      padding-bottom: 88px;
+    }
+
+    .brand-logo {
+      font-family: "Black Han Sans", sans-serif;
+      letter-spacing: 0.18em;
+      color: var(--ink-1);
+    }
+
+    .mono-label {
+      font-family: "Space Mono", monospace;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+    }
+
+    .serif-title {
+      font-family: "Noto Serif KR", serif;
+    }
+
+    .han-card {
+      background: var(--surface);
+      border: 1px solid var(--gold-bd);
+      border-radius: 16px;
+      box-shadow: 0 12px 28px rgba(45, 30, 10, 0.08);
+    }
+
+    .aperture {
+      width: 196px;
+      height: 196px;
+      position: relative;
+      margin: 0 auto;
+    }
+
+    .aperture-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 999px;
+      border: 2px solid transparent;
+      animation: hb-spin 7s linear infinite;
+    }
+
+    .aperture-ring:nth-child(1) {
+      border-top-color: var(--gold);
+      border-right-color: rgba(184, 144, 47, 0.2);
+    }
+
+    .aperture-ring:nth-child(2) {
+      inset: 10px;
+      border-bottom-color: rgba(184, 144, 47, 0.45);
+      animation-duration: 9s;
+      animation-direction: reverse;
+    }
+
+    .aperture-ring:nth-child(3) {
+      inset: 21px;
+      border-top-color: rgba(184, 144, 47, 0.2);
+      animation-duration: 13s;
+    }
+
+    .aperture-core {
+      position: absolute;
+      inset: 32px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 38% 34%, #fffef8, #f0e8d4 72%);
+      border: 1px solid rgba(184, 144, 47, 0.32);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 6px;
+      overflow: hidden;
+      box-shadow: 0 0 44px rgba(184, 144, 47, 0.18), inset 0 0 24px rgba(184, 144, 47, 0.07);
+    }
+
+    .scan-line {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(184, 144, 47, 0.9), transparent);
+      animation: hb-scan 3.4s ease-in-out infinite;
+    }
+
+    @keyframes hb-spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes hb-scan {
+      0% { top: 0; opacity: 0; }
+      12% { opacity: 1; }
+      88% { opacity: 1; }
+      100% { top: 100%; opacity: 0; }
+    }
+
+    .primary-btn {
+      border: 0;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--ink-1), #2c261b);
+      color: var(--surface-2);
+      box-shadow: 0 10px 26px rgba(45, 30, 10, 0.22);
+      font-family: "Black Han Sans", sans-serif;
+      letter-spacing: 0.18em;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .primary-btn::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(184, 144, 47, 0.24), transparent);
+      transform: translateX(-120%);
+      animation: hb-shine 4s ease infinite;
+    }
+
+    @keyframes hb-shine {
+      0% { transform: translateX(-120%); }
+      35%, 100% { transform: translateX(120%); }
+    }
+
+    .secondary-btn {
+      border: 1px solid var(--gold-bd);
+      border-radius: 14px;
+      background: var(--surface);
+      color: var(--ink-2);
+      font-weight: 700;
+    }
+
+    .bottom-nav {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 10;
+      display: flex;
+      padding: 8px 0 22px;
+      background: rgba(244, 237, 220, 0.96);
+      backdrop-filter: blur(18px);
+      border-top: 1px solid var(--gold-bd);
+    }
+
+    .bottom-nav button {
+      flex: 1;
+      border: 0;
+      background: transparent;
+      color: var(--ink-3);
+      padding: 6px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      cursor: pointer;
+    }
+
+    .bottom-nav button.active {
+      color: var(--gold);
+    }
+
+    .bottom-nav .nav-icon {
+      font-size: 19px;
+      line-height: 1;
+    }
+
+    .bottom-nav .nav-label {
+      font-family: "Space Mono", monospace;
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+    }
+
+    .analysis-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 30;
+      background: rgba(244, 237, 220, 0.96);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 14px;
+      text-align: center;
+    }
+
+    .spinner {
+      width: 56px;
+      height: 56px;
+      border-radius: 999px;
+      border: 2px solid rgba(184, 144, 47, 0.18);
+      border-top-color: var(--gold);
+      animation: hb-spin 0.9s linear infinite;
+    }
+
+    .ai-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(139, 92, 246, 0.35);
+      background: #f3edfe;
+      color: #8b5cf6;
+      font-family: "Space Mono", monospace;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+    }
+
+    .native-pill,
+    .rarity-pill {
+      border-radius: 999px;
+      backdrop-filter: blur(8px);
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .rarity-pill {
+      font-family: "Space Mono", monospace;
+      letter-spacing: 0.12em;
+    }
+
+    .native-native { background: rgba(231, 245, 236, 0.96); border: 1px solid rgba(22, 163, 74, 0.3); color: var(--native); }
+    .native-invasive { background: rgba(254, 231, 231, 0.96); border: 1px solid rgba(220, 38, 38, 0.35); color: var(--invasive); }
+    .native-unknown { background: rgba(239, 241, 244, 0.96); border: 1px solid rgba(107, 114, 128, 0.25); color: var(--unknown); }
+
+    .rarity-L { background: #fbf3dc; border: 1px solid rgba(201, 146, 39, 0.45); color: var(--L); }
+    .rarity-E { background: #f3edfe; border: 1px solid rgba(139, 92, 246, 0.35); color: var(--E); }
+    .rarity-R { background: #e8f0fe; border: 1px solid rgba(37, 99, 235, 0.3); color: var(--R); }
+    .rarity-U { background: #e7f5ec; border: 1px solid rgba(22, 163, 74, 0.3); color: var(--U); }
+    .rarity-C { background: #eff1f4; border: 1px solid rgba(107, 114, 128, 0.25); color: var(--C); }
+
+    .confidence-track,
+    .total-track,
+    .rarity-track {
+      overflow: hidden;
+      background: rgba(45, 30, 10, 0.08);
+      border-radius: 999px;
+    }
+
+    .confidence-fill,
+    .total-fill,
+    .rarity-fill {
+      height: 100%;
+      border-radius: 999px;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 96px;
+      z-index: 50;
+      transform: translateX(-50%);
+      width: max-content;
+      max-width: calc(100vw - 48px);
+      padding: 11px 18px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #16a34a, #15803d);
+      color: white;
+      font-family: "Black Han Sans", sans-serif;
+      letter-spacing: 0.08em;
+      box-shadow: 0 8px 24px rgba(22, 163, 74, 0.35);
+    }
+
+    .card-flip-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      transition: transform 0.6s ease;
+    }
+
+    .card-flip-inner.is-flipped {
+      transform: rotateY(180deg);
+    }
+
+    .card-face {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+
+    .card-face-back {
+      transform: rotateY(180deg);
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script>
+    window.DEMO_MODE = window.DEMO_MODE || false;
+    window.API_BASE_URL = window.API_BASE_URL || "http://localhost:8000";
+  </script>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="lib/api.js"></script>
+  <script type="text/babel" src="components/UploadView.jsx"></script>
+  <script type="text/babel" src="components/LoadingView.jsx"></script>
+  <script type="text/babel" src="components/ErrorView.jsx"></script>
+  <script type="text/babel" src="components/ResultCard.jsx"></script>
+  <script type="text/babel" src="components/CollectionCard.jsx"></script>
+  <script type="text/babel" src="components/CollectionView.jsx"></script>
+  <script type="text/babel" src="components/App.jsx"></script>
+</body>
+</html>
