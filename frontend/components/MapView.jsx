@@ -82,7 +82,7 @@ function MapView({ onBack }) {
       marker.bindPopup(
         "<div style='font-family:sans-serif;min-width:130px'>" +
         "<b style='font-size:14px'>" + item.korean_name + "</b><br>" +
-        "<span style='color:" + rc.color + ";font-size:11px;font-weight:700'>★ " + rarityKr + "급</span><br>" +
+        "<span style='color:" + rc.color + ";font-size:10px;font-weight:700;letter-spacing:1px;font-family:Space Mono,monospace'>★ " + rc.label + "</span><br>" +
         "<span style='color:#888;font-size:11px'>" + desc + "</span>" +
         "</div>"
       );
