@@ -69,8 +69,10 @@ SHARE_RARITY_KR = {
     "노랑무늬붓꽃":"희귀","금꿩의다리":"희귀","개족도리풀":"희귀","좀민들레":"비범",
     "가시딸기":"희귀","나도승마":"희귀","서양민들레":"비범","돼지풀":"평범",
     "단풍잎돼지풀":"평범","미국쑥부쟁이":"평범","양미역취":"평범","가시박":"평범",
-    "따오기":"전설","수달":"특산",
+    "따오기":"전설","수달":"특산","한라솜다리":"전설","분홍바늘꽃":"희귀",
 }
+
+RARITY_KR_TO_PCT = {"전설":"0.3", "특산":"1.2", "희귀":"4.5", "비범":"15", "평범":"40"}
 
 
 @app.get("/share/{korean_name}", response_class=HTMLResponse)
@@ -78,10 +80,16 @@ def share_page(korean_name: str):
     site = os.getenv("SITE_URL", "https://hanban-do.com")
     photo = SHARE_SPECIES_PHOTOS.get(korean_name, "/assets/photos/미선나무.jpg")
     rarity_kr = SHARE_RARITY_KR.get(korean_name, "")
+    pct = RARITY_KR_TO_PCT.get(rarity_kr, "")
     photo_url = site + photo
 
     name_safe = html_module.escape(korean_name)
-    desc_text = f"{rarity_kr}급 한국 토종 생물 카드 · 전국민이 함께 만드는 도감" if rarity_kr else "전국민이 함께 만드는 한국 토종 생물 도감"
+    if rarity_kr and pct:
+        desc_text = f"전국민 중 상위 {pct}%만 보유한 {rarity_kr}급 카드 · 한반도감"
+    elif rarity_kr:
+        desc_text = f"{rarity_kr}급 한국 토종 생물 카드 · 한반도감"
+    else:
+        desc_text = "전국민이 함께 만드는 한국 토종 생물 도감 · 한반도감"
     desc_safe = html_module.escape(desc_text)
 
     html_doc = f"""<!DOCTYPE html>

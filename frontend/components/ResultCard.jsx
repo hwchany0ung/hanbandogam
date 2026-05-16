@@ -9,8 +9,16 @@ function ResultCard({ result, imageFile, onSave, onRetry, onCollection }) {
   var pct = Math.round(result.confidence * 100);
   var morphTags = result.morphological_clues ? result.morphological_clues.split(/[,，、]+/).map(s=>s.trim()).filter(Boolean) : [];
 
+  // 식별 불가 판정 (해당 없음 / N/A / 빈 결과 → 저장 차단)
+  var notIdentified =
+    !result.korean_name ||
+    result.korean_name === "해당 없음" ||
+    result.korean_name === "N/A" ||
+    result.scientific_name === "N/A" ||
+    result.confidence < 0.3;
+
   async function handleSave() {
-    if (saved) return;
+    if (saved || notIdentified) return;
     setSaving(true);
     try { await addToCollection(result, previewUrl||""); setSaved(true); if (onSave) onSave(); }
     catch(e) { alert("저장 실패: "+e.message); }
@@ -86,13 +94,31 @@ function ResultCard({ result, imageFile, onSave, onRetry, onCollection }) {
 
       {/* 고정 저장 버튼 (하단 sticky) */}
       <div style={{flexShrink:0,padding:"10px 16px 14px",background:"var(--paper)",borderTop:"1px solid rgba(45,30,10,0.06)",boxShadow:"0 -4px 14px rgba(45,30,10,0.04)"}}>
+        {notIdentified && (
+          <div style={{marginBottom:"8px",padding:"8px 12px",borderRadius:"8px",background:"rgba(220,38,38,0.06)",border:"1px solid rgba(220,38,38,0.18)",fontSize:"11px",color:"var(--invasive)",textAlign:"center"}}>
+            ⚠️ 한국 토종 생물이 아닙니다 · 도감에 저장할 수 없어요
+          </div>
+        )}
         <button
           onClick={handleSave}
-          disabled={saving||saved}
-          className="btn-shine w-full py-3.5 rounded-xl"
-          style={{background:saved?"var(--ink-3)":"linear-gradient(135deg,#1D4ED8,var(--R))",border:"none",color:"#fff",fontFamily:"'Black Han Sans',sans-serif",fontSize:"15px",letterSpacing:"3px",cursor:saved?"default":"pointer",boxShadow:saved?"none":"0 6px 20px rgba(37,99,235,0.3)"}}
+          disabled={saving||saved||notIdentified}
+          className={notIdentified?"":"btn-shine"}
+          style={{
+            width:"100%",
+            padding:"14px 0",
+            borderRadius:"12px",
+            border:"none",
+            background:notIdentified?"rgba(45,30,10,0.08)":saved?"var(--ink-3)":"linear-gradient(135deg,#1D4ED8,var(--R))",
+            color:notIdentified?"var(--ink-3)":"#fff",
+            fontFamily:"'Black Han Sans',sans-serif",
+            fontSize:"15px",
+            letterSpacing:"3px",
+            cursor:(saved||notIdentified)?"not-allowed":"pointer",
+            boxShadow:(saved||notIdentified)?"none":"0 6px 20px rgba(37,99,235,0.3)",
+            opacity:notIdentified?0.7:1
+          }}
         >
-          {saved?"✓ 도감에 저장됨":saving?"저장 중…":"📚  도감에 추가! +1"}
+          {notIdentified?"❌ 도감 추가 불가":saved?"✓ 도감에 저장됨":saving?"저장 중…":"📚  도감에 추가! +1"}
         </button>
 
         {saved && (

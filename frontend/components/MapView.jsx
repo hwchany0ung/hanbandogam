@@ -135,7 +135,7 @@ function MapView({ onBack }) {
           return (
             <div key={r} style={{display:"flex",alignItems:"center",gap:"5px"}}>
               <div style={{width:"10px",height:"10px",borderRadius:"50%",background:rc.color,border:"1.5px solid #fff",boxShadow:"0 0 0 1px "+rc.color}}/>
-              <span style={{fontFamily:"'Noto Sans KR',sans-serif",fontSize:"10px",color:rc.color,fontWeight:"700"}}>{RARITY_LABEL_KR[r]}</span>
+              <span style={{fontFamily:"'Space Mono',monospace",fontSize:"10px",color:rc.color,fontWeight:"700",letterSpacing:"1px"}}>{r}</span>
             </div>
           );
         })}

@@ -15,15 +15,15 @@ var DEMO_CAPTURES = [
     memo: "우포늪 상공 촬영",
   },
   {
-    korean_name: "미선나무",
-    scientific_name: "Abeliophyllum distichum",
+    korean_name: "한라솜다리",
+    scientific_name: "Leontopodium hallaisanense",
     native_status: "토종",
-    confidence: 0.97,
-    ecology_summary: "지구상에서 오직 한반도에만 자라는 1속 1종의 한국 특산식물. 세계에서 가장 희귀한 수목 중 하나로 꼽히며 괴산·진안 등 4개 자생지만 천연기념물로 지정 보호 중이다.",
-    conservation_status: "VU — 세계 유일 한반도 특산 1속 1종",
-    morphological_clues: "부채꼴 납작한 시과, 2~3월 잎보다 먼저 피는 흰 꽃, 대생 타원형 잎",
-    image_path: "/assets/photos/미선나무.jpg",
-    memo: "괴산 자생지 군락",
+    confidence: 0.94,
+    ecology_summary: "한라산 해발 1,500m 이상 정상부에만 자생하는 한국 특산종. '한국의 에델바이스'로 불리며, 별 모양 흰 솜털 포엽이 추위와 강풍을 견디는 고산 생태계의 상징이다. 야생 개체수가 200여 본 이하로 추정되는 초희귀 식물.",
+    conservation_status: "CR — 한라산 정상부 한정 200여 본 생존",
+    morphological_clues: "별 모양 흰 솜털 포엽, 작은 노란 꽃 머리, 좁고 두꺼운 잎, 전체 은백색 솜털",
+    image_path: "/assets/illustrations/한라솜다리.svg",
+    memo: "한라산 백록담 능선",
   },
   {
     korean_name: "수달",
@@ -37,15 +37,15 @@ var DEMO_CAPTURES = [
     memo: "섬진강 상류 직접 관찰",
   },
   {
-    korean_name: "동강할미꽃",
-    scientific_name: "Pulsatilla tongkangensis",
+    korean_name: "분홍바늘꽃",
+    scientific_name: "Chamerion angustifolium",
     native_status: "토종",
-    confidence: 0.94,
-    ecology_summary: "동강 석회암 절벽에만 자생하는 한국 특산종. 2000년 동강댐 건설 반대 여론의 상징이 된 꽃으로, 댐이 지어졌다면 영원히 사라졌을 식물이다. 현재 자생지 전체가 멸종위기 서식지로 관리된다.",
-    conservation_status: "EN — 동강 석회암 절벽 한정 자생",
-    morphological_clues: "꽃잎 6장 보라색, 전체 흰 솜털, 3~4월 개화, 석회암 절벽 틈 특이 서식",
-    image_path: "/assets/photos/동강할미꽃.jpg",
-    memo: "동강 백운산 절벽",
+    confidence: 0.93,
+    ecology_summary: "산불·벌목 후 가장 먼저 자라나는 '개척자 식물'. 분홍색 꽃이 긴 이삭처럼 피며, 한 그루가 한 시즌에 8만 개의 깃털 달린 씨앗을 만들어 바람을 타고 멀리 날아간다. 강원도 산림 복원지의 상징.",
+    conservation_status: "VU — 산림 화재·벌목 복원지 의존",
+    morphological_clues: "분홍색 꽃 긴 이삭, 좁고 긴 잎 어긋나기, 길게 늘어지는 깃털 씨앗, 7~8월 개화",
+    image_path: "/assets/illustrations/분홍바늘꽃.svg",
+    memo: "강원도 평창 화재 복원지",
   },
 ];
 
@@ -80,11 +80,10 @@ function App() {
     await new Promise(r=>setTimeout(r,350));
     setShutterOn(false);
 
-    // 첫 촬영은 오늘의 미션에 맞는 종, 이후 순환
+    // 오늘 미션 기반 시작점 + 매 클릭마다 회전 (중복 없이 다양한 종)
     var todayMissionIdx = new Date().getDate() % MISSION_DEMO_IDX.length;
-    var captureIdx = demoIdx === 0
-      ? MISSION_DEMO_IDX[todayMissionIdx]
-      : demoIdx % DEMO_CAPTURES.length;
+    var firstIdx = MISSION_DEMO_IDX[todayMissionIdx];
+    var captureIdx = (firstIdx + demoIdx) % DEMO_CAPTURES.length;
     var capture = DEMO_CAPTURES[captureIdx];
     setDemoIdx(i=>i+1);
     setImageFile(null);
