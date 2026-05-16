@@ -81,7 +81,7 @@ EnvironmentFile=/home/ec2-user/hanbando/.env
 ExecStart=/home/ec2-user/hanbando/venv/bin/uvicorn backend.main:app \
     --host 127.0.0.1 \
     --port 8000 \
-    --workers 2 \
+    --workers 4 \
     --log-level info
 Restart=on-failure
 RestartSec=5
