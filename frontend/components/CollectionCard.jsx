@@ -69,6 +69,25 @@ var STORY_MAP = {
 
 var FALLBACK = "/assets/illustrations/fallback.svg";
 
+// 도감에 없는 새 종은 자동으로 등급 색상 + 첫 글자 일러스트 생성
+var RARITY_HEX    = { L:"#C99227", E:"#8B5CF6", R:"#2563EB", U:"#16A34A", C:"#6B7280" };
+var RARITY_BG_HEX = { L:"#FBF3DC", E:"#F3EDFE", R:"#E8F0FE", U:"#E7F5EC", C:"#EFF1F4" };
+
+function generateIllustration(name, rarity) {
+  var color = RARITY_HEX[rarity] || RARITY_HEX.C;
+  var bg    = RARITY_BG_HEX[rarity] || RARITY_BG_HEX.C;
+  var first = (name || "?").charAt(0);
+  var svg =
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">' +
+      '<rect width="100" height="100" fill="' + bg + '"/>' +
+      '<circle cx="50" cy="46" r="30" fill="' + color + '" opacity="0.16"/>' +
+      '<circle cx="50" cy="46" r="22" fill="' + color + '" opacity="0.12"/>' +
+      '<text x="50" y="60" text-anchor="middle" font-family="Noto Serif KR, serif" font-size="38" font-weight="900" fill="' + color + '">' + first + '</text>' +
+      '<text x="50" y="88" text-anchor="middle" font-family="sans-serif" font-size="7" fill="#9C907E">' + (name||"") + '</text>' +
+    '</svg>';
+  return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+}
+
 function CollectionCard({ item, onDelete }) {
   var [zoomed,       setZoomed]       = React.useState(false);
   var [showPhoto,    setShowPhoto]    = React.useState(false);
@@ -82,7 +101,8 @@ function CollectionCard({ item, onDelete }) {
   var rc = RARITY_CONFIG[rarity];
   var nc = NATIVE_CONFIG[item.native_status] || NATIVE_CONFIG["불명확"];
 
-  var illustSrc = illustErr ? FALLBACK : (ILLUSTRATION_MAP[item.korean_name] || FALLBACK);
+  var autoIllust = generateIllustration(item.korean_name, rarity);
+  var illustSrc = illustErr ? autoIllust : (ILLUSTRATION_MAP[item.korean_name] || autoIllust);
   var isIllustPath = item.image_path && item.image_path.startsWith("/assets/illustrations/");
   var hasUserPhoto  = item.image_path && !isIllustPath;
   var userSrc = hasUserPhoto ? (photoErr ? FALLBACK : item.image_path) : FALLBACK;
