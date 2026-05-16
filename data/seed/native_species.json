@@ -1,0 +1,2184 @@
+{
+  "_meta": {
+    "source": "기후에너지환경부 국립생물자원관 - 고유식물종자 I (Seeds of Endemic Plants Vol. I)",
+    "source_url": "https://www.data.go.kr/data/15066788/fileData.do",
+    "source_pdf": "Seeds.pdf (1740 pages)",
+    "extracted_pages": "1-4 (목차 CONTENTS)",
+    "extracted_at": "2026-05-04",
+    "license": "공공누리 (Open Government License)",
+    "note": "모두 한국 고유식물(특산식물)이므로 native_status=토종. ecology_summary와 distribution은 본선 당일 식물자원 OpenAPI 또는 Claude로 보강 예정.",
+    "total_count": 90
+  },
+  "species": [
+    {
+      "id": 1,
+      "korean_name": "가시딸기",
+      "scientific_name": "Rubus hongnoensis Nakai",
+      "family": "장미과 (Rosaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "distribution": "제주",
+      "ecology_summary": "제주도 남부지역의 계곡 주변, 숲 속 및 풀밭에서 자라는 한국 특산 낙엽관목. 3~4월 흰색 꽃이 핀다.",
+      "data_source": "NIBR_Seeds_p12",
+      "regions": [
+        "제주"
+      ],
+      "bloom_months": [
+        3,
+        4
+      ]
+    },
+    {
+      "id": 2,
+      "korean_name": "가시복분자딸기",
+      "scientific_name": "Rubus schizostylus H. Lév.",
+      "family": "장미과 (Rosaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "distribution": "한반도 남부",
+      "data_source": "NIBR_Seeds_p14",
+      "regions": [
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 3,
+      "korean_name": "각시서덜취",
+      "scientific_name": "Saussurea macrolepis (Nakai) Kitam.",
+      "family": "국화과 (Asteraceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "data_source": "NIBR_Seeds_p16",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 4,
+      "korean_name": "갈퀴아재비",
+      "scientific_name": "Asperula lasiantha Nakai",
+      "family": "꼭두서니과 (Rubiaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "data_source": "NIBR_Seeds_p18",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 5,
+      "korean_name": "개느삼",
+      "scientific_name": "Sophora koreensis Nakai",
+      "family": "콩과 (Fabaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "data_source": "NIBR_Seeds_p20",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 6,
+      "korean_name": "개족도리풀",
+      "scientific_name": "Asarum maculatum Nakai",
+      "family": "쥐방울덩굴과 (Aristolochiaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "data_source": "NIBR_Seeds_p22",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 7,
+      "korean_name": "곰취",
+      "scientific_name": "Ligularia taquetii (H. Lév. & Vaniot) Nakai",
+      "family": "국화과 (Asteraceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "data_source": "NIBR_Seeds_p24",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 8,
+      "korean_name": "고려엉겅퀴",
+      "scientific_name": "Cirsium setidens (Dunn) Nakai",
+      "family": "국화과 (Asteraceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "data_source": "NIBR_Seeds_p26",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 9,
+      "korean_name": "구상나무",
+      "scientific_name": "Abies koreana E. H. Wilson",
+      "family": "소나무과 (Pinaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "distribution": "한라산, 지리산, 덕유산 등 고산지대",
+      "ecology_summary": "한국 특산 상록침엽교목. 한라산을 대표하는 나무로 IUCN 적색목록 위기(EN)에 등재된 보호종.",
+      "conservation_status": "취약",
+      "data_source": "NIBR_Seeds_p28",
+      "regions": [
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 10,
+      "korean_name": "금강초롱꽃",
+      "scientific_name": "Hanabusaya asiatica (Nakai) Nakai",
+      "family": "초롱꽃과 (Campanulaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "distribution": "강원도, 경기도 북부 산지",
+      "ecology_summary": "한국 특산 1속 1종. 보랏빛 종 모양 꽃이 7~9월에 핀다. 금강산에서 처음 발견되어 이름이 붙음.",
+      "conservation_status": "관심필요",
+      "data_source": "NIBR_Seeds_p30",
+      "regions": [
+        "서울/경기",
+        "강원"
+      ],
+      "bloom_months": [
+        7,
+        8,
+        9
+      ]
+    },
+    {
+      "id": 11,
+      "korean_name": "금꿩의다리",
+      "scientific_name": "Thalictrum rochebrunianum var. grandisepalum (H. Lév.) Nakai",
+      "family": "미나리아재비과 (Ranunculaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "data_source": "NIBR_Seeds_p32",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 12,
+      "korean_name": "나도승마",
+      "scientific_name": "Kirengeshoma koreana Nakai",
+      "family": "수국과 (Hydrangeaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "data_source": "NIBR_Seeds_p34",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 13,
+      "korean_name": "나래완두",
+      "scientific_name": "Vicia hirticalycina Nakai",
+      "family": "콩과 (Fabaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "data_source": "NIBR_Seeds_p36",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 14,
+      "korean_name": "넓은잎쥐오줌풀",
+      "scientific_name": "Valeriana dageletiana Nakai ex F. Maek.",
+      "family": "마타리과 (Valerianaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "distribution": "울릉도",
+      "data_source": "NIBR_Seeds_p38",
+      "regions": [
+        "경상"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 15,
+      "korean_name": "노랑갈퀴",
+      "scientific_name": "Vicia chosenensis Ohwi",
+      "family": "콩과 (Fabaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "data_source": "NIBR_Seeds_p40",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 16,
+      "korean_name": "노랑무늬붓꽃",
+      "scientific_name": "Iris odaesanensis Y. N. Lee",
+      "family": "붓꽃과 (Iridaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "distribution": "오대산",
+      "ecology_summary": "한국 특산 다년초로 오대산에서 발견되어 학명이 붙음. 4~5월 노란 꽃이 핀다.",
+      "data_source": "NIBR_Seeds_p42",
+      "regions": [
+        "강원"
+      ],
+      "bloom_months": [
+        4,
+        5
+      ]
+    },
+    {
+      "id": 17,
+      "korean_name": "노랑붓꽃",
+      "scientific_name": "Iris koreana (Fisch.) Nakai",
+      "family": "붓꽃과 (Iridaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "data_source": "NIBR_Seeds_p44",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 18,
+      "korean_name": "노랑팽나무",
+      "scientific_name": "Celtis edulis Nakai",
+      "family": "삼과 (Cannabaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "data_source": "NIBR_Seeds_p46",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 19,
+      "korean_name": "눈갯쑥부쟁이",
+      "scientific_name": "Aster hayatae H. Lév. & Vaniot",
+      "family": "국화과 (Asteraceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "data_source": "NIBR_Seeds_p48",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 20,
+      "korean_name": "늦둥굴레",
+      "scientific_name": "Polygonatum infundiflorum Y. S. Kim, B. U. Oh & C. G. Jang",
+      "family": "백합과 (Liliaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "data_source": "NIBR_Seeds_p50",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 21,
+      "korean_name": "단양쑥부쟁이",
+      "scientific_name": "Aster altaicus var. uchiyamae Kitam.",
+      "family": "국화과 (Asteraceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "distribution": "충북 단양 일대",
+      "conservation_status": "멸종위기",
+      "data_source": "NIBR_Seeds_p52",
+      "regions": [
+        "충청"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 22,
+      "korean_name": "댕강나무",
+      "scientific_name": "Zabelia tyaihyonii (T. H. Chung ex Nakai) Hisauti & H. Hara",
+      "family": "인동과 (Caprifoliaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "data_source": "NIBR_Seeds_p54",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 23,
+      "korean_name": "덕우기름나물",
+      "scientific_name": "Peucedanum insolens Kitag.",
+      "family": "산형과 (Apiaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "data_source": "NIBR_Seeds_p56",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 24,
+      "korean_name": "동강할미꽃",
+      "scientific_name": "Pulsatilla tongkangensis Y. N. Lee & T. C. Lee",
+      "family": "미나리아재비과 (Ranunculaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "distribution": "강원도 동강 일대",
+      "ecology_summary": "한국 특산 다년초. 동강 절벽지대의 석회암 바위 틈에서 자란다. 4월 자주색·분홍색·흰색 꽃이 핀다.",
+      "conservation_status": "관심필요",
+      "data_source": "NIBR_Seeds_p58",
+      "regions": [
+        "강원"
+      ],
+      "bloom_months": [
+        4
+      ]
+    },
+    {
+      "id": 25,
+      "korean_name": "두잎감자난초",
+      "scientific_name": "Oreorchis coreana Finet",
+      "family": "난초과 (Orchidaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "data_source": "NIBR_Seeds_p60",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 26,
+      "korean_name": "떡잎윤노리나무",
+      "scientific_name": "Pourthiaea villosa var. brunnea (H. Lév.) Nakai",
+      "family": "장미과 (Rosaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "data_source": "NIBR_Seeds_p62",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 27,
+      "korean_name": "매미꽃",
+      "scientific_name": "Coreanomecon hylomeconoides Nakai",
+      "family": "양귀비과 (Papaveraceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "ecology_summary": "한국 특산 1속 1종 다년초. 4~6월 노란 꽃이 핀다.",
+      "data_source": "NIBR_Seeds_p64",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6
+      ]
+    },
+    {
+      "id": 28,
+      "korean_name": "매자나무",
+      "scientific_name": "Berberis koreana Palib.",
+      "family": "매자나무과 (Berberidaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "data_source": "NIBR_Seeds_p66",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 29,
+      "korean_name": "모데미풀",
+      "scientific_name": "Megaleranthis saniculifolia Ohwi",
+      "family": "미나리아재비과 (Ranunculaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "ecology_summary": "한국 특산 1속 1종. 4~5월 흰 꽃이 피며 깊은 산 계곡 주변에서 자란다.",
+      "conservation_status": "관심필요",
+      "data_source": "NIBR_Seeds_p68",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5
+      ]
+    },
+    {
+      "id": 30,
+      "korean_name": "미선나무",
+      "scientific_name": "Abeliophyllum distichum Nakai",
+      "family": "물푸레나무과 (Oleaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "distribution": "충북 진천·괴산, 전북 부안 등 일부 지역",
+      "ecology_summary": "한국 특산 1속 1종 낙엽관목. 3~4월 흰색 또는 분홍색 꽃이 잎보다 먼저 핀다. 천연기념물 지정.",
+      "conservation_status": "멸종위기",
+      "data_source": "NIBR_Seeds_p70",
+      "regions": [
+        "충청",
+        "전라"
+      ],
+      "bloom_months": [
+        3,
+        4
+      ]
+    },
+    {
+      "id": 31,
+      "korean_name": "바늘엉겅퀴",
+      "scientific_name": "Cirsium rhinoceros (H. Lév. & Vaniot) Nakai",
+      "family": "국화과 (Asteraceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "distribution": "제주",
+      "data_source": "NIBR_Seeds_p72",
+      "regions": [
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 32,
+      "korean_name": "백양더부살이",
+      "scientific_name": "Orobanche filicicola Nakai ex J. O. Hyun, H. C. Shin & Y. S. Im",
+      "family": "열당과 (Orobanchaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "conservation_status": "멸종위기",
+      "data_source": "NIBR_Seeds_p74",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 33,
+      "korean_name": "벌개미취",
+      "scientific_name": "Aster koraiensis Nakai",
+      "family": "국화과 (Asteraceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "ecology_summary": "한국 특산 다년초. 6~10월 연보라 꽃이 핀다. 도로변 조경에 흔히 식재된다.",
+      "data_source": "NIBR_Seeds_p76",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 34,
+      "korean_name": "벌깨냉이",
+      "scientific_name": "Cardamine glechomifolia H. Lév.",
+      "family": "십자화과 (Brassicaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "data_source": "NIBR_Seeds_p78",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 35,
+      "korean_name": "병꽃나무",
+      "scientific_name": "Weigela subsessilis (Nakai) L. H. Bailey",
+      "family": "인동과 (Caprifoliaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "ecology_summary": "한국 특산 낙엽관목. 5월 병 모양의 노란~붉은 꽃이 핀다.",
+      "data_source": "NIBR_Seeds_p80",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        5
+      ]
+    },
+    {
+      "id": 36,
+      "korean_name": "봉래꼬리풀",
+      "scientific_name": "Pseudolysimachion kiusianum var. diamantiacum (Nakai) T. Yamaz.",
+      "family": "현삼과 (Scrophulariaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "data_source": "NIBR_Seeds_p82",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 37,
+      "korean_name": "산개나리",
+      "scientific_name": "Forsythia saxatilis (Nakai) Nakai",
+      "family": "물푸레나무과 (Oleaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "distribution": "북한산, 관악산 등",
+      "ecology_summary": "한국 특산 낙엽관목. 3~4월 노란 꽃이 핀다. 개나리와 달리 야생에서 자란다.",
+      "conservation_status": "취약",
+      "data_source": "NIBR_Seeds_p84",
+      "regions": [
+        "서울/경기"
+      ],
+      "bloom_months": [
+        3,
+        4
+      ]
+    },
+    {
+      "id": 38,
+      "korean_name": "산오이풀",
+      "scientific_name": "Sanguisorba hakusanensis Makino",
+      "family": "장미과 (Rosaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "data_source": "NIBR_Seeds_p86",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 39,
+      "korean_name": "서울제비꽃",
+      "scientific_name": "Viola seoulensis Nakai",
+      "family": "제비꽃과 (Violaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "data_source": "NIBR_Seeds_p88",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 40,
+      "korean_name": "설앵초",
+      "scientific_name": "Primula modesta var. hannasanensis T. Yamaz.",
+      "family": "앵초과 (Primulaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "distribution": "한라산",
+      "data_source": "NIBR_Seeds_p90",
+      "regions": [
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 41,
+      "korean_name": "섬개야광나무",
+      "scientific_name": "Cotoneaster wilsonii Nakai",
+      "family": "장미과 (Rosaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "distribution": "울릉도",
+      "conservation_status": "멸종위기",
+      "data_source": "NIBR_Seeds_p92",
+      "regions": [
+        "경상"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 42,
+      "korean_name": "섬현삼",
+      "scientific_name": "Scrophularia takesimensis Nakai",
+      "family": "현삼과 (Scrophulariaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "distribution": "울릉도",
+      "conservation_status": "멸종위기",
+      "data_source": "NIBR_Seeds_p94",
+      "regions": [
+        "경상"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 43,
+      "korean_name": "섬광대수염",
+      "scientific_name": "Lamium takesimense Nakai",
+      "family": "꿀풀과 (Lamiaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "distribution": "울릉도",
+      "data_source": "NIBR_Seeds_p96",
+      "regions": [
+        "경상"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 44,
+      "korean_name": "섬기린초",
+      "scientific_name": "Sedum takesimense Nakai",
+      "family": "돌나물과 (Crassulaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "distribution": "울릉도",
+      "data_source": "NIBR_Seeds_p98",
+      "regions": [
+        "경상"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 45,
+      "korean_name": "섬꼬리풀",
+      "scientific_name": "Pseudolysimachion insulare (Nakai) T. Yamaz.",
+      "family": "현삼과 (Scrophulariaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "distribution": "울릉도",
+      "data_source": "NIBR_Seeds_p100",
+      "regions": [
+        "경상"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 46,
+      "korean_name": "섬나무딸기",
+      "scientific_name": "Rubus takesimensis Nakai",
+      "family": "장미과 (Rosaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "distribution": "울릉도",
+      "data_source": "NIBR_Seeds_p102",
+      "regions": [
+        "경상"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 47,
+      "korean_name": "섬남성",
+      "scientific_name": "Arisaema takesimense Nakai",
+      "family": "천남성과 (Araceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "distribution": "울릉도",
+      "data_source": "NIBR_Seeds_p104",
+      "regions": [
+        "경상"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 48,
+      "korean_name": "섬노루귀",
+      "scientific_name": "Hepatica maxima Nakai",
+      "family": "미나리아재비과 (Ranunculaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "distribution": "울릉도",
+      "data_source": "NIBR_Seeds_p106",
+      "regions": [
+        "경상"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 49,
+      "korean_name": "섬매발톱나무",
+      "scientific_name": "Berberis amurensis var. quelpaertensis Nakai",
+      "family": "매자나무과 (Berberidaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "data_source": "NIBR_Seeds_p108",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 50,
+      "korean_name": "섬바디",
+      "scientific_name": "Dystaenia takesimana (Nakai) Kitag.",
+      "family": "산형과 (Apiaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "distribution": "울릉도",
+      "data_source": "NIBR_Seeds_p110",
+      "regions": [
+        "경상"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 51,
+      "korean_name": "섬시호",
+      "scientific_name": "Bupleurum latissimum Nakai",
+      "family": "산형과 (Apiaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "distribution": "울릉도",
+      "conservation_status": "멸종위기",
+      "data_source": "NIBR_Seeds_p112",
+      "regions": [
+        "경상"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 52,
+      "korean_name": "섬자리공",
+      "scientific_name": "Phytolacca insularis Nakai",
+      "family": "자리공과 (Phytolaccaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "distribution": "울릉도",
+      "data_source": "NIBR_Seeds_p114",
+      "regions": [
+        "경상"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 53,
+      "korean_name": "섬잔대",
+      "scientific_name": "Adenophora taquetii H. Lév.",
+      "family": "초롱꽃과 (Campanulaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "data_source": "NIBR_Seeds_p116",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 54,
+      "korean_name": "섬제비꽃",
+      "scientific_name": "Viola takesimana Nakai",
+      "family": "제비꽃과 (Violaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "distribution": "울릉도",
+      "data_source": "NIBR_Seeds_p118",
+      "regions": [
+        "경상"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 55,
+      "korean_name": "섬초롱꽃",
+      "scientific_name": "Campanula takesimana Nakai",
+      "family": "초롱꽃과 (Campanulaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "distribution": "울릉도",
+      "ecology_summary": "한국 울릉도 특산 다년초. 6~8월 자주색 점 무늬가 있는 종 모양 꽃이 핀다.",
+      "data_source": "NIBR_Seeds_p120",
+      "regions": [
+        "경상"
+      ],
+      "bloom_months": [
+        6,
+        7,
+        8
+      ]
+    },
+    {
+      "id": 56,
+      "korean_name": "세뿔투구꽃",
+      "scientific_name": "Aconitum austrokoreense Koidz.",
+      "family": "미나리아재비과 (Ranunculaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "conservation_status": "멸종위기",
+      "data_source": "NIBR_Seeds_p122",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 57,
+      "korean_name": "세잎승마",
+      "scientific_name": "Cimicifuga heracleifolia var. bifida Nakai",
+      "family": "미나리아재비과 (Ranunculaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "data_source": "NIBR_Seeds_p124",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 58,
+      "korean_name": "솔비나무",
+      "scientific_name": "Maackia fauriei (H. Lév.) Takeda",
+      "family": "콩과 (Fabaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "distribution": "제주",
+      "data_source": "NIBR_Seeds_p126",
+      "regions": [
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 59,
+      "korean_name": "애기더덕",
+      "scientific_name": "Codonopsis minima Nakai",
+      "family": "초롱꽃과 (Campanulaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "data_source": "NIBR_Seeds_p128",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 60,
+      "korean_name": "애기솔나물",
+      "scientific_name": "Galium verum var. asiaticum f. pusillum (Nakai) M. K. Park",
+      "family": "꼭두서니과 (Rubiaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "data_source": "NIBR_Seeds_p130",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 61,
+      "korean_name": "애기송이풀",
+      "scientific_name": "Pedicularis ishidoyana Koidz. & Ohwi",
+      "family": "열당과 (Orobanchaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "conservation_status": "멸종위기",
+      "data_source": "NIBR_Seeds_p132",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 62,
+      "korean_name": "요강나물",
+      "scientific_name": "Clematis fusca var. coreana (H. Lév. & Vaniot) Nakai",
+      "family": "미나리아재비과 (Ranunculaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "data_source": "NIBR_Seeds_p134",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 63,
+      "korean_name": "울릉국화",
+      "scientific_name": "Dendranthema zawadskii var. lucidum (Nakai) J. H. Pak",
+      "family": "국화과 (Asteraceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "distribution": "울릉도",
+      "data_source": "NIBR_Seeds_p136",
+      "regions": [
+        "경상"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 64,
+      "korean_name": "울릉장구채",
+      "scientific_name": "Silene takeshimensis Uyeki & Sakata",
+      "family": "석죽과 (Caryophyllaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "distribution": "울릉도",
+      "conservation_status": "관심필요",
+      "data_source": "NIBR_Seeds_p138",
+      "regions": [
+        "경상"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 65,
+      "korean_name": "은꿩의다리",
+      "scientific_name": "Thalictrum actaefolium var. brevistylum Nakai",
+      "family": "미나리아재비과 (Ranunculaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "data_source": "NIBR_Seeds_p140",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 66,
+      "korean_name": "자란초",
+      "scientific_name": "Ajuga spectabilis Nakai",
+      "family": "꿀풀과 (Lamiaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "data_source": "NIBR_Seeds_p142",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 67,
+      "korean_name": "자병취",
+      "scientific_name": "Saussurea chabyoungsanica H. T. Im",
+      "family": "국화과 (Asteraceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "data_source": "NIBR_Seeds_p144",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 68,
+      "korean_name": "자주꿩의다리",
+      "scientific_name": "Thalictrum uchiyamai Nakai",
+      "family": "미나리아재비과 (Ranunculaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "data_source": "NIBR_Seeds_p146",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 69,
+      "korean_name": "자주솜대",
+      "scientific_name": "Smilacina bicolor Nakai",
+      "family": "백합과 (Liliaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "data_source": "NIBR_Seeds_p148",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 70,
+      "korean_name": "정선황기",
+      "scientific_name": "Astragalus koraiensis Y. N. Lee",
+      "family": "콩과 (Fabaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "distribution": "강원도 정선",
+      "conservation_status": "멸종위기",
+      "data_source": "NIBR_Seeds_p150",
+      "regions": [
+        "강원"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 71,
+      "korean_name": "제주고사리삼",
+      "scientific_name": "Mankyua chejuense B.-Y. Sun, M. H. Kim & C. H. Kim",
+      "family": "고사리삼과 (Ophioglossaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "distribution": "제주",
+      "ecology_summary": "한국 제주 특산 1속 1종 양치식물. 매우 희귀한 보호종.",
+      "conservation_status": "멸종위기",
+      "data_source": "NIBR_Seeds_p152",
+      "regions": [
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 72,
+      "korean_name": "제주황기",
+      "scientific_name": "Astragalus mongholicus var. nakaianus (Y.N. Lee) I.S. Choi & B.H. Choi",
+      "family": "콩과 (Fabaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "distribution": "제주",
+      "data_source": "NIBR_Seeds_p154",
+      "regions": [
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 73,
+      "korean_name": "좀갈매나무",
+      "scientific_name": "Rhamnus taquetii (H. Lév.) H. Lév.",
+      "family": "갈매나무과 (Rhamnaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "data_source": "NIBR_Seeds_p156",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 74,
+      "korean_name": "좀민들레",
+      "scientific_name": "Taraxacum hallaisanense Nakai",
+      "family": "국화과 (Asteraceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "distribution": "한라산",
+      "ecology_summary": "한국 한라산 특산 다년초. 4~6월 노란 꽃이 핀다. 외래종 서양민들레와 구별되는 한국 토종 민들레.",
+      "data_source": "NIBR_Seeds_p158",
+      "regions": [
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6
+      ]
+    },
+    {
+      "id": 75,
+      "korean_name": "지리터리풀",
+      "scientific_name": "Filipendula formosa Nakai",
+      "family": "장미과 (Rosaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "distribution": "지리산",
+      "data_source": "NIBR_Seeds_p160",
+      "regions": [
+        "전라"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 76,
+      "korean_name": "진노랑상사화",
+      "scientific_name": "Lycoris chinensis var. sinuolata K. H. Tae & S. C. Ko",
+      "family": "수선화과 (Amaryllidaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "conservation_status": "멸종위기",
+      "data_source": "NIBR_Seeds_p162",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 77,
+      "korean_name": "진범",
+      "scientific_name": "Aconitum pseudolaeve Nakai",
+      "family": "미나리아재비과 (Ranunculaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "data_source": "NIBR_Seeds_p164",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 78,
+      "korean_name": "참배암차즈기",
+      "scientific_name": "Salvia chanroenica Nakai",
+      "family": "꿀풀과 (Lamiaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "data_source": "NIBR_Seeds_p166",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 79,
+      "korean_name": "참좁쌀풀",
+      "scientific_name": "Lysimachia coreana Nakai",
+      "family": "앵초과 (Primulaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "data_source": "NIBR_Seeds_p168",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 80,
+      "korean_name": "청괴불나무",
+      "scientific_name": "Lonicera subsessilis Rehder",
+      "family": "인동과 (Caprifoliaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "data_source": "NIBR_Seeds_p170",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 81,
+      "korean_name": "큰세잎쥐손이",
+      "scientific_name": "Geranium knuthii Nakai",
+      "family": "쥐손이풀과 (Geraniaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "data_source": "NIBR_Seeds_p172",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 82,
+      "korean_name": "털중나리",
+      "scientific_name": "Lilium amabile Palib.",
+      "family": "백합과 (Liliaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "ecology_summary": "한국 특산 다년초. 6~7월 짙은 주황색 꽃이 핀다.",
+      "data_source": "NIBR_Seeds_p174",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        6,
+        7
+      ]
+    },
+    {
+      "id": 83,
+      "korean_name": "한라개승마",
+      "scientific_name": "Aruncus aethusifolius (H. Lév.) Nakai",
+      "family": "장미과 (Rosaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "distribution": "한라산",
+      "data_source": "NIBR_Seeds_p176",
+      "regions": [
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 84,
+      "korean_name": "한라부추",
+      "scientific_name": "Allium taquetii H. Lév.",
+      "family": "백합과 (Liliaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "distribution": "한라산",
+      "data_source": "NIBR_Seeds_p178",
+      "regions": [
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 85,
+      "korean_name": "한라참나물",
+      "scientific_name": "Pimpinella hallaisanensis (W. T. Lee & G. J. Jang), W. K. Paik & W. T. Lee",
+      "family": "산형과 (Apiaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "distribution": "한라산",
+      "data_source": "NIBR_Seeds_p180",
+      "regions": [
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 86,
+      "korean_name": "한라투구꽃",
+      "scientific_name": "Aconitum quelpaertense Nakai",
+      "family": "미나리아재비과 (Ranunculaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "distribution": "한라산",
+      "data_source": "NIBR_Seeds_p182",
+      "regions": [
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 87,
+      "korean_name": "할미밀망",
+      "scientific_name": "Clematis trichotoma Nakai",
+      "family": "미나리아재비과 (Ranunculaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "data_source": "NIBR_Seeds_p184",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 88,
+      "korean_name": "해변싸리",
+      "scientific_name": "Lespedeza maritima Nakai",
+      "family": "콩과 (Fabaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "data_source": "NIBR_Seeds_p186",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 89,
+      "korean_name": "흰괴불나무",
+      "scientific_name": "Lonicera tatarovii var. leptantha (Rehder) Nakai",
+      "family": "인동과 (Caprifoliaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "data_source": "NIBR_Seeds_p188",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": 90,
+      "korean_name": "흰바디나물",
+      "scientific_name": "Angelica cartilaginomarginata var. distans (Nakai) Kitag.",
+      "family": "산형과 (Apiaceae)",
+      "native_status": "토종",
+      "category": "식물",
+      "data_source": "NIBR_Seeds_p190",
+      "regions": [
+        "서울/경기",
+        "강원",
+        "충청",
+        "전라",
+        "경상",
+        "제주"
+      ],
+      "bloom_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    }
+  ]
+}
