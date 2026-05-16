@@ -129,38 +129,19 @@ function App() {
 
   if (view === "splash") {
     return (
-      <div className={splashExit ? "splash-exit" : ""} style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",height:"100vh",background:"var(--paper)",gap:"40px",position:"relative"}}>
+      <div className={splashExit ? "splash-exit" : ""} style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",height:"100vh",background:"#F5F0E8",gap:"36px",position:"relative"}}>
         <div className="paper-tex"/>
 
-        {/* 도장 프레임 */}
-        <div style={{animation:"stamp-in 0.7s cubic-bezier(0.34,1.56,0.64,1) forwards",position:"relative"}}>
-          {/* 바깥 테두리 */}
-          <div style={{width:"220px",height:"220px",border:"4px solid #C0392B",borderRadius:"6px",display:"flex",alignItems:"center",justifyContent:"center",position:"relative",background:"rgba(192,57,43,0.03)",boxShadow:"0 0 0 1.5px rgba(192,57,43,0.15),4px 6px 24px rgba(192,57,43,0.18)"}}>
-            {/* 안쪽 테두리 */}
-            <div style={{position:"absolute",inset:"8px",border:"1.5px solid rgba(192,57,43,0.5)",borderRadius:"3px",pointerEvents:"none"}}/>
-
-            {/* 모서리 장식 */}
-            {[["0px","0px"],["0px","auto"],["auto","0px"],["auto","auto"]].map(function([t,b], i){
-              return (
-                <div key={i} style={{position:"absolute",top:t==="auto"?undefined:"-2px",bottom:b==="auto"?undefined:"-2px",left:i%2===0?"-2px":undefined,right:i%2===1?"-2px":undefined,width:"14px",height:"14px",borderTop:t!=="auto"?"3px solid #C0392B":"none",borderBottom:b!=="auto"?"3px solid #C0392B":"none",borderLeft:i%2===0?"3px solid #C0392B":"none",borderRight:i%2===1?"3px solid #C0392B":"none"}}/>
-              );
-            })}
-
-            {/* 텍스트 */}
-            <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:"10px",zIndex:1}}>
-              <div style={{fontFamily:"'Black Han Sans',sans-serif",fontSize:"50px",letterSpacing:"10px",color:"#C0392B",lineHeight:1,textShadow:"1px 1px 0 rgba(192,57,43,0.2)"}}>한반도감</div>
-              <div style={{width:"140px",height:"1px",background:"rgba(192,57,43,0.35)"}}/>
-              <div style={{fontFamily:"'Space Mono',monospace",fontSize:"8px",letterSpacing:"3px",color:"rgba(192,57,43,0.7)",textAlign:"center"}}>KOREAN SPECIES{"\n"}FIELD GUIDE</div>
-            </div>
-
-            {/* 도장 잉크 번짐 효과 */}
-            <div style={{position:"absolute",inset:0,borderRadius:"4px",background:"radial-gradient(ellipse at 30% 30%,rgba(192,57,43,0.06),transparent 60%)",pointerEvents:"none"}}/>
-          </div>
-        </div>
+        {/* 로고 이미지 */}
+        <img
+          src="/assets/logo.png"
+          alt="한반도감"
+          style={{width:"200px",height:"200px",objectFit:"contain",animation:"stamp-in 0.7s cubic-bezier(0.34,1.56,0.64,1) forwards"}}
+        />
 
         {/* 로딩 바 */}
-        <div style={{width:"100px",height:"2px",background:"rgba(192,57,43,0.15)",borderRadius:"1px",overflow:"hidden"}}>
-          <div style={{height:"100%",background:"#C0392B",borderRadius:"1px",animation:"splash-load 2.6s linear forwards"}}/>
+        <div style={{width:"100px",height:"2px",background:"rgba(106,153,85,0.2)",borderRadius:"1px",overflow:"hidden"}}>
+          <div style={{height:"100%",background:"#6A9955",borderRadius:"1px",animation:"splash-load 2.6s linear forwards"}}/>
         </div>
       </div>
     );
