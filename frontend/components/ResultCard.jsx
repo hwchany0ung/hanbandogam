@@ -1,6 +1,6 @@
-function ResultCard({ result, imageFile, onSave, onRetry, onCollection }) {
+function ResultCard({ result, imageFile, onSave, onRetry, onCollection, autoSaved }) {
   var [saving, setSaving] = React.useState(false);
-  var [saved,  setSaved]  = React.useState(false);
+  var [saved,  setSaved]  = React.useState(autoSaved||false);
   var previewUrl = imageFile ? URL.createObjectURL(imageFile) : null;
 
   var rarity = getRarity(result.korean_name);
