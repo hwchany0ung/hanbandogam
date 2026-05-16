@@ -25,7 +25,12 @@ async def identify(
     media_type = file.content_type or "image/jpeg"
 
     try:
-        return await run_identify(image_bytes, media_type, memo)
+        return await run_identify(
+            image_bytes,
+            media_type,
+            memo,
+            file_name=file.filename,
+        )
     except HTTPException:
         raise
     except ValueError as exc:
