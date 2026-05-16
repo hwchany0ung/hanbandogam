@@ -15,7 +15,7 @@ function CollectionView({ isActive, onBack }) {
   }
 
   var uniqueItems = getUniqueCollectionItems(items);
-  var [sortBy,    setSortBy]    = React.useState("name");     // "name" | "rarity" | "latest"
+  var [sortBy,    setSortBy]    = React.useState("latest");   // "latest" | "rarity" | "name"
   var [sortOrder, setSortOrder] = React.useState("asc");      // "asc" | "desc"
 
   // 등급 우선순위 (L 최고 → C 최저)
@@ -123,17 +123,17 @@ function CollectionView({ isActive, onBack }) {
                 {/* 정렬 기준 토글 */}
                 <div style={{display:"flex",gap:"2px",background:"rgba(45,30,10,0.05)",borderRadius:"7px",padding:"2px"}}>
                   <button
-                    onClick={() => setSortBy("name")}
-                    style={{padding:"3px 9px",background:sortBy==="name"?"var(--surface)":"transparent",borderRadius:"5px",fontSize:"10px",border:"none",cursor:"pointer",color:sortBy==="name"?"var(--ink-1)":"var(--ink-3)",fontWeight:sortBy==="name"?"700":"500",boxShadow:sortBy==="name"?"0 1px 3px rgba(45,30,10,0.1)":"none"}}
-                  >이름순</button>
+                    onClick={() => setSortBy("latest")}
+                    style={{padding:"3px 9px",background:sortBy==="latest"?"var(--surface)":"transparent",borderRadius:"5px",fontSize:"10px",border:"none",cursor:"pointer",color:sortBy==="latest"?"var(--ink-1)":"var(--ink-3)",fontWeight:sortBy==="latest"?"700":"500",boxShadow:sortBy==="latest"?"0 1px 3px rgba(45,30,10,0.1)":"none"}}
+                  >최신순</button>
                   <button
                     onClick={() => setSortBy("rarity")}
                     style={{padding:"3px 9px",background:sortBy==="rarity"?"var(--surface)":"transparent",borderRadius:"5px",fontSize:"10px",border:"none",cursor:"pointer",color:sortBy==="rarity"?"var(--ink-1)":"var(--ink-3)",fontWeight:sortBy==="rarity"?"700":"500",boxShadow:sortBy==="rarity"?"0 1px 3px rgba(45,30,10,0.1)":"none"}}
                   >등급순</button>
                   <button
-                    onClick={() => setSortBy("latest")}
-                    style={{padding:"3px 9px",background:sortBy==="latest"?"var(--surface)":"transparent",borderRadius:"5px",fontSize:"10px",border:"none",cursor:"pointer",color:sortBy==="latest"?"var(--ink-1)":"var(--ink-3)",fontWeight:sortBy==="latest"?"700":"500",boxShadow:sortBy==="latest"?"0 1px 3px rgba(45,30,10,0.1)":"none"}}
-                  >최신순</button>
+                    onClick={() => setSortBy("name")}
+                    style={{padding:"3px 9px",background:sortBy==="name"?"var(--surface)":"transparent",borderRadius:"5px",fontSize:"10px",border:"none",cursor:"pointer",color:sortBy==="name"?"var(--ink-1)":"var(--ink-3)",fontWeight:sortBy==="name"?"700":"500",boxShadow:sortBy==="name"?"0 1px 3px rgba(45,30,10,0.1)":"none"}}
+                  >이름순</button>
                 </div>
                 {/* 오름/내림 토글 */}
                 <button
