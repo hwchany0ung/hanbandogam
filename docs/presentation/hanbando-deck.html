@@ -2114,35 +2114,42 @@
       <div class="s7-sub">기능 나열이 아닌 — <b>사용자 행동 중심</b> 설계</div>
     </div>
 
-    <div class="s7-row">
-      <div class="s7-phone-wrap">
-        <div class="s7-phone-lbl">① 발견 → 촬영</div>
-        <div class="s7-phone">
-          <div class="s7-screen" style="padding:0">
-            <img src="screenshots/live-home.png" alt="홈 화면" style="width:100%;height:100%;object-fit:cover;object-position:top;display:block;">
-          </div>
+    <div style="display:flex;align-items:center;justify-content:center;gap:4vw;flex:1;margin-top:1vh">
+
+      <!-- 폰 프레임 + 영상 -->
+      <div class="s7-phone" style="flex-shrink:0;width:22vw;height:44vw;max-height:72vh;">
+        <div class="s7-screen" style="padding:0;overflow:hidden;border-radius:inherit;">
+          <video
+            src="screenshots/demo.mp4"
+            autoplay muted loop playsinline
+            style="width:100%;height:100%;object-fit:cover;display:block;"
+          ></video>
         </div>
-        <div class="s7-tagline"><b>이벤트·미션</b>으로 재방문 유도</div>
       </div>
 
-      <div class="s7-phone-wrap">
-        <div class="s7-phone-lbl">② AI 응답 → 판단</div>
-        <div class="s7-phone">
-          <div class="s7-screen" style="padding:0">
-            <img src="screenshots/live-result.png" alt="판별 결과" style="width:100%;height:100%;object-fit:cover;object-position:top;display:block;">
+      <!-- 사이드 설명 -->
+      <div style="display:flex;flex-direction:column;gap:2.4vh;">
+        <div style="display:flex;align-items:flex-start;gap:1.2vw;">
+          <div style="font-family:'Space Mono',monospace;font-size:1.4vw;font-weight:700;color:var(--hi);flex-shrink:0;margin-top:0.2vh;">①</div>
+          <div>
+            <div style="font-family:'Black Han Sans',sans-serif;font-size:1.3vw;color:#fff;margin-bottom:0.4vh;">발견 → 촬영</div>
+            <div style="font-size:0.85vw;color:rgba(255,255,255,0.55);line-height:1.5;"><b style="color:rgba(255,255,255,0.85)">이벤트·미션</b>으로 재방문 유도</div>
           </div>
         </div>
-        <div class="s7-tagline"><b>LEGENDARY</b> 94% — 다시찍기·오류신고</div>
-      </div>
-
-      <div class="s7-phone-wrap">
-        <div class="s7-phone-lbl">③ 수집 → 재방문</div>
-        <div class="s7-phone">
-          <div class="s7-screen" style="padding:0">
-            <img src="screenshots/live-collection.png" alt="내 도감" style="width:100%;height:100%;object-fit:cover;object-position:top;display:block;">
+        <div style="display:flex;align-items:flex-start;gap:1.2vw;">
+          <div style="font-family:'Space Mono',monospace;font-size:1.4vw;font-weight:700;color:var(--hi);flex-shrink:0;margin-top:0.2vh;">②</div>
+          <div>
+            <div style="font-family:'Black Han Sans',sans-serif;font-size:1.3vw;color:#fff;margin-bottom:0.4vh;">AI 응답 → 판단</div>
+            <div style="font-size:0.85vw;color:rgba(255,255,255,0.55);line-height:1.5;"><b style="color:rgba(255,255,255,0.85)">LEGENDARY</b> 94% — 다시찍기·오류신고</div>
           </div>
         </div>
-        <div class="s7-tagline"><b>27종 · Lv.4</b> 포인트·등급 수집 동기</div>
+        <div style="display:flex;align-items:flex-start;gap:1.2vw;">
+          <div style="font-family:'Space Mono',monospace;font-size:1.4vw;font-weight:700;color:var(--hi);flex-shrink:0;margin-top:0.2vh;">③</div>
+          <div>
+            <div style="font-family:'Black Han Sans',sans-serif;font-size:1.3vw;color:#fff;margin-bottom:0.4vh;">수집 → 재방문</div>
+            <div style="font-size:0.85vw;color:rgba(255,255,255,0.55);line-height:1.5;"><b style="color:rgba(255,255,255,0.85)">27종 · Lv.4</b> 포인트·등급 수집 동기</div>
+          </div>
+        </div>
       </div>
     </div>
 
