@@ -47,13 +47,13 @@ function UploadView({ onUpload, onDemoCapture, collectionCount, missionCompleted
   }
 
   return (
-    <div className="flex flex-col flex-1 relative overflow-hidden" style={{background:"var(--paper)"}}>
+    <div className="home-screen flex flex-col flex-1 relative overflow-hidden" style={{background:"var(--paper)"}}>
       <div ref={bokehRef} className="absolute inset-0 pointer-events-none overflow-hidden" style={{zIndex:0}}/>
 
       {/* 헤더 */}
-      <div className="text-center pt-12 pb-6 relative" style={{zIndex:2}}>
-        <div style={{fontFamily:"'Black Han Sans',sans-serif",fontSize:"32px",letterSpacing:"6px",color:"var(--ink-1)"}}>한반도감</div>
-        <div style={{fontFamily:"'Space Mono',monospace",fontSize:"9px",color:"var(--gold)",letterSpacing:"4px",marginTop:"5px"}}>KOREAN SPECIES FIELD GUIDE</div>
+      <div className="home-header text-center relative" style={{zIndex:2}}>
+        <div className="home-logo">한반도감</div>
+        <div className="home-subtitle">KOREAN SPECIES FIELD GUIDE</div>
       </div>
 
       {/* 조리개 */}
@@ -63,8 +63,7 @@ function UploadView({ onUpload, onDemoCapture, collectionCount, missionCompleted
           onDragOver={e=>{e.preventDefault();setDragging(true);}}
           onDragLeave={()=>setDragging(false)}
           onDrop={e=>{e.preventDefault();setDragging(false);handleFile(e.dataTransfer.files[0]);}}
-          className="cursor-pointer"
-          style={{width:"196px",height:"196px",position:"relative"}}
+          className="home-scanner cursor-pointer"
         >
           <div className="ring ring-1"/><div className="ring ring-2"/><div className="ring ring-3"/>
           <div className="aperture-core" style={{opacity:dragging?0.7:1}}>
@@ -74,42 +73,42 @@ function UploadView({ onUpload, onDemoCapture, collectionCount, missionCompleted
           </div>
         </div>
 
-        <div className="text-center mt-5">
-          <div style={{fontFamily:"'Noto Serif KR',serif",fontSize:"20px",fontWeight:"700",color:"var(--ink-1)"}}>생물을 발견하세요</div>
-          <div style={{fontSize:"12px",color:"var(--ink-2)",marginTop:"6px"}}>사진 한 장으로 토종 생물 즉시 판별</div>
+        <div className="home-copy text-center">
+          <div className="home-copy-title">생물을 발견하세요</div>
+          <div className="home-copy-sub">사진 한 장으로 토종 생물 즉시 판별</div>
         </div>
       </div>
 
       {/* 버튼 */}
-      <div className="px-6 mt-7 flex flex-col gap-3 relative" style={{zIndex:2}}>
+      <div className="home-primary-wrap flex flex-col gap-3 relative" style={{zIndex:2}}>
         <button
           onClick={() => onDemoCapture ? onDemoCapture() : inputRef.current.click()}
-          className="btn-shine w-full py-4 rounded-xl flex items-center justify-center gap-3"
-          style={{background:"linear-gradient(135deg,var(--ink-1),#2C261B)",color:"#FBF7EC",fontFamily:"'Black Han Sans',sans-serif",fontSize:"15px",letterSpacing:"3px",boxShadow:"0 8px 24px rgba(45,30,10,0.25)",border:"none"}}
+          className="btn-shine home-primary-button w-full rounded-xl flex items-center justify-center gap-3"
+          style={{background:"linear-gradient(135deg,var(--ink-1),#2C261B)"}}
         >
           <Icon name="Camera" size={18} strokeWidth={2.3} /> <span>카메라로 촬영</span>
         </button>
       </div>
 
       {/* 일일 미션 */}
-      <div className="mx-5 mt-6 relative" style={{zIndex:2}}>
-        <div className="px-4 py-4 rounded-xl" style={{
+      <div className="home-mission-wrap relative" style={{zIndex:2}}>
+        <div className="home-mission-card rounded-xl" style={{
           background: missionCompleted ? "rgba(22,163,74,0.07)" : "var(--surface)",
           border: "1px solid " + (missionCompleted ? "rgba(22,163,74,0.35)" : "var(--gold-bd)"),
           boxShadow: "0 4px 12px rgba(45,30,10,0.06)",
           transition: "all 0.4s"
         }}>
-          <div style={{display:"flex",alignItems:"center",gap:"6px",marginBottom:"8px"}}>
-            <div style={{fontFamily:"'Space Mono',monospace",fontSize:"9px",fontWeight:"700",letterSpacing:"2px",color:missionCompleted?"var(--native)":"var(--gold)"}}>
+          <div style={{display:"flex",alignItems:"center",gap:"6px"}}>
+            <div className="home-mission-label" style={{color:missionCompleted?"var(--native)":"var(--gold)"}}>
               {missionCompleted ? "MISSION COMPLETE" : "TODAY'S MISSION"}
             </div>
           </div>
-          <div style={{fontFamily:"'Noto Serif KR',serif",fontSize:"14px",fontWeight:"600",color:"var(--ink-1)",lineHeight:1.65}}>
+          <div className="home-mission-text">
             "{DAILY_MISSIONS[new Date().getDate() % DAILY_MISSIONS.length]}"
           </div>
           {missionCompleted
-            ? <div style={{marginTop:"10px",fontSize:"11px",color:"var(--native)",fontWeight:"600",display:"flex",alignItems:"center",gap:"6px"}}><Icon name="BadgeCheck" size={14} /> 오늘의 미션을 완료했어요!</div>
-            : <div style={{marginTop:"10px",fontSize:"10px",color:"var(--ink-3)",display:"flex",alignItems:"center",gap:"6px"}}><Icon name="Camera" size={13} /> 위 촬영 버튼을 눌러 미션을 달성해보세요</div>
+            ? <div className="home-mission-helper" style={{color:"var(--native)"}}><Icon name="BadgeCheck" size={14} /> 오늘의 미션을 완료했어요!</div>
+            : <div className="home-mission-helper" style={{color:"var(--ink-3)"}}><Icon name="Camera" size={13} /> 위 촬영 버튼을 눌러 미션을 달성해보세요</div>
           }
         </div>
       </div>
