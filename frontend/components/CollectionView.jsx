@@ -12,7 +12,11 @@ function CollectionView({ onBack }) {
     catch(e) { alert("삭제 실패: "+e.message); }
   }
 
-  var pct = items.length ? (items.length/102*100).toFixed(1) : 0;
+  function calcTopPct(count) {
+    if (count === 0) return null;
+    return Math.max(0.1, +(45 * Math.exp(-count * 0.08)).toFixed(1));
+  }
+  var topPct = calcTopPct(items.length);
 
   // 희귀도별 카운트
   var rarCount = {L:0,E:0,R:0,U:0,C:0};
@@ -28,19 +32,25 @@ function CollectionView({ onBack }) {
       </div>
 
       {/* 수집 현황 카드 */}
-      <div className="mx-4 mb-3 px-5 py-4 rounded-xl flex justify-between items-center" style={{background:"var(--surface)",border:"1px solid var(--gold-bd)",boxShadow:"0 4px 14px rgba(45,30,10,0.06)"}}>
-        <div>
-          <div style={{fontFamily:"'Space Mono',monospace",fontSize:"36px",fontWeight:"700",color:"var(--gold)",lineHeight:1}}>
-            {items.length}<span style={{fontSize:"18px",color:"var(--ink-3)"}}>/102</span>
+      <div className="mx-4 mb-3 px-5 py-4 rounded-xl" style={{background:"var(--surface)",border:"1px solid var(--gold-bd)",boxShadow:"0 4px 14px rgba(45,30,10,0.06)"}}>
+        <div style={{display:"flex",alignItems:"center",gap:"8px",flexWrap:"wrap"}}>
+          <div style={{fontFamily:"'Black Han Sans',sans-serif",fontSize:"30px",letterSpacing:"1px",color:"var(--ink-1)",lineHeight:1}}>
+            {items.length}<span style={{fontSize:"16px",color:"var(--ink-3)",fontFamily:"'Noto Sans KR',sans-serif",fontWeight:"500",letterSpacing:"0"}}>종 수집!</span>
           </div>
-          <div style={{fontSize:"10px",color:"var(--ink-3)",marginTop:"5px",letterSpacing:"1px",fontWeight:"600"}}>SPECIES COLLECTED</div>
+          {topPct && (
+            <div style={{display:"inline-flex",alignItems:"center",padding:"4px 12px",borderRadius:"20px",background:"linear-gradient(135deg,rgba(184,144,47,0.12),rgba(184,144,47,0.18))",border:"1px solid var(--gold-bd)"}}>
+              <span style={{fontFamily:"'Space Mono',monospace",fontSize:"11px",color:"var(--gold)",fontWeight:"700"}}>전국민중 상위 {topPct}%</span>
+            </div>
+          )}
         </div>
-        <div>
-          <div style={{fontSize:"11px",color:"var(--ink-2)",textAlign:"right",fontWeight:"600"}}>수집률 {pct}%</div>
-          <div style={{marginTop:"4px",width:"130px",height:"5px",background:"rgba(45,30,10,0.08)",borderRadius:"3px",overflow:"hidden"}}>
-            <div style={{height:"100%",background:"linear-gradient(90deg,var(--gold),var(--gold-2))",borderRadius:"3px",width:pct+"%"}}/>
+        {topPct && (
+          <div style={{fontSize:"10px",color:"var(--ink-3)",marginTop:"7px",lineHeight:"1.5"}}>
+            종을 더 수집하면 상위 {+(topPct*0.6).toFixed(1)}%까지 올라갈 수 있어요
           </div>
-        </div>
+        )}
+        {!topPct && (
+          <div style={{fontSize:"10px",color:"var(--ink-3)",marginTop:"7px"}}>첫 번째 생물을 촬영해서 수집을 시작해보세요</div>
+        )}
       </div>
 
       {/* 희귀도 진행 */}

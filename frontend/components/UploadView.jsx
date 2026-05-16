@@ -1,3 +1,20 @@
+var DAILY_MISSIONS = [
+  "흰색과 초록색이 공존하는 식물을 찍어보세요",
+  "길가에서 발견한 들꽃을 찾아보세요",
+  "가장 가까운 공원에서 나무를 탐색해보세요",
+  "노란색 꽃이 피어있는 식물을 찾아보세요",
+  "잎 모양이 독특한 식물을 발견해보세요",
+  "물가 주변의 수생식물을 촬영해보세요",
+  "산이나 숲에서 특이한 식물을 찾아보세요",
+  "자주색 또는 보라색 꽃을 피운 식물을 찾아보세요",
+  "줄기나 가시가 특이한 식물을 찍어보세요",
+  "꽃보다 잎이 더 아름다운 식물을 탐색해보세요",
+  "빨간 열매를 맺은 식물을 발견해보세요",
+  "이름을 모르는 식물을 사진으로 찍어보세요",
+  "넓은 잎사귀를 가진 식물을 찾아보세요",
+  "돌이나 바위 틈에서 자라는 식물을 발견해보세요",
+];
+
 function UploadView({ onUpload, onDemoCapture, collectionCount }) {
   var [dragging, setDragging] = React.useState(false);
   var inputRef = React.useRef(null);
@@ -72,27 +89,18 @@ function UploadView({ onUpload, onDemoCapture, collectionCount }) {
         >
           📷&nbsp;&nbsp;카메라로 촬영
         </button>
-        <button
-          onClick={() => inputRef.current.click()}
-          className="w-full py-3.5 rounded-xl flex items-center justify-center gap-2"
-          style={{background:"var(--surface)",border:"1px solid var(--gold-bd)",color:"var(--ink-2)",fontSize:"13px",fontWeight:"500"}}
-        >
-          🖼️&nbsp;&nbsp;갤러리에서 선택
-        </button>
       </div>
 
-      {/* 통계 띠 */}
+      {/* 일일 미션 */}
       <div className="mx-5 mt-6 relative" style={{zIndex:2}}>
-        <div className="flex justify-between items-center px-3 py-4 rounded-xl" style={{background:"var(--surface)",border:"1px solid var(--gold-bd)",boxShadow:"0 4px 12px rgba(45,30,10,0.06)"}}>
-          {[["102","등록 종"],[(collectionCount||0)+"","내 발견"],["AI","Claude"]].map(([n,l],i,arr)=>(
-            <React.Fragment key={l}>
-              <div className="flex-1 flex flex-col items-center gap-1">
-                <div style={{fontFamily:"'Space Mono',monospace",fontSize:"24px",fontWeight:"700",color:"var(--gold)",lineHeight:1}}>{n}</div>
-                <div style={{fontSize:"10px",color:"var(--ink-3)",letterSpacing:"1px",fontWeight:"600"}}>{l}</div>
-              </div>
-              {i<arr.length-1 && <div style={{width:"1px",height:"36px",background:"var(--gold-bd)",flexShrink:0}}/>}
-            </React.Fragment>
-          ))}
+        <div className="px-4 py-4 rounded-xl" style={{background:"var(--surface)",border:"1px solid var(--gold-bd)",boxShadow:"0 4px 12px rgba(45,30,10,0.06)"}}>
+          <div style={{display:"flex",alignItems:"center",gap:"6px",marginBottom:"8px"}}>
+            <div style={{fontFamily:"'Space Mono',monospace",fontSize:"9px",fontWeight:"700",color:"var(--gold)",letterSpacing:"2px"}}>✦ TODAY'S MISSION</div>
+          </div>
+          <div style={{fontFamily:"'Noto Serif KR',serif",fontSize:"14px",fontWeight:"600",color:"var(--ink-1)",lineHeight:1.65}}>
+            "{DAILY_MISSIONS[new Date().getDate() % DAILY_MISSIONS.length]}"
+          </div>
+          <div style={{marginTop:"10px",fontSize:"10px",color:"var(--ink-3)"}}>위 촬영 버튼을 눌러 미션을 달성해보세요 📸</div>
         </div>
       </div>
 

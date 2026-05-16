@@ -42,6 +42,8 @@ var ILLUSTRATION_MAP = {
   "한라솜다리":"/assets/illustrations/한라솜다리.svg",
 };
 
+var RARITY_OWNERSHIP_PCT = { L:"0.3", E:"1.2", R:"4.5", U:"15", C:"40" };
+
 var STORY_MAP = {
   "구상나무":     "전 세계 크리스마스 트리의 원조가 바로 한국 토종이다. 지금도 유럽 농장에서 기르는 '코리안 퍼'가 우리 구상나무 후손이지만, 정작 한라산 구상나무 군락은 기후변화로 매년 3%씩 사라지고 있다.",
   "미선나무":     "지구상에서 오직 한반도에만 존재하는 나무. 1속 1종. 우리나라가 사라지면 이 나무도 영원히 사라진다. 2월, 잎도 나기 전에 먼저 흰 꽃을 터뜨리는 고집쟁이.",
@@ -94,6 +96,17 @@ function CollectionCard({ item, onDelete }) {
     U: "0 0 0 1.5px var(--U-bd),0 2px 8px rgba(22,163,74,0.10)",
     C: "0 0 0 1px var(--C-bd)",
   }[rarity];
+
+  function handleShare(e) {
+    e.stopPropagation();
+    var ownerPct = RARITY_OWNERSHIP_PCT[rarity];
+    var text = "한반도감 📖\n" + item.korean_name + " (" + rc.label + ") 수집!\n전국민 중 상위 " + ownerPct + "%만 보유한 희귀 카드\n#한반도감 #한국토종생물 #" + item.korean_name;
+    if (navigator.share) {
+      navigator.share({ title:"한반도감", text:text }).catch(function(){});
+    } else {
+      navigator.clipboard ? navigator.clipboard.writeText(text).then(function(){ alert("클립보드에 복사됐어요!"); }) : alert(text);
+    }
+  }
 
   function openModal() {
     setShowPhoto(false);
@@ -188,12 +201,21 @@ function CollectionCard({ item, onDelete }) {
             )}
           </div>
 
-          {/* 삭제 버튼 */}
-          <div style={{borderTop:"1px solid rgba(45,30,10,0.06)",padding:"10px 20px"}}>
+          {/* 공유 버튼 */}
+          <div style={{borderTop:"1px solid rgba(45,30,10,0.06)",padding:"12px 20px 14px"}}>
+            {/* 보유 희귀도 표시 */}
+            <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:"8px",marginBottom:"10px",padding:"8px 14px",borderRadius:"12px",background:rc.bg,border:`1px solid ${rc.bd}`}}>
+              <span style={{fontFamily:"'Space Mono',monospace",fontSize:"11px",fontWeight:"700",color:rc.color}}>★ {rc.label}</span>
+              <span style={{fontSize:"11px",color:"rgba(45,30,10,0.2)"}}>|</span>
+              <span style={{fontFamily:"'Space Mono',monospace",fontSize:"13px",fontWeight:"700",color:rc.color}}>상위 {RARITY_OWNERSHIP_PCT[rarity]}%</span>
+              <span style={{fontSize:"10px",color:"var(--ink-3)"}}>만 보유</span>
+            </div>
             <button
-              onClick={e => { e.stopPropagation(); if(confirm("도감에서 삭제할까요?")) { onDelete && onDelete(item.id); setZoomed(false); } }}
-              style={{width:"100%",padding:"8px",borderRadius:"10px",border:"1px solid rgba(200,50,50,0.2)",background:"rgba(200,50,50,0.04)",color:"rgba(180,50,50,0.7)",fontSize:"12px",cursor:"pointer"}}
-            >삭제</button>
+              onClick={handleShare}
+              style={{width:"100%",padding:"11px",borderRadius:"12px",border:`1.5px solid ${rc.bd}`,background:rc.bg,color:rc.color,fontFamily:"'Black Han Sans',sans-serif",fontSize:"15px",letterSpacing:"2px",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:"8px"}}
+            >
+              <span>📤</span><span>자랑하기</span>
+            </button>
           </div>
         </div>
       </div>
