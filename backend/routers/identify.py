@@ -1,32 +1,44 @@
-import json
-import os
-import random
-from pathlib import Path
+from __future__ import annotations
 
-from fastapi import APIRouter, Form, HTTPException, UploadFile
-
-from domain.types import IdentifyResult
-from services.identify_service import run_identify
-
-router = APIRouter(prefix="/api", tags=["identify"])
-
-_DEMO_MODE = os.getenv("APP_DEMO_MODE", "") == "1"
-_DEMO_CACHE_DIR = Path(__file__).parent.parent / "demo_cache"
+from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 
 
-@router.post("/identify", response_model=IdentifyResult)
-async def identify(file: UploadFile, memo: str = Form("")):
-    if _DEMO_MODE:
-        return _load_demo()
+try:
+    from backend.services.identify_service import IdentifyResult, run_identify
+except ImportError:
+    from services.identify_service import IdentifyResult, run_identify
 
+
+router = APIRouter(tags=["identify"])
+
+
+@router.post("/api/identify", response_model=IdentifyResult)
+async def identify(
+    file: UploadFile = File(...),
+    memo: str = Form(""),
+) -> IdentifyResult:
     image_bytes = await file.read()
+
+    if not image_bytes:
+        raise HTTPException(status_code=400, detail="업로드된 이미지 파일이 비어 있습니다.")
+
     media_type = file.content_type or "image/jpeg"
-    return await run_identify(image_bytes, media_type, memo)
 
-
-def _load_demo() -> IdentifyResult:
-    cache_files = list(_DEMO_CACHE_DIR.glob("*.json"))
-    if not cache_files:
-        raise HTTPException(status_code=503, detail="demo_cache가 비어있습니다")
-    data = json.loads(random.choice(cache_files).read_text(encoding="utf-8"))
-    return IdentifyResult.model_validate(data)
+    try:
+        return await run_identify(
+            image_bytes,
+            media_type,
+            memo,
+            file_name=file.filename,
+        )
+    except HTTPException:
+        raise
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except RuntimeError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+    except Exception as exc:
+        raise HTTPException(
+            status_code=502,
+            detail="이미지 식별 서비스 호출 중 오류가 발생했습니다.",
+        ) from exc
