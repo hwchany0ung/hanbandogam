@@ -112,7 +112,7 @@ function App() {
   var activeTab = view==="map" ? "map" : (view==="collection") ? "collection" : "upload";
 
   return (
-    <div style={{display:"flex",flexDirection:"column",height:"100vh",background:"var(--paper)",position:"relative"}}>
+    <div className="app-shell">
       <div className="paper-tex"/>
 
       {/* 셔터 플래시 오버레이 */}
@@ -121,7 +121,7 @@ function App() {
       )}
 
       {/* 뷰 */}
-      <div style={{flex:1,overflow:"hidden",display:"flex",flexDirection:"column",position:"relative",zIndex:1}}>
+      <div className="app-view">
         {view==="upload"     && <UploadView onUpload={handleUpload} onDemoCapture={handleDemoCapture} collectionCount={colCount} missionCompleted={missionCompleted}/>}
         {view==="map"        && <MapView onBack={()=>setView("upload")}/>}
         {view==="loading"    && <LoadingView/>}
@@ -131,7 +131,7 @@ function App() {
       </div>
 
       {/* 바텀 내비 */}
-      <div style={{position:"relative",zIndex:10,background:"rgba(244,237,220,0.96)",backdropFilter:"blur(20px)",borderTop:"1px solid var(--gold-bd)",display:"flex",padding:"8px 0 24px"}}>
+      <div className="bottom-tabs">
         {tabs.map(t=>(
           <button
             key={t.id}
