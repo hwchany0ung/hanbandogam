@@ -374,12 +374,10 @@ function CollectionCard({ item, onDelete }) {
       style={{aspectRatio:"1",boxShadow:rarityBorderStyle,borderRadius:"12px",overflow:"hidden",position:"relative",cursor:"pointer",background:"var(--surface)"}}
     >
       <img
-        src={illustSrc}
+        src={realPhotoSrc || illustSrc}
         alt={item.korean_name}
         style={{width:"100%",height:"100%",objectFit:"cover"}}
         onError={() => {
-          // ILLUSTRATION_MAP 의 PNG 가 실패 → convention 시도하도록 illustErr=true
-          // convention 도 실패하면 → conventionErr=true → SVG 폴백
           if (!illustErr) setIllustErr(true);
           else if (!conventionErr) setConventionErr(true);
         }}

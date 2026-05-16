@@ -1,4 +1,4 @@
-window.DEMO_MODE = false;
+window.DEMO_MODE = true;
 var BASE_URL = "";
 
 // ── 희귀도 맵 (korean_name → L/E/R/U/C) ─────────────────────
@@ -56,9 +56,17 @@ var DEMO_RESULTS = [
 ];
 
 var DEMO_COLLECTION = [
-  { id:1, korean_name:"구상나무",   scientific_name:"Abies koreana",           native_status:"토종",   confidence:0.95, ecology_summary:"한국 특산 고산수종", conservation_status:"취약(VU)", morphological_clues:"잎 끝 오목, 자주색 솔방울", image_path:"/assets/illustrations/구상나무.svg",   memo:"", created_at:"2026-05-16T10:00:00" },
-  { id:2, korean_name:"황소개구리", scientific_name:"Lithobates catesbeianus",  native_status:"외래종", confidence:0.92, ecology_summary:"북미 원산 침입 외래종",  conservation_status:"생태계교란종",  morphological_clues:"고막이 눈보다 큼",       image_path:"/assets/illustrations/황소개구리.svg", memo:"", created_at:"2026-05-16T11:00:00" },
-  { id:3, korean_name:"왜가리",     scientific_name:"Ardea cinerea",           native_status:"토종",   confidence:0.88, ecology_summary:"하천·논에 사는 대형 왜가리", conservation_status:"관심필요",      morphological_clues:"흰목·긴다리·회색날개", image_path:"/assets/illustrations/왜가리.svg",     memo:"", created_at:"2026-05-16T12:00:00" },
+  { id:1,  korean_name:"동강할미꽃",   scientific_name:"Pulsatilla tongkangensis",       native_status:"토종",   confidence:0.94, ecology_summary:"동강 석회암 절벽에만 자생하는 한국 특산종.", conservation_status:"EN — 동강 석회암 절벽 한정 자생", morphological_clues:"꽃잎 6장 보라색, 흰 솜털, 석회암 절벽 특이 서식", image_path:"", memo:"", created_at:"2026-05-16T10:00:00" },
+  { id:2,  korean_name:"미선나무",     scientific_name:"Abeliophyllum distichum",         native_status:"토종",   confidence:0.97, ecology_summary:"지구상에서 오직 한반도에만 자라는 1속 1종 특산식물.", conservation_status:"VU — 세계 유일 한반도 특산 1속 1종", morphological_clues:"부채꼴 납작한 시과, 흰 꽃, 대생 타원형 잎", image_path:"", memo:"", created_at:"2026-05-16T10:10:00" },
+  { id:3,  korean_name:"수달",         scientific_name:"Lutra lutra",                     native_status:"토종",   confidence:0.95, ecology_summary:"1급 멸종위기 포유류. 하천 생태계 최상위 포식자.", conservation_status:"EN — 멸종위기 1급 · 천연기념물 330호", morphological_clues:"납작한 머리, 긴 몸통, 물갈퀴, 갈색 방수털", image_path:"", memo:"", created_at:"2026-05-16T10:20:00" },
+  { id:4,  korean_name:"구상나무",     scientific_name:"Abies koreana",                   native_status:"토종",   confidence:0.95, ecology_summary:"한국 특산 고산수종. 크리스마스트리의 원조.", conservation_status:"취약(VU) — IUCN 적색목록", morphological_clues:"잎 끝 오목, 자주색 솔방울", image_path:"", memo:"", created_at:"2026-05-16T10:30:00" },
+  { id:5,  korean_name:"금강초롱꽃",   scientific_name:"Hanabusaya asiatica",             native_status:"토종",   confidence:0.91, ecology_summary:"한국 특산종. 설악산 바위틈에서 보라색 종 모양 꽃을 피운다.", conservation_status:"R — 한국 특산 희귀종", morphological_clues:"보라색 종 모양 꽃, 바위틈 자생", image_path:"", memo:"", created_at:"2026-05-16T10:40:00" },
+  { id:6,  korean_name:"따오기",       scientific_name:"Nipponia nippon",                 native_status:"토종",   confidence:0.98, ecology_summary:"1978년 야생 절멸 후 복원 중. 흰 깃털에 붉은 얼굴이 특징.", conservation_status:"EN — 멸종위기 1급", morphological_clues:"흰 깃털, 붉은 얼굴, 긴 하향 만곡 부리", image_path:"", memo:"", created_at:"2026-05-16T10:50:00" },
+  { id:7,  korean_name:"노랑붓꽃",     scientific_name:"Iris koreana",                    native_status:"토종",   confidence:0.89, ecology_summary:"전라도 일부 골짜기에만 피는 희귀 붓꽃.", conservation_status:"R — 자생지 희귀", morphological_clues:"노란 꽃잎, 붓꽃 형태", image_path:"", memo:"", created_at:"2026-05-16T11:00:00" },
+  { id:8,  korean_name:"가시딸기",     scientific_name:"Rubus hongnoensis",               native_status:"토종",   confidence:0.87, ecology_summary:"제주에만 사는 가시 가득한 토종 딸기.", conservation_status:"E — 제주 특산", morphological_clues:"줄기 가시, 붉은 열매", image_path:"", memo:"", created_at:"2026-05-16T11:10:00" },
+  { id:9,  korean_name:"서양민들레",   scientific_name:"Taraxacum officinale",            native_status:"외래종", confidence:0.93, ecology_summary:"총포가 뒤로 젖혀지면 외래종. 도시 어디서나 만나는 그 민들레.", conservation_status:"C — 흔함", morphological_clues:"총포 외편 뒤로 젖혀짐, 노란 두상화", image_path:"", memo:"", created_at:"2026-05-16T11:20:00" },
+  { id:10, korean_name:"가시박",       scientific_name:"Sicyos angulatus",                native_status:"외래종", confidence:0.90, ecology_summary:"한 그루가 한 시즌에 2만 개 씨앗. 하천변 생태계 파괴 외래종.", conservation_status:"생태계교란종", morphological_clues:"가시 달린 덩굴, 오이과 잎", image_path:"", memo:"", created_at:"2026-05-16T11:30:00" },
+  { id:11, korean_name:"황소개구리",   scientific_name:"Lithobates catesbeianus",         native_status:"외래종", confidence:0.92, ecology_summary:"북미 원산 대형 침입 외래종. 토종 양서류 위협.", conservation_status:"생태계교란종", morphological_clues:"고막이 눈보다 큼, 올리브색 등", image_path:"/assets/illustrations/황소개구리.svg", memo:"", created_at:"2026-05-16T11:40:00" },
 ];
 
 function getOrCreateUserId() {
