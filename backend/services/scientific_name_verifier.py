@@ -74,9 +74,15 @@ def verify_scientific_name(scientific_name: str, timeout: float = 4.0) -> dict:
         return _empty_result("exception")
 
     # GBIF 응답 매칭 종류: EXACT / FUZZY / HIGHERRANK / NONE
+    # - EXACT/FUZZY (confidence >= 80): 종까지 정확/유사 매칭 → matched
+    # - HIGHERRANK (confidence >= 90): "Tillandsia sp." 같이 종까지 미특정 — 속/과까지 매칭 → matched
+    #   (Claude vision 이 "sp." 로 종 미특정 시 GBIF 는 HIGHERRANK 반환 — 시연 가드레일 유지하려면 인정)
     match_type = (data.get("matchType") or "").upper()
     confidence = int(data.get("confidence") or 0)
-    matched = match_type in ("EXACT", "FUZZY") and confidence >= 80
+    matched = (
+        (match_type in ("EXACT", "FUZZY") and confidence >= 80)
+        or (match_type == "HIGHERRANK" and confidence >= 90)
+    )
 
     result = {
         "matched": matched,
