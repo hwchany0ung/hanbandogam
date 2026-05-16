@@ -173,7 +173,18 @@ function ResultCard({ result, imageFile, onSave, onRetry, onCollection, alreadyC
       )}
 
       {/* 탑바 */}
-      <div className="flex items-center gap-3 px-4 pt-4 pb-3" style={{flexShrink:0}}>
+      <div
+        className="flex items-center gap-3 px-4 pt-4 pb-3"
+        style={{
+          flexShrink:0,
+          position:"sticky",
+          top:0,
+          zIndex:30,
+          background:"rgba(244,237,220,0.98)",
+          borderBottom:"1px solid rgba(184,144,47,0.12)",
+          backdropFilter:"blur(14px)"
+        }}
+      >
         <button onClick={onRetry} style={{width:"36px",height:"36px",borderRadius:"50%",background:"var(--surface)",border:"1px solid var(--gold-bd)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"16px",color:"var(--ink-1)",boxShadow:"0 2px 6px rgba(45,30,10,0.06)",flexShrink:0,cursor:"pointer"}}><Icon name="ArrowLeft" size={17} /></button>
         <div style={{fontSize:"13px",color:"var(--ink-2)",fontWeight:"500"}}>AI 판별 결과</div>
         <div style={{marginLeft:"auto",display:"inline-flex",alignItems:"center",gap:"5px",padding:"4px 10px",background:"var(--E-bg)",border:"1px solid var(--E-bd)",borderRadius:"20px",fontFamily:"'Space Mono',monospace",fontSize:"9px",color:"var(--E)",fontWeight:"700"}}><Icon name="Sparkles" size={12} /> CLAUDE</div>
@@ -272,9 +283,9 @@ function ResultCard({ result, imageFile, onSave, onRetry, onCollection, alreadyC
       </div>
 
       {/* 고정 액션 영역 */}
-      <div style={{flex:"0 0 auto",padding:"8px 16px calc(8px + env(safe-area-inset-bottom, 0px))",background:"rgba(244,237,220,0.96)",borderTop:"1px solid var(--gold-bd)",boxShadow:"0 -10px 26px rgba(45,30,10,0.08)",backdropFilter:"blur(18px)"}}>
+      <div style={{flex:"0 0 auto",padding:"8px 16px calc(8px + var(--app-safe-bottom, 0px))",background:"rgba(244,237,220,0.96)",borderTop:"1px solid var(--gold-bd)",boxShadow:"0 -10px 26px rgba(45,30,10,0.08)",backdropFilter:"blur(18px)"}}>
         {showReportToast && (
-          <div style={{position:"fixed",bottom:"calc(90px + env(safe-area-inset-bottom,0px))",left:"50%",transform:"translateX(-50%)",padding:"10px 18px",borderRadius:"10px",background:"rgba(31,26,18,0.94)",color:"#FFF7E8",fontSize:"12px",lineHeight:"1.5",textAlign:"center",zIndex:9999,maxWidth:"calc(100vw - 48px)",backdropFilter:"blur(12px)",boxShadow:"0 6px 20px rgba(0,0,0,0.28)",whiteSpace:"nowrap"}}>
+          <div style={{position:"fixed",bottom:"calc(90px + var(--app-safe-bottom, 0px))",left:"50%",transform:"translateX(-50%)",padding:"10px 18px",borderRadius:"10px",background:"rgba(31,26,18,0.94)",color:"#FFF7E8",fontSize:"12px",lineHeight:"1.5",textAlign:"center",zIndex:9999,maxWidth:"calc(100vw - 48px)",backdropFilter:"blur(12px)",boxShadow:"0 6px 20px rgba(0,0,0,0.28)",whiteSpace:"nowrap"}}>
             신고가 접수되었습니다. 전문가 검토 후 데이터 개선에 반영됩니다.
           </div>
         )}
@@ -339,13 +350,6 @@ function ResultCard({ result, imageFile, onSave, onRetry, onCollection, alreadyC
             </div>
           </>
         )}
-
-        {saved && (
-          <button onClick={onCollection} style={{display:"flex",alignItems:"center",justifyContent:"center",gap:"5px",width:"100%",textAlign:"center",marginTop:"8px",fontSize:"13px",color:"var(--gold)",textDecoration:"underline",background:"none",border:"none",cursor:"pointer"}}>
-            내 도감 보기 <Icon name="ArrowRight" size={14} />
-          </button>
-        )}
-
       </div>
     </div>
   );
