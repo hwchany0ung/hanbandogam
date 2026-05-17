@@ -243,3 +243,140 @@ async def identify_species(
         image_base64,
         media_type or "image/jpeg",
     )
+
+
+# ─────────────────────────────────────────────────────────────────
+# 도감 정보 별도 호출 (vision-hallucination-guard)
+# Design Ref: kna-image-reference §C — 생태 요약 prompt 분리.
+# Vision 1차에서 사진을 보고 ecology_summary 를 생성하면 학명을
+# 사진 색깔에 끼워 맞춘 가짜 설명을 만들 위험이 큼 (예: 활량나물
+# 학명인데 분홍 꽃이라 표기). text-only 2차 호출로 학명만 기반의
+# 정직 도감 정보 출력 → 사용자가 사진과 비교해 false positive 인지.
+# ─────────────────────────────────────────────────────────────────
+
+CODEX_SYSTEM_PROMPT = """
+너는 한국 생물 도감 전문 편집자다. 주어진 종에 대해 사실만 기반으로
+한국어 도감 정보를 출력한다. 추측·과장·사진 추정 금지. 학명을 알 수
+없으면 ecology_summary 에 "정보 부족" 으로 반환한다.
+
+반드시 JSON 객체 하나만 반환한다:
+{
+  "ecology_summary": "100자 이내 한국어 생태 요약 (서식지·개화기·꽃 색·잎 모양 등 표준 도감 정보)",
+  "conservation_status": "50자 이내 보전 상태 (IUCN 등급·국내 멸종위기 여부 등)"
+}
+""".strip()
+
+
+def _fetch_codex_info_sync(korean_name: str, scientific_name: str) -> dict:
+    """text-only Claude 호출로 학명 기반 도감 정보만 추출. 사진 안 봄."""
+    api_key = os.getenv("ANTHROPIC_API_KEY")
+    if not api_key:
+        return {}
+
+    from anthropic import Anthropic
+    client = Anthropic(api_key=api_key)
+
+    user_prompt = (
+        f"종명(한국어): {korean_name or '미상'}\n"
+        f"학명: {scientific_name or 'N/A'}\n"
+        f"\n위 종의 도감 정보 JSON 을 반환하라."
+    )
+    try:
+        response = client.messages.create(
+            model=os.getenv("CLAUDE_MODEL", "claude-sonnet-4-6"),
+            max_tokens=400,
+            temperature=0,
+            system=CODEX_SYSTEM_PROMPT,
+            messages=[{"role": "user", "content": [{"type": "text", "text": user_prompt}]}],
+        )
+        text = _extract_response_text(response)
+        data = _parse_json_object(text)
+        if not isinstance(data, dict):
+            return {}
+        return {
+            "ecology_summary": str(data.get("ecology_summary") or "").strip(),
+            "conservation_status": str(data.get("conservation_status") or "").strip(),
+        }
+    except Exception:
+        return {}
+
+
+async def fetch_codex_info(korean_name: str, scientific_name: str) -> dict:
+    """async wrapper."""
+    return await asyncio.to_thread(_fetch_codex_info_sync, korean_name, scientific_name)
+
+
+# ─────────────────────────────────────────────────────────────────
+# Vision 2-stage 자기 검증 (kna-image-reference §E)
+# Design Ref: KNA hit 시 backend 가 KNA 표준 이미지 fetch → Vision 에
+# 사용자 사진 + 표준 이미지 둘 다 전달 → "같은 종?" 응답. different 면
+# native_status="불명확" 로 강등해 false positive 차단.
+# ─────────────────────────────────────────────────────────────────
+
+COMPARE_SYSTEM_PROMPT = """
+너는 한국 식물·동물 동일종 판정 전문가다. 두 이미지가 같은 종인지
+판정한다. 색깔·꽃 모양·잎 구조·전체 형태를 종합적으로 본다. 불확실하면
+uncertain 으로 반환한다.
+
+반드시 JSON 객체 하나만 반환한다:
+{
+  "verdict": "same | different | uncertain",
+  "confidence": 0.0~1.0,
+  "reason": "30자 이내 핵심 근거 (예: '꽃 색이 분홍 vs 노랑으로 명백 다름')"
+}
+""".strip()
+
+
+def _compare_two_images_sync(user_image_b64: str, user_media_type: str, reference_image_b64: str, reference_media_type: str) -> dict:
+    """두 이미지가 같은 종인지 Claude Vision 으로 판정. KNA hit 시 false positive 차단."""
+    api_key = os.getenv("ANTHROPIC_API_KEY")
+    if not api_key:
+        return {"verdict": "uncertain", "confidence": 0.0, "reason": "no-api-key"}
+
+    from anthropic import Anthropic
+    client = Anthropic(api_key=api_key)
+
+    try:
+        response = client.messages.create(
+            model=os.getenv("CLAUDE_MODEL", "claude-sonnet-4-6"),
+            max_tokens=300,
+            temperature=0,
+            system=COMPARE_SYSTEM_PROMPT,
+            messages=[{
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": "사진 1 (사용자 업로드):"},
+                    {"type": "image", "source": {"type": "base64", "media_type": user_media_type, "data": user_image_b64}},
+                    {"type": "text", "text": "사진 2 (국립수목원 표준 이미지):"},
+                    {"type": "image", "source": {"type": "base64", "media_type": reference_media_type, "data": reference_image_b64}},
+                    {"type": "text", "text": "위 두 사진이 같은 종인가? JSON 으로 답하라."},
+                ],
+            }],
+        )
+        text = _extract_response_text(response)
+        data = _parse_json_object(text)
+        if not isinstance(data, dict):
+            return {"verdict": "uncertain", "confidence": 0.0, "reason": "parse-fail"}
+        verdict = str(data.get("verdict") or "uncertain").lower().strip()
+        if verdict not in ("same", "different", "uncertain"):
+            verdict = "uncertain"
+        try:
+            conf = float(data.get("confidence", 0.0))
+            conf = min(max(conf, 0.0), 1.0)
+        except (TypeError, ValueError):
+            conf = 0.0
+        return {
+            "verdict": verdict,
+            "confidence": conf,
+            "reason": str(data.get("reason") or "")[:80],
+        }
+    except Exception as exc:
+        return {"verdict": "uncertain", "confidence": 0.0, "reason": f"exception:{type(exc).__name__}"}
+
+
+async def compare_two_images(user_image_b64: str, user_media_type: str, reference_image_b64: str, reference_media_type: str) -> dict:
+    """async wrapper."""
+    return await asyncio.to_thread(
+        _compare_two_images_sync,
+        user_image_b64, user_media_type, reference_image_b64, reference_media_type,
+    )

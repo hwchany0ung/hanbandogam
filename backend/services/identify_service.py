@@ -10,15 +10,45 @@ import httpx
 
 
 try:
-    from backend.ai.claude_client import IdentifyResult, identify_species
+    from backend.ai.claude_client import IdentifyResult, identify_species, fetch_codex_info, compare_two_images
 except ImportError:
-    from ai.claude_client import IdentifyResult, identify_species
+    from ai.claude_client import IdentifyResult, identify_species, fetch_codex_info, compare_two_images  # type: ignore
+
+import urllib.request as _urlreq
+import urllib.parse as _urlparse
 
 # 학명 교차검증 (GBIF) — 본선 슬라이드/Q&A 명시 기능
 try:
     from backend.services.scientific_name_verifier import verify_scientific_name
 except ImportError:
     from services.scientific_name_verifier import verify_scientific_name  # type: ignore
+
+
+# Vision 2-stage 검증용 — KNA 이미지 server-side fetch (CORS 우회)
+# Design Ref: kna-image-reference §E — SSRF 방지로 nature.go.kr only 허용
+_KNA_ALLOWED_HOSTS = {"www.nature.go.kr", "nature.go.kr"}
+_KNA_FETCH_TIMEOUT = 6.0
+
+
+def _fetch_kna_image_as_base64(url: str) -> tuple[str, str]:
+    """KNA 이미지 server-side fetch + base64. 실패 시 ('', '')."""
+    try:
+        parsed = _urlparse.urlparse(url)
+        host = (parsed.netloc or "").lower().split(":")[0]
+        if host not in _KNA_ALLOWED_HOSTS:
+            return "", ""
+        if parsed.scheme not in ("http", "https"):
+            return "", ""
+        req = _urlreq.Request(url, headers={"Accept": "image/*", "User-Agent": "Mozilla/5.0 hanbando"})
+        with _urlreq.urlopen(req, timeout=_KNA_FETCH_TIMEOUT) as resp:
+            content_type = resp.headers.get("Content-Type", "image/jpeg")
+            raw = resp.read()
+        if len(raw) < 100 or len(raw) > 5 * 1024 * 1024:  # 안전 한도 5MB
+            return "", ""
+        import base64 as _b64
+        return _b64.b64encode(raw).decode("ascii"), content_type
+    except Exception:
+        return "", ""
 
 
 UPSTAGE_ENDPOINT = "https://api.upstage.ai/v1/solar"
@@ -197,6 +227,55 @@ async def run_identify(
         except Exception as exc:  # noqa: BLE001
             import logging
             logging.getLogger(__name__).warning("[verify] 예외: %s", exc)
+
+    # Vision 2-stage 자기 검증 (kna-image-reference §E)
+    # Design Ref: KNA hit + kna_image_url 있는 케이스에만 호출. KNA 표준 이미지를
+    # backend 가 server-side fetch (CORS 우회) + base64 → Claude Vision 비교 호출.
+    # verdict="different" 면 native_status 강등으로 false positive 차단.
+    kna_image_url = _get_result_value(result, "kna_image_url")
+    if kna_image_url and _get_result_value(result, "verification_source") == "KNA":
+        try:
+            ref_b64, ref_media = _fetch_kna_image_as_base64(str(kna_image_url))
+            if ref_b64:
+                compare = await compare_two_images(image_base64, media_type or "image/jpeg", ref_b64, ref_media)
+                verdict = compare.get("verdict")
+                reason = compare.get("reason") or ""
+                if verdict == "different":
+                    # 강등: native_status 불명확 + verification_matched False + reason 부착
+                    import logging
+                    logging.getLogger(__name__).info(
+                        "[compare] mismatch '%s' → native='불명확' reason=%s",
+                        _get_result_value(result, "korean_name"), reason,
+                    )
+                    result = _copy_result_with(
+                        result,
+                        native_status="불명확",
+                        verification_matched=False,
+                        verification_source=f"KNA_MISMATCH:{reason[:40]}",
+                    )
+        except Exception as exc:  # noqa: BLE001
+            import logging
+            logging.getLogger(__name__).warning("[compare] 예외: %s", exc)
+
+    # 생태 요약 hallucination 차단 — text-only 2차 호출로 학명 기반 정직 도감 정보 덮어쓰기
+    # Design Ref: kna-image-reference §C — vision-hallucination-guard
+    # Plan SC: 활량나물(노란)→사진(분홍) 같은 사진 색깔 끼워 맞춤 가짜 설명 방지
+    korean_name = _get_result_value(result, "korean_name")
+    if (
+        scientific_name
+        and scientific_name != "N/A"
+        and korean_name
+        and korean_name != "해당 없음"
+    ):
+        try:
+            codex = await fetch_codex_info(str(korean_name), str(scientific_name))
+            if codex.get("ecology_summary"):
+                result = _copy_result_with(result, ecology_summary=codex["ecology_summary"])
+            if codex.get("conservation_status"):
+                result = _copy_result_with(result, conservation_status=codex["conservation_status"])
+        except Exception as exc:  # noqa: BLE001
+            import logging
+            logging.getLogger(__name__).warning("[codex] 예외: %s", exc)
 
     ecology_summary = _get_result_value(result, "ecology_summary")
     enriched_summary = await enrich_korean_text(str(ecology_summary or ""))
