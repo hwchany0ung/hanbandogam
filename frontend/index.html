@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko" style="background:#F4EDDC;">
+<html lang="ko">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
@@ -17,8 +17,6 @@
 
   <style>
     :root {
-      background: #F4EDDC;
-      color-scheme: light;
       --paper:    #F4EDDC;
       --paper-2:  #FAF5E6;
       --surface:  #FFFFFF;
@@ -39,7 +37,6 @@
       --R: #2563EB; --R-bg: #E8F0FE; --R-bd: rgba(37,99,235,0.30);
       --U: #16A34A; --U-bg: #E7F5EC; --U-bd: rgba(22,163,74,0.30);
       --C: #6B7280; --C-bg: #EFF1F4; --C-bd: rgba(107,114,128,0.25);
-      --app-safe-bottom: 0px;
     }
 
     *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
@@ -54,15 +51,6 @@
       overflow: hidden;
     }
 
-    body::before {
-      content:'';
-      position:fixed;
-      inset:0;
-      background:var(--paper);
-      pointer-events:none;
-      z-index:0;
-    }
-
     #root {
       max-width: 390px;
       margin: 0 auto;
@@ -71,7 +59,6 @@
       min-height: 0;
       background: var(--paper);
       position: relative;
-      z-index:1;
       overflow: hidden;
       display: flex;
       flex-direction: column;
@@ -236,16 +223,7 @@
       backdrop-filter:blur(20px);
       border-top:1px solid var(--gold-bd);
       display:flex;
-      padding:8px 0 calc(10px + var(--app-safe-bottom));
-    }
-
-    @media (hover:none) and (pointer:coarse) {
-      :root {
-        --app-safe-bottom: min(env(safe-area-inset-bottom, 0px), 10px);
-      }
-      .bottom-tabs {
-        padding:7px 0 calc(8px + var(--app-safe-bottom));
-      }
+      padding:8px 0 calc(18px + env(safe-area-inset-bottom, 0px));
     }
 
     .home-screen {
@@ -678,14 +656,14 @@
     }
   </script>
 
-  <script type="text/babel" src="lib/api.js?v=notice-safe-1"></script>
-  <script type="text/babel" src="components/CollectionCard.jsx?v=notice-safe-1"></script>
+  <script type="text/babel" src="lib/api.js?v=merge-fe-1"></script>
+  <script type="text/babel" src="components/CollectionCard.jsx?v=merge-fe-1"></script>
   <script type="text/babel" src="components/UploadView.jsx?v=carousel-auto-3"></script>
   <script type="text/babel" src="components/LoadingView.jsx"></script>
-  <script type="text/babel" src="components/ResultCard.jsx?v=notice-safe-1"></script>
+  <script type="text/babel" src="components/ResultCard.jsx?v=btn-flex-center-1"></script>
   <script type="text/babel" src="components/ErrorView.jsx"></script>
-  <script type="text/babel" src="components/CollectionView.jsx?v=notice-safe-1"></script>
+  <script type="text/babel" src="components/CollectionView.jsx?v=points-bar-1"></script>
   <script type="text/babel" src="components/MapView.jsx"></script>
-  <script type="text/babel" src="components/App.jsx?v=notice-safe-1"></script>
+  <script type="text/babel" src="components/App.jsx?v=merge-fe-1"></script>
 </body>
 </html>
