@@ -60,6 +60,11 @@ function App() {
   var [demoIdx,          setDemoIdx]          = React.useState(0);
   var [missionCompleted, setMissionCompleted] = React.useState(false);
   var [newSpeciesKeys,   setNewSpeciesKeys]   = React.useState([]);
+  var [pullDistance,     setPullDistance]     = React.useState(0);
+  var [pullState,        setPullState]        = React.useState("idle"); // idle | pulling | ready | refreshing
+  var touchStartYRef = React.useRef(0);
+  var pullActiveRef = React.useRef(false);
+  var refreshingRef = React.useRef(false);
 
   React.useEffect(()=>{
     getCollection().then(function(list) {
@@ -70,6 +75,8 @@ function App() {
   var uniqueCollectionItems = getUniqueCollectionItems(collectionItems);
   var colCount = uniqueCollectionItems.length;
   var existingItem = result ? findCollectedItem(collectionItems, result) : null;
+  var pullThreshold = 86;
+  var pullLockedDistance = 66;
 
   function showToast(msg) {
     setToast(msg);
@@ -128,6 +135,77 @@ function App() {
     });
   }
 
+  function findScrollableParent(node) {
+    var current = node;
+    while (current && current !== document.body && current !== document.documentElement) {
+      var style = window.getComputedStyle(current);
+      var canScroll = /(auto|scroll)/.test(style.overflowY) && current.scrollHeight > current.clientHeight;
+      if (canScroll) return current;
+      current = current.parentElement;
+    }
+    return null;
+  }
+
+  function canStartPullRefresh(eventTarget) {
+    var scrollParent = findScrollableParent(eventTarget);
+    return !scrollParent || scrollParent.scrollTop <= 0;
+  }
+
+  function runPullRefresh() {
+    if (refreshingRef.current) return;
+    refreshingRef.current = true;
+    pullActiveRef.current = false;
+    setPullState("refreshing");
+    setPullDistance(pullLockedDistance);
+
+    window.setTimeout(function() {
+      window.location.reload();
+    }, 320);
+  }
+
+  function handleTouchStart(event) {
+    if (refreshingRef.current || event.touches.length !== 1) return;
+    if (!canStartPullRefresh(event.target)) return;
+    touchStartYRef.current = event.touches[0].clientY;
+    pullActiveRef.current = true;
+  }
+
+  function handleTouchMove(event) {
+    if (!pullActiveRef.current || refreshingRef.current || event.touches.length !== 1) return;
+    var deltaY = event.touches[0].clientY - touchStartYRef.current;
+
+    if (deltaY <= 0) {
+      setPullDistance(0);
+      setPullState("idle");
+      return;
+    }
+
+    if (!canStartPullRefresh(event.target)) {
+      pullActiveRef.current = false;
+      setPullDistance(0);
+      setPullState("idle");
+      return;
+    }
+
+    if (deltaY > 8 && event.cancelable) event.preventDefault();
+    var easedDistance = Math.min(112, Math.pow(deltaY, 0.86) * 1.45);
+    setPullDistance(easedDistance);
+    setPullState(easedDistance >= pullThreshold ? "ready" : "pulling");
+  }
+
+  function handleTouchEnd() {
+    if (!pullActiveRef.current || refreshingRef.current) return;
+    pullActiveRef.current = false;
+
+    if (pullDistance >= pullThreshold) {
+      runPullRefresh();
+      return;
+    }
+
+    setPullDistance(0);
+    setPullState("idle");
+  }
+
   var tabs = [
     { id:"upload",     icon:"Camera", label:"촬영" },
     { id:"collection", icon:"BookOpen", label:"도감" },
@@ -137,8 +215,54 @@ function App() {
   var activeTab = view==="map" ? "map" : (view==="collection") ? "collection" : "upload";
 
   return (
-    <div className="app-shell">
+    <div
+      className="app-shell"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      onTouchCancel={handleTouchEnd}
+    >
       <div className="paper-tex"/>
+
+      <div
+        style={{
+          position:"absolute",
+          top:"10px",
+          left:"50%",
+          zIndex:70,
+          width:"40px",
+          height:"40px",
+          borderRadius:"50%",
+          background:"rgba(255,252,242,0.96)",
+          border:"1px solid var(--gold-bd)",
+          boxShadow:"0 8px 24px rgba(45,30,10,0.16)",
+          display:"flex",
+          alignItems:"center",
+          justifyContent:"center",
+          color:pullState==="ready" || pullState==="refreshing" ? "var(--gold)" : "var(--ink-3)",
+          opacity:pullState==="idle" ? 0 : Math.min(1, pullDistance / 48),
+          transform:"translate(-50%," + (pullState==="refreshing" ? pullLockedDistance : Math.max(-34, pullDistance - 42)) + "px)",
+          transition:pullState==="refreshing" || pullState==="idle" ? "transform 0.24s ease, opacity 0.2s ease" : "none",
+          pointerEvents:"none",
+        }}
+      >
+        <span
+          style={{
+            width:"20px",
+            height:"20px",
+            display:"inline-flex",
+            alignItems:"center",
+            justifyContent:"center",
+            transform:"rotate(" + Math.round(pullDistance * 3.2) + "deg)",
+            animation:pullState==="refreshing" ? "pullRefreshSpin 0.8s linear infinite" : "none",
+            fontSize:"20px",
+            lineHeight:"1",
+            fontWeight:"800"
+          }}
+        >
+          {window.lucide ? <Icon name="RefreshCw" size={18} strokeWidth={2.4} /> : "↻"}
+        </span>
+      </div>
 
       {/* 셔터 플래시 오버레이 */}
       {shutterOn && (

@@ -261,8 +261,7 @@ function CollectionCard({ item, onDelete, isNew, onSeen }) {
       setSharing(true);
       navigator.share({
         title: "한반도감 - " + item.korean_name,
-        text: promo,
-        url: shareUrl,
+        text: fullText,
       }).then(function(){ setSharing(false); }).catch(function(){ setSharing(false); });
     } else if (navigator.clipboard) {
       navigator.clipboard.writeText(fullText).then(function(){
