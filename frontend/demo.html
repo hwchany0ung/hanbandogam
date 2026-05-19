@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>한반도감 DEMO</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Serif+KR:wght@400;600;700;900&family=Noto+Sans+KR:wght@300;400;500;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    :root {
+      --paper:    #F4EDDC;
+      --paper-2:  #FAF5E6;
+      --surface:  #FFFFFF;
+      --surface-2:#FBF7EC;
+      --lift:     #F0E8D4;
+      --ink-1:    #1F1A12;
+      --ink-2:    #5C5345;
+      --ink-3:    #9C907E;
+      --ink-4:    #C8BDA8;
+      --gold:     #B8902F;
+      --gold-2:   #D4A93D;
+      --gold-dim: rgba(184,144,47,0.10);
+      --gold-bd:  rgba(184,144,47,0.30);
+      --native:   #16A34A;
+      --invasive: #DC2626;
+      --L: #C99227; --L-bg: #FBF3DC; --L-bd: rgba(201,146,39,0.45);
+      --E: #8B5CF6; --E-bg: #F3EDFE; --E-bd: rgba(139,92,246,0.35);
+      --R: #2563EB; --R-bg: #E8F0FE; --R-bd: rgba(37,99,235,0.30);
+      --U: #16A34A; --U-bg: #E7F5EC; --U-bd: rgba(22,163,74,0.30);
+      --C: #6B7280; --C-bg: #EFF1F4; --C-bd: rgba(107,114,128,0.25);
+    }
+
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+    html, body {
+      background: #ECE3CC;
+      width: 100%;
+      height: 100%;
+      min-height: 100vh;
+      font-family: 'Noto Sans KR', sans-serif;
+      color: var(--ink-1);
+      overflow: hidden;
+    }
+
+    #demo-banner {
+      position: fixed;
+      top: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 100%; max-width: 390px;
+      height: 30px;
+      background: #1F1A12;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      z-index: 9999;
+      font-family: 'Space Mono', monospace;
+      font-size: 9px; letter-spacing: 2px; color: rgba(251,247,236,0.6);
+    }
+    #demo-banner .badge {
+      padding: 1px 7px; border-radius: 5px;
+      background: var(--gold); color: #1F1A12;
+      font-size: 8px; font-weight: 700; letter-spacing: 1px;
+    }
+
+    #root {
+      max-width: 390px;
+      margin: 0 auto;
+      height: 100vh;
+      height: 100dvh;
+      min-height: 0;
+      background: var(--paper);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      padding-top: 30px;
+    }
+
+    /* ── 한지 텍스처 ── */
+    .paper-tex {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-image:
+        radial-gradient(circle at 25% 35%, rgba(184,144,47,0.04) 1px, transparent 1.5px),
+        radial-gradient(circle at 70% 60%, rgba(92,83,69,0.03) 1px, transparent 1.5px);
+      background-size: 40px 40px, 35px 35px;
+      max-width: 390px;
+    }
+
+    /* ── 플립 카드 ── */
+    .card-flip-container { perspective: 1000px; }
+    .card-flip-inner {
+      position: relative; width: 100%; height: 100%;
+      transition: transform 0.55s cubic-bezier(0.4,0,0.2,1);
+      transform-style: preserve-3d;
+    }
+    .card-flip-inner.is-flipped { transform: rotateY(180deg); }
+    .card-face {
+      position: absolute; inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+    .card-face-back { transform: rotateY(180deg); }
+
+    /* ── 조리개 애니메이션 ── */
+    .ring { position:absolute; inset:0; border-radius:50%; border:2px solid transparent; }
+    .ring-1 { border-top-color:var(--gold); border-right-color:rgba(184,144,47,0.18); animation:spin 5s linear infinite; }
+    .ring-2 { inset:10px; border-bottom-color:rgba(184,144,47,0.45); animation:spin 7s linear infinite reverse; }
+    .ring-3 { inset:20px; border-top-color:rgba(184,144,47,0.18); animation:spin 11s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    .aperture-core {
+      position:absolute; inset:30px; border-radius:50%;
+      background:radial-gradient(circle at 40% 35%, #FFFEF8, #F0E8D4 70%);
+      border:1px solid rgba(184,144,47,0.3);
+      display:flex; align-items:center; justify-content:center;
+      flex-direction:column; gap:4px; overflow:hidden;
+      animation:pulse 4s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%,100% { box-shadow:0 0 24px rgba(184,144,47,0.15),inset 0 0 30px rgba(184,144,47,0.06); }
+      50%      { box-shadow:0 0 50px rgba(184,144,47,0.3),inset 0 0 20px rgba(184,144,47,0.04); }
+    }
+    .scan-bar {
+      position:absolute; left:0; right:0; height:1.5px;
+      background:linear-gradient(90deg,transparent,rgba(184,144,47,0.85),transparent);
+      animation:scan 3.5s ease-in-out infinite;
+    }
+    @keyframes scan { 0%{top:0%;opacity:0} 5%{opacity:1} 95%{opacity:1} 100%{top:100%;opacity:0} }
+
+    /* ── 보케 ── */
+    .bokeh-dot {
+      position:absolute; border-radius:50%;
+      filter:blur(20px); animation:rise linear infinite;
+    }
+    @keyframes rise {
+      0%   { transform:translateY(110%) scale(0.4); opacity:0; }
+      15%  { opacity:0.8; }
+      85%  { opacity:0.3; }
+      100% { transform:translateY(-10%) scale(1.6); opacity:0; }
+    }
+
+    /* ── 홀로 ── */
+    .holo {
+      position:absolute; inset:0; pointer-events:none;
+      background:linear-gradient(135deg,transparent 20%,rgba(255,255,255,0.18) 35%,transparent 50%,rgba(255,255,255,0.22) 65%,transparent 80%);
+      background-size:200% 200%;
+      animation:holo 5s linear infinite;
+      mix-blend-mode:overlay;
+    }
+    @keyframes holo { 0%{background-position:0% 0%} 100%{background-position:200% 200%} }
+
+    /* ── 버튼 샤인 ── */
+    .btn-shine { position:relative; overflow:hidden; }
+    .btn-shine::after {
+      content:''; position:absolute; inset:0;
+      background:linear-gradient(90deg,transparent,rgba(184,144,47,0.25),transparent);
+      transform:translateX(-100%); animation:shine 4s ease infinite;
+    }
+    @keyframes shine { 0%{transform:translateX(-100%)} 30%,100%{transform:translateX(200%)} }
+
+    /* ── 포인트 토스트 ── */
+    @keyframes toastUp {
+      0%   { transform:translateX(-50%) translateY(-20px); opacity:0; }
+      60%  { transform:translateX(-50%) translateY(3px);   opacity:1; }
+      100% { transform:translateX(-50%) translateY(0);     opacity:1; }
+    }
+    @keyframes toastFade {
+      0%   { opacity:1; }
+      100% { opacity:0; }
+    }
+
+    /* ── 셔터 플래시 ── */
+    @keyframes shutterFlash {
+      0%   { opacity:0.95; }
+      40%  { opacity:0.6; }
+      100% { opacity:0; }
+    }
+
+    /* ── 토스트 ── */
+    .toast {
+      position:fixed; bottom:90px; left:50%; transform:translateX(-50%);
+      background:linear-gradient(135deg,#16A34A,#15803d);
+      color:#fff; padding:11px 22px; border-radius:26px;
+      font-family:'Black Han Sans',sans-serif; font-size:13px; letter-spacing:1px;
+      white-space:nowrap; z-index:50; opacity:0; transition:opacity 0.3s;
+      pointer-events:none; box-shadow:0 8px 24px rgba(22,163,74,0.35);
+    }
+    .toast.show { opacity:1; }
+
+    /* 스크롤바 */
+    ::-webkit-scrollbar { width:3px; }
+    ::-webkit-scrollbar-thumb { background:var(--gold-bd); border-radius:3px; }
+
+    .app-shell {
+      display:flex;
+      flex-direction:column;
+      height:100vh;
+      height:100dvh;
+      min-height:0;
+      background:var(--paper);
+      position:relative;
+      overflow:hidden;
+    }
+    .app-view {
+      flex:1 1 auto;
+      min-height:0;
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      position:relative;
+      z-index:20;
+    }
+    .bottom-tabs {
+      flex:0 0 auto;
+      position:relative;
+      z-index:10;
+      background:rgba(244,237,220,0.96);
+      backdrop-filter:blur(20px);
+      border-top:1px solid var(--gold-bd);
+      display:flex;
+      padding:8px 0 calc(18px + env(safe-area-inset-bottom, 0px));
+    }
+
+    .home-screen {
+      --home-x-pad: 24px;
+      --home-top-pad: 48px;
+      --home-header-bottom: 24px;
+      --home-logo-size: 32px;
+      --home-subtitle-size: 9px;
+      --scanner-size: 196px;
+      --scanner-ring-2: 10px;
+      --scanner-ring-3: 20px;
+      --scanner-core-inset: 30px;
+      --scanner-icon-size: 36px;
+      --home-copy-gap: 20px;
+      --home-copy-title-size: 20px;
+      --home-copy-sub-size: 12px;
+      --button-height: 52px;
+      --button-font: 15px;
+      --button-icon-size: 18px;
+      --button-letter-spacing: 3px;
+      --mission-top-gap: 24px;
+      --mission-button-gap: 12px;
+      --button-bottom-gap: 16px;
+      --mission-pad-y: 12px;
+      --mission-pad-x: 16px;
+      --mission-label-size: 9px;
+      --mission-title-size: 15px;
+      --mission-sub-size: 11px;
+    }
+    .home-header {
+      padding-top:var(--home-top-pad);
+      padding-bottom:var(--home-header-bottom);
+      flex-shrink:0;
+    }
+    .home-logo {
+      font-family:'Black Han Sans',sans-serif;
+      font-size:var(--home-logo-size);
+      letter-spacing:6px;
+      color:var(--ink-1);
+      line-height:1.05;
+    }
+    .home-subtitle {
+      font-family:'Space Mono',monospace;
+      font-size:var(--home-subtitle-size);
+      color:var(--gold);
+      letter-spacing:4px;
+      margin-top:5px;
+      line-height:1.4;
+      white-space:nowrap;
+    }
+    .home-scan-zone {
+      flex:1 1 auto;
+      min-height:0;
+      justify-content:center;
+    }
+    .home-scanner {
+      width:var(--scanner-size);
+      height:var(--scanner-size);
+      position:relative;
+    }
+    .home-scanner .ring-2 { inset:var(--scanner-ring-2); }
+    .home-scanner .ring-3 { inset:var(--scanner-ring-3); }
+    .home-scanner .aperture-core { inset:var(--scanner-core-inset); }
+    .home-scanner .aperture-core .lucide-icon svg {
+      width:var(--scanner-icon-size);
+      height:var(--scanner-icon-size);
+    }
+    .home-copy { margin-top:var(--home-copy-gap); }
+    .home-copy-title {
+      font-family:'Noto Serif KR',serif;
+      font-size:var(--home-copy-title-size);
+      font-weight:700;
+      color:var(--ink-1);
+      line-height:1.25;
+    }
+    .home-copy-sub {
+      font-size:var(--home-copy-sub-size);
+      color:var(--ink-2);
+      margin-top:6px;
+      line-height:1.45;
+    }
+    .home-bottom-stack {
+      margin-top:0;
+      padding-top:var(--mission-top-gap);
+      padding-bottom:var(--button-bottom-gap);
+      flex-shrink:0;
+    }
+    .home-primary-wrap {
+      padding-left:var(--home-x-pad);
+      padding-right:var(--home-x-pad);
+      flex-shrink:0;
+    }
+    .home-primary-button {
+      min-height:var(--button-height);
+      height:var(--button-height);
+      padding:0 16px;
+      color:#FBF7EC;
+      font-family:'Black Han Sans',sans-serif;
+      font-size:var(--button-font);
+      letter-spacing:var(--button-letter-spacing);
+      box-shadow:0 8px 24px rgba(45,30,10,0.25);
+      border:none;
+      white-space:nowrap;
+    }
+    .home-primary-button .lucide-icon svg {
+      width:var(--button-icon-size);
+      height:var(--button-icon-size);
+    }
+    .home-mission-wrap {
+      margin:0 var(--home-x-pad) var(--mission-button-gap);
+      flex-shrink:0;
+    }
+    .home-mission-card {
+      padding:var(--mission-pad-y) var(--mission-pad-x);
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+    .home-mission-icon {
+      width:36px;
+      height:36px;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-shrink:0;
+    }
+    .home-mission-body {
+      flex:1;
+      min-width:0;
+    }
+    .home-mission-label {
+      font-family:'Space Mono',monospace;
+      font-size:var(--mission-label-size);
+      font-weight:700;
+      letter-spacing:1.5px;
+      margin-bottom:3px;
+      line-height:1.3;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .home-mission-title {
+      font-family:'Noto Serif KR',serif;
+      font-size:var(--mission-title-size);
+      font-weight:800;
+      color:var(--ink-1);
+      line-height:1.25;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .home-mission-sub {
+      margin-top:2px;
+      font-size:var(--mission-sub-size);
+      color:var(--ink-3);
+      line-height:1.35;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    @media (max-height: 740px) {
+      .home-screen {
+        --home-top-pad: 32px;
+        --home-header-bottom: 18px;
+        --scanner-size: 170px;
+        --scanner-ring-2: 9px;
+        --scanner-ring-3: 18px;
+        --scanner-core-inset: 26px;
+        --scanner-icon-size: 32px;
+        --home-copy-gap: 16px;
+        --button-height: 48px;
+        --button-font: 14px;
+        --button-icon-size: 16px;
+        --mission-top-gap: 18px;
+        --mission-button-gap: 10px;
+        --button-bottom-gap: 12px;
+        --mission-pad-y: 10px;
+        --mission-title-size: 14px;
+      }
+    }
+    @media (max-height: 660px) {
+      .home-screen {
+        --home-top-pad: 24px;
+        --home-header-bottom: 14px;
+        --home-logo-size: 28px;
+        --scanner-size: 144px;
+        --scanner-ring-2: 8px;
+        --scanner-ring-3: 16px;
+        --scanner-core-inset: 23px;
+        --scanner-icon-size: 28px;
+        --home-copy-gap: 12px;
+        --home-copy-title-size: 18px;
+        --home-copy-sub-size: 11px;
+        --button-height: 44px;
+        --button-font: 13px;
+        --button-icon-size: 15px;
+        --mission-top-gap: 14px;
+        --mission-button-gap: 9px;
+        --button-bottom-gap: 10px;
+        --mission-pad-y: 9px;
+        --mission-title-size: 13px;
+        --mission-sub-size: 10px;
+      }
+    }
+    @media (max-height: 580px) {
+      .home-screen {
+        --home-top-pad: 16px;
+        --home-header-bottom: 10px;
+        --home-logo-size: 25px;
+        --home-subtitle-size: 8px;
+        --scanner-size: 124px;
+        --scanner-ring-2: 7px;
+        --scanner-ring-3: 14px;
+        --scanner-core-inset: 20px;
+        --scanner-icon-size: 24px;
+        --home-copy-gap: 9px;
+        --home-copy-title-size: 16px;
+        --button-height: 40px;
+        --mission-top-gap: 10px;
+        --mission-button-gap: 8px;
+        --button-bottom-gap: 8px;
+        --mission-pad-y: 8px;
+        --mission-title-size: 12px;
+      }
+      .home-copy-sub,
+      .home-mission-sub { display:none !important; }
+    }
+    @media (max-width: 360px) {
+      .home-screen {
+        --home-x-pad: 18px;
+        --button-letter-spacing: 2px;
+      }
+      .home-logo { letter-spacing:4px; }
+      .home-subtitle { letter-spacing:3px; }
+      .home-primary-button { padding:0 12px; }
+    }
+
+    .collection-modal-panel {
+      min-height:min(760px, calc(100dvh - clamp(54px, 9vh, 96px)));
+      max-height:calc(100dvh - clamp(12px, 3vh, 28px));
+    }
+    .collection-modal-hero { height:262px; }
+    .collection-modal-info { padding:74px 20px 16px; }
+    .collection-modal-story { font-size:13.5px; line-height:1.72; }
+    .collection-modal-footer { padding:10px 20px 12px; }
+    .collection-modal-ownership { gap:5px 8px; margin-bottom:8px; padding:7px 10px; }
+    .collection-modal-share { height:42px; }
+
+    @media (max-height: 880px) {
+      .collection-modal-panel { min-height:min(720px, calc(100dvh - 58px)) !important; max-height:calc(100dvh - 12px) !important; }
+      .collection-modal-hero { height:252px !important; }
+      .collection-modal-info { padding:73px 19px 14px !important; }
+      .collection-modal-story { display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:6; overflow:hidden; line-height:1.64 !important; }
+      .collection-modal-footer { padding:9px 19px 11px !important; }
+    }
+    @media (max-height: 760px) {
+      .collection-modal-panel { min-height:min(650px, calc(100dvh - 44px)) !important; max-height:calc(100dvh - 10px) !important; }
+      .collection-modal-hero { height:230px !important; }
+      .collection-modal-info { padding:72px 18px 12px !important; }
+      .collection-modal-story { display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:6; overflow:hidden; font-size:13px !important; line-height:1.6 !important; }
+      .collection-modal-footer { padding:8px 18px 10px !important; }
+      .collection-modal-ownership { margin-bottom:7px !important; padding:6px 9px !important; }
+      .collection-modal-share { height:40px !important; }
+    }
+    @media (max-height: 680px) {
+      .collection-modal-hero { height:196px !important; }
+      .collection-modal-info { padding:71px 17px 10px !important; }
+      .collection-modal-title { font-size:19px !important; }
+      .collection-modal-story { -webkit-line-clamp:5; font-size:12.5px !important; line-height:1.55 !important; }
+      .collection-modal-tip { margin-top:7px !important; }
+      .collection-modal-footer { padding:7px 17px 9px !important; }
+      .collection-modal-share { height:38px !important; font-size:14px !important; }
+    }
+    @media (max-height: 600px) {
+      .collection-modal-panel { border-radius:16px !important; min-height:min(540px, calc(100dvh - 28px)) !important; max-height:calc(100dvh - 8px) !important; }
+      .collection-modal-hero { height:164px !important; }
+      .collection-modal-info { padding:69px 16px 10px !important; }
+      .collection-modal-title { font-size:18px !important; }
+      .collection-modal-story { -webkit-line-clamp:5; font-size:12px !important; line-height:1.52 !important; }
+      .collection-modal-footer { padding:6px 16px 8px !important; }
+      .collection-modal-ownership { margin-bottom:6px !important; padding:5px 8px !important; }
+      .collection-modal-share { height:36px !important; border-radius:10px !important; }
+    }
+
+    .lucide-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 0;
+      flex-shrink: 0;
+    }
+    .lucide-icon svg { display:block; }
+  </style>
+</head>
+<body>
+  <div id="demo-banner">
+    <span class="badge">DEMO</span>
+    시연용 버전 · 실제 AI 판별 미사용
+  </div>
+  <div id="root"></div>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://unpkg.com/lucide@1.16.0/dist/umd/lucide.js"></script>
+
+  <!-- 데모 모드 활성화 (api.js 로드 전에 설정) -->
+  <script>
+    window.DEMO_MODE = true;
+  </script>
+
+  <!-- 이야기 데이터 사전 로드 -->
+  <script>
+    window.STORIES_DATA = {};
+    fetch("/data/stories.json")
+      .then(function(r) { return r.ok ? r.json() : {}; })
+      .then(function(d) { window.STORIES_DATA = d || {}; })
+      .catch(function(){ window.STORIES_DATA = {}; });
+  </script>
+
+  <script>
+    function Icon(props) {
+      props = props || {};
+      var name = props.name;
+      var iconNode = window.lucide && (window.lucide[name] || (window.lucide.icons && window.lucide.icons[name]));
+      if (!iconNode || !window.React) return null;
+
+      var svg = window.lucide.createElement(iconNode, {
+        width: props.size || 18,
+        height: props.size || 18,
+        "stroke-width": props.strokeWidth || 2,
+      });
+      svg.setAttribute("aria-hidden", "true");
+
+      return React.createElement("span", {
+        className: "lucide-icon" + (props.className ? " " + props.className : ""),
+        style: props.style,
+        dangerouslySetInnerHTML: { __html: svg.outerHTML },
+      });
+    }
+  </script>
+
+  <script type="text/babel" src="lib/api.js?v=merge-fe-1"></script>
+  <script type="text/babel" src="components/CollectionCard.jsx?v=merge-fe-1"></script>
+  <script type="text/babel" src="components/UploadView.jsx?v=notice-modal-1"></script>
+  <script type="text/babel" src="components/LoadingView.jsx"></script>
+  <script type="text/babel" src="components/ResultCard.jsx?v=low-confidence-reason-5"></script>
+  <script type="text/babel" src="components/ErrorView.jsx"></script>
+  <script type="text/babel" src="components/CollectionView.jsx?v=points-bar-1"></script>
+  <script type="text/babel" src="components/MapView.jsx"></script>
+  <script type="text/babel" src="components/App.jsx?v=merge-fe-1"></script>
+</body>
+</html>

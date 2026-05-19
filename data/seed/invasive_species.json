@@ -3,38 +3,9 @@
     "source": "환경부 생태계교란 생물 지정 고시 (제2024-212호, 2024-10-31) + 일반 귀화식물",
     "note": "한국에 정착한 대표적 외래종/귀화식물. 토종 시드와 비교 대조용. 본선 데모 시 토종 vs 외래 구분 시연에 활용.",
     "extracted_at": "2026-05-04",
-    "total_count": 12
+    "total_count": 11
   },
   "species": [
-    {
-      "id": 101,
-      "korean_name": "서양민들레",
-      "scientific_name": "Taraxacum officinale",
-      "family": "국화과 (Asteraceae)",
-      "native_status": "외래종",
-      "category": "식물",
-      "origin": "유럽",
-      "ecology_summary": "유럽 원산 귀화식물. 도시 길가·잔디밭 등에서 흔히 보이며 한국 토종 민들레(좀민들레, 흰민들레)를 압도하고 있다.",
-      "distinguishing_feature": "총포(꽃받침) 외편이 뒤로 젖혀짐. 토종은 곧게 서 있음.",
-      "is_invasive": false,
-      "regions": [
-        "서울/경기",
-        "강원",
-        "충청",
-        "전라",
-        "경상",
-        "제주"
-      ],
-      "bloom_months": [
-        4,
-        5,
-        6,
-        7,
-        8,
-        9,
-        10
-      ]
-    },
     {
       "id": 102,
       "korean_name": "가시박",

@@ -1,0 +1,77 @@
+name: Generate Illustration
+
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: '종 한국명 (예: 할미꽃)'
+        required: true
+        type: string
+      status:
+        description: '토종 또는 외래종'
+        required: true
+        type: string
+        default: '토종'
+
+concurrency:
+  group: illust-${{ inputs.name }}
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.ADMIN_PUSH_TOKEN }}
+          fetch-depth: 1
+
+      - name: Check if PNG already exists
+        id: check
+        run: |
+          NAME="${{ inputs.name }}"
+          PATH_PNG="frontend/assets/illustrations/${NAME}.png"
+          if [ -f "$PATH_PNG" ] && [ $(stat -c%s "$PATH_PNG") -gt 1000 ]; then
+            echo "Already exists: $PATH_PNG"
+            echo "skip=true" >> $GITHUB_OUTPUT
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Set up Python
+        if: steps.check.outputs.skip != 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Generate via Replicate
+        if: steps.check.outputs.skip != 'true'
+        env:
+          REPLICATE_API_TOKEN: ${{ secrets.REPLICATE_API_TOKEN }}
+          INPUT_NAME: ${{ inputs.name }}
+          INPUT_STATUS: ${{ inputs.status }}
+        run: |
+          python scripts/generate_illust.py "${INPUT_NAME}:${INPUT_STATUS}"
+
+      - name: Commit and push
+        if: steps.check.outputs.skip != 'true'
+        run: |
+          NAME="${{ inputs.name }}"
+          PATH_PNG="frontend/assets/illustrations/${NAME}.png"
+          if [ ! -f "$PATH_PNG" ]; then
+            echo "::error::PNG was not generated: $PATH_PNG"
+            exit 1
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$PATH_PNG"
+          git commit -m "feat(illust): auto-generate ${NAME} via flux-schnell"
+          git push origin main
+
+      - name: Skip summary
+        if: steps.check.outputs.skip == 'true'
+        run: echo "::notice::Skipped — illustration already exists for ${{ inputs.name }}"

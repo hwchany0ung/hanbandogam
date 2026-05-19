@@ -1,0 +1,19 @@
+{
+  "name": "한반도감",
+  "short_name": "한반도감",
+  "description": "시민 참여형 한국 생태 도감",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#F4EDDC",
+  "theme_color": "#F4EDDC",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/assets/illustrations/fallback.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
