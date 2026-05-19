@@ -1,0 +1,2467 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>한반도감 — AI Hack Camp 2026 본선</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+  <style>
+    :root {
+      --white:    #FFFFFF;
+      --paper:    #FAFAF7;
+      --line:     #E5E5E0;
+      --line-2:   #D4D4D0;
+
+      --black:    #0A0A0A;
+      --soot:     #161616;
+      --ash:      #2A2A2A;
+
+      --ink-1:    #0A0A0A;
+      --ink-2:    #404040;
+      --ink-3:    #737373;
+      --ink-4:    #A3A3A3;
+
+      --accent:   #00A86B;     /* 토종 그린 */
+      --warn:     #E53935;     /* 외래 레드 */
+      --hi:       #FFD400;     /* 하이라이트 옐로 */
+      --blue:     #2563EB;
+      --purple:   #8B5CF6;
+
+      --L: #C99227; --L-bg: #FBF3DC;
+      --E: #8B5CF6; --E-bg: #F3EDFE;
+      --R: #2563EB; --R-bg: #E8F0FE;
+      --U: #00A86B; --U-bg: #E1F5EC;
+      --C: #6B7280; --C-bg: #EFF1F4;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%; height: 100%;
+      overflow: hidden;
+      background: var(--black);
+      font-family: 'Pretendard', 'Inter', sans-serif;
+      color: var(--ink-1);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ═══ DECK CONTAINER ═══ */
+    .deck {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      display: none;
+      overflow: hidden;
+    }
+    .slide.active { display: flex; flex-direction: column; animation: in 0.5s ease; }
+    @keyframes in {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ═══ COMMON META BAR ═══ */
+    .meta {
+      position: absolute;
+      top: 4vh; left: 5vw; right: 5vw;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72vw;
+      letter-spacing: 0.25vw;
+      z-index: 10;
+    }
+    .meta-light { color: var(--ink-3); }
+    .meta-light strong { color: var(--ink-1); }
+    .meta-dark { color: rgba(255,255,255,0.45); }
+    .meta-dark strong { color: var(--white); }
+
+    .foot {
+      position: absolute;
+      bottom: 4vh; left: 5vw; right: 5vw;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65vw;
+      letter-spacing: 0.18vw;
+      z-index: 10;
+    }
+
+    /* ═══ THEMES ═══ */
+    .theme-white { background: var(--white); color: var(--ink-1); }
+    .theme-paper { background: var(--paper); color: var(--ink-1); }
+    .theme-black { background: var(--black); color: var(--white); }
+
+    /* 가이드 그리드(시각 보조) */
+    .grid-bg {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(to right, rgba(0,0,0,0.025) 1px, transparent 1px);
+      background-size: calc(100vw / 12) 100%;
+      pointer-events: none;
+    }
+    .theme-black .grid-bg {
+      background-image:
+        linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px);
+    }
+
+    /* ╔════════════════════════════════════════╗
+       ║  S1 — COVER (Black)
+       ╚════════════════════════════════════════╝ */
+    .s1 { padding: 5vh 5vw; justify-content: space-between; }
+
+    .s1-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .s1-mark {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75vw;
+      letter-spacing: 0.3vw;
+      color: rgba(255,255,255,0.5);
+      line-height: 1.6;
+    }
+    .s1-mark strong { color: var(--white); display: block; margin-bottom: 0.4vh; }
+
+    .s1-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1vw;
+      letter-spacing: 0.4vw;
+      color: var(--hi);
+      border: 1px solid var(--hi);
+      padding: 0.5vh 1vw;
+      border-radius: 0;
+    }
+
+    .s1-mid { display: flex; align-items: center; flex: 1; }
+    .s1-title {
+      font-family: 'Pretendard', sans-serif;
+      font-weight: 900;
+      font-size: 18vw;
+      letter-spacing: -0.5vw;
+      line-height: 0.9;
+      color: var(--white);
+    }
+    .s1-title em {
+      font-style: normal;
+      color: var(--accent);
+      display: inline-block;
+    }
+    .s1-title-en {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6vw;
+      letter-spacing: 0.7vw;
+      color: rgba(255,255,255,0.4);
+      margin-top: 1vh;
+    }
+
+    .s1-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      border-top: 1px solid rgba(255,255,255,0.15);
+      padding-top: 2.5vh;
+    }
+    .s1-tagline {
+      font-size: 1.6vw;
+      font-weight: 500;
+      color: var(--white);
+      letter-spacing: -0.05vw;
+      max-width: 50vw;
+    }
+    .s1-tagline em {
+      color: var(--accent);
+      font-style: normal;
+      font-weight: 700;
+    }
+    .s1-info {
+      display: flex;
+      gap: 3vw;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75vw;
+      color: rgba(255,255,255,0.45);
+      letter-spacing: 0.1vw;
+    }
+    .s1-info strong {
+      display: block;
+      color: var(--white);
+      font-size: 1.1vw;
+      letter-spacing: 0.15vw;
+      margin-top: 0.4vh;
+    }
+
+    /* ╔════════════════════════════════════════╗
+       ║  S2 — PROBLEM (White, Big Question)
+       ╚════════════════════════════════════════╝ */
+    .s2 {
+      padding: 9vh 5vw 9vh;
+      justify-content: center;
+      gap: 5vh;
+    }
+
+    .s2-q {
+      font-family: 'Pretendard', sans-serif;
+      font-weight: 900;
+      font-size: 8.5vw;
+      line-height: 0.95;
+      letter-spacing: -0.3vw;
+      color: var(--ink-1);
+      text-align: center;
+    }
+    .s2-q em {
+      font-style: normal;
+      background: linear-gradient(180deg, transparent 60%, var(--hi) 60%);
+      padding: 0 0.4vw;
+    }
+
+    .s2-loss-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2.5vw;
+    }
+    .s2-loss-card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 0.8vw;
+      padding: 3vh 2vw 2.5vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.7vh;
+      text-align: center;
+    }
+    .s2-loss-card.highlight {
+      border-color: var(--accent);
+      border-width: 2px;
+      background: linear-gradient(160deg, #f0faf5 0%, var(--paper) 70%);
+    }
+    .s2-loss-badge {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.88vw;
+      letter-spacing: 0.12vw;
+      padding: 0.35vh 0.85vw;
+      border-radius: 0.25vw;
+      font-weight: 700;
+    }
+    .s2-loss-badge.extinct  { background: var(--ink-1); color: var(--white); }
+    .s2-loss-badge.critical { background: var(--warn);  color: var(--white); }
+    .s2-loss-badge.warn     { background: var(--hi);    color: var(--ink-1); }
+    .s2-loss-emoji { font-size: 3.8vw; line-height: 1; margin: 1.2vh 0 0.5vh; }
+    .s2-loss-name {
+      font-size: 2.4vw;
+      font-weight: 800;
+      letter-spacing: -0.06vw;
+      color: var(--ink-1);
+    }
+    .s2-loss-sci {
+      font-family: 'Space Mono', monospace;
+      font-style: italic;
+      font-size: 0.7vw;
+      color: var(--ink-4);
+    }
+    .s2-loss-quote {
+      font-size: 0.9vw;
+      color: var(--ink-2);
+      font-weight: 500;
+      line-height: 1.65;
+      border-top: 1px solid var(--line);
+      padding-top: 1.2vh;
+      margin-top: 0.6vh;
+      width: 100%;
+    }
+    .s2-loss-cta {
+      text-align: center;
+      font-size: 1.7vw;
+      font-weight: 600;
+      color: var(--ink-2);
+      letter-spacing: -0.04vw;
+    }
+    .s2-loss-cta em {
+      font-style: normal;
+      color: var(--accent);
+      font-weight: 800;
+    }
+
+    /* S2 Hero layout */
+    .s2-hero-layout {
+      display: grid;
+      grid-template-columns: 3fr 2fr;
+      gap: 2.5vw;
+      margin-top: 2.5vh;
+      height: 55vh;
+    }
+    .s2-hero-panel {
+      position: relative;
+      border-radius: 1vw;
+      overflow: hidden;
+      background: var(--ink-1);
+    }
+    .s2-hero-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 30%;
+      opacity: 0.82;
+      display: block;
+    }
+    .s2-hero-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 2.2vw 2vw 1.8vw;
+      background: linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.3) 70%, transparent 100%);
+    }
+    .s2-hero-name {
+      font-family: 'Pretendard', sans-serif;
+      font-size: 4.2vw;
+      font-weight: 900;
+      color: #fff;
+      line-height: 1.05;
+      letter-spacing: -0.08vw;
+    }
+    .s2-hero-sci-name {
+      font-family: 'Space Mono', monospace;
+      font-size: 1vw;
+      font-style: italic;
+      color: rgba(255,255,255,0.6);
+      margin: 0.4vh 0 0.9vh;
+    }
+    .s2-hero-quote {
+      font-size: 1.2vw;
+      color: rgba(255,255,255,0.82);
+      line-height: 1.55;
+    }
+    .s2-hero-credit {
+      position: absolute;
+      bottom: 0.6vh;
+      right: 0.8vw;
+      font-size: 0.5vw;
+      color: rgba(255,255,255,0.3);
+      font-family: 'Space Mono', monospace;
+    }
+    .s2-side-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5vw;
+    }
+    .s2-side-card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 0.8vw;
+      padding: 1.6vw;
+      flex: 1;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4vh;
+    }
+    .s2-side-name {
+      font-family: 'Pretendard', sans-serif;
+      font-size: 1.9vw;
+      font-weight: 800;
+      color: var(--ink-1);
+      letter-spacing: -0.05vw;
+    }
+
+    /* ╔════════════════════════════════════════╗
+       ║  S3 — CRISIS (Black, Data Shock)
+       ╚════════════════════════════════════════╝ */
+    .s3 {
+      padding: 9vh 5vw 9vh;
+      justify-content: center;
+      gap: 6vh;
+    }
+    .s3-eyebrow {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1vw;
+      letter-spacing: 0.4vw;
+      color: var(--warn);
+    }
+    .s3-eyebrow::before { content: '— '; }
+    .s3-eyebrow::after { content: ' —'; }
+
+    .s3-head {
+      font-family: 'Pretendard', sans-serif;
+      font-weight: 900;
+      font-size: 6.5vw;
+      line-height: 1;
+      letter-spacing: -0.2vw;
+      color: var(--white);
+      margin-top: 1vh;
+    }
+    .s3-head em {
+      font-style: normal;
+      color: var(--warn);
+      text-shadow: 0 0 30px rgba(229,57,53,0.5);
+    }
+
+    .s3-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2vw;
+      margin-top: 4vh;
+    }
+    .s3-card {
+      border: 1px solid rgba(255,255,255,0.12);
+      padding: 3.5vh 2.5vw;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+      position: relative;
+    }
+    .s3-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--warn);
+    }
+    .s3-card.green::before { background: var(--accent); }
+    .s3-card.amber::before { background: var(--hi); }
+
+    .s3-card-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7vw;
+      letter-spacing: 0.25vw;
+      color: var(--ink-4);
+      margin-bottom: 1vh;
+    }
+    .s3-n {
+      font-family: 'Pretendard', sans-serif;
+      font-weight: 900;
+      font-size: 8vw;
+      line-height: 0.85;
+      letter-spacing: -0.3vw;
+      color: var(--warn);
+    }
+    .s3-card.green .s3-n { color: var(--accent); }
+    .s3-card.amber .s3-n { color: var(--hi); }
+    .s3-unit {
+      font-size: 2vw;
+      font-weight: 600;
+      color: var(--white);
+      margin-left: 0.4vw;
+    }
+    .s3-label {
+      font-size: 1.55vw;
+      font-weight: 700;
+      color: var(--white);
+      margin-top: 1.5vh;
+    }
+    .s3-source {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.85vw;
+      color: var(--ink-4);
+      margin-top: 1vh;
+      line-height: 1.5;
+      letter-spacing: 0.05vw;
+    }
+
+    /* ╔════════════════════════════════════════╗
+       ║  S4 — GAP (White, Comparison)
+       ╚════════════════════════════════════════╝ */
+    .s4 {
+      padding: 9vh 5vw 12vh;
+      justify-content: flex-start;
+      gap: 4vh;
+    }
+    .section-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.85vw;
+      letter-spacing: 0.3vw;
+      color: var(--ink-3);
+      font-weight: 700;
+    }
+    .section-tag::before { content: '— '; }
+    .section-tag::after  { content: ' —'; }
+
+    .head-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      border-bottom: 2px solid var(--ink-1);
+      padding-bottom: 2vh;
+      margin-bottom: 4vh;
+    }
+    .head-row .section-tag { color: var(--accent); }
+
+    .head-title {
+      font-family: 'Pretendard', sans-serif;
+      font-weight: 900;
+      font-size: 5.5vw;
+      letter-spacing: -0.15vw;
+      line-height: 1;
+      color: var(--ink-1);
+      margin-top: 1.5vh;
+    }
+    .head-title em { font-style: normal; color: var(--warn); }
+
+    .head-meta {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7vw;
+      color: var(--ink-3);
+      letter-spacing: 0.2vw;
+      text-align: right;
+      line-height: 1.7;
+    }
+
+    .s4-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5vh 4vw;
+    }
+    .s4-row {
+      display: grid;
+      grid-template-columns: 4vw 1fr;
+      gap: 1.5vw;
+      padding: 2vh 0;
+      border-bottom: 1px solid var(--line);
+      align-items: start;
+    }
+    .s4-x {
+      font-family: 'Pretendard', sans-serif;
+      font-size: 3vw;
+      font-weight: 300;
+      color: var(--warn);
+      line-height: 1;
+    }
+    .s4-row-name {
+      font-size: 1.9vw;
+      font-weight: 800;
+      color: var(--ink-1);
+      letter-spacing: -0.05vw;
+    }
+    .s4-row-desc {
+      font-size: 1.2vw;
+      color: var(--ink-2);
+      margin-top: 0.6vh;
+      line-height: 1.5;
+    }
+    .s4-row-desc b { color: var(--ink-1); }
+
+    .s4-bottom {
+      padding: 2.5vh 3vw;
+      background: var(--ink-1);
+      color: var(--white);
+      border-radius: 0.4vw;
+      font-size: 1.75vw;
+      font-weight: 600;
+      text-align: center;
+      letter-spacing: -0.05vw;
+    }
+    .s4-bottom em {
+      font-style: normal;
+      color: var(--hi);
+      font-weight: 800;
+    }
+
+    /* ╔════════════════════════════════════════╗
+       ║  S5 — SOLUTION (White, Big Logo)
+       ╚════════════════════════════════════════╝ */
+    .s5 {
+      padding: 5vh 5vw;
+      justify-content: center;
+      align-items: center;
+    }
+    .s5-section {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.2vw;
+      letter-spacing: 0.6vw;
+      color: var(--accent);
+      margin-bottom: 2vh;
+    }
+    .s5-title {
+      font-family: 'Pretendard', sans-serif;
+      font-weight: 900;
+      font-size: 14vw;
+      letter-spacing: -0.4vw;
+      line-height: 0.9;
+      color: var(--ink-1);
+      text-align: center;
+    }
+    .s5-sub {
+      font-size: 2.1vw;
+      color: var(--ink-2);
+      margin-top: 3vh;
+      letter-spacing: -0.05vw;
+      text-align: center;
+      font-weight: 500;
+    }
+    .s5-sub b {
+      color: var(--accent);
+      font-weight: 800;
+      background: linear-gradient(180deg, transparent 65%, rgba(0,168,107,0.2) 65%);
+      padding: 0 0.3vw;
+    }
+
+    .s5-flow {
+      display: flex;
+      align-items: center;
+      gap: 2vw;
+      margin-top: 6vh;
+    }
+    .s5-step {
+      width: 14vw; height: 14vw;
+      border-radius: 50%;
+      background: var(--white);
+      border: 2px solid var(--ink-1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 0.5vh;
+      position: relative;
+    }
+    .s5-step-n {
+      position: absolute;
+      top: -1vh; left: 50%;
+      transform: translateX(-50%);
+      background: var(--ink-1);
+      color: var(--white);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1vw;
+      letter-spacing: 0.15vw;
+      padding: 0.4vh 1vw;
+      border-radius: 0.3vw;
+    }
+    .s5-emoji { font-size: 4vw; line-height: 1; }
+    .s5-step-name {
+      font-size: 1.9vw;
+      font-weight: 800;
+      color: var(--ink-1);
+      letter-spacing: -0.05vw;
+    }
+    .s5-step-desc {
+      font-size: 1vw;
+      color: var(--ink-3);
+    }
+    .s5-arrow {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 4vw;
+      color: var(--ink-1);
+      line-height: 1;
+    }
+
+    /* ╔════════════════════════════════════════╗
+       ║  S6 — SERVICE FLOW (White, Required)
+       ╚════════════════════════════════════════╝ */
+    .s6 {
+      padding: 9vh 5vw 11vh;
+      justify-content: flex-start;
+      gap: 0;
+    }
+    .s6-legend {
+      display: flex;
+      justify-content: center;
+      gap: 2.5vw;
+      margin: 2vh 0 3vh;
+    }
+    .s6-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.6vw;
+      font-family: 'Space Mono', monospace;
+      font-size: 1vw;
+      font-weight: 700;
+      color: var(--ink-2);
+      letter-spacing: 0.1vw;
+    }
+    .s6-leg-dot {
+      width: 1vw; height: 1vw;
+      border-radius: 0.2vw;
+    }
+    .leg-user   { background: var(--R-bg); border: 2px solid var(--R); }
+    .leg-system { background: var(--L-bg); border: 2px solid var(--L); }
+    .leg-ai     { background: var(--E-bg); border: 2px solid var(--E); }
+
+    .s6-flow {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 0.9vw;
+    }
+    .s6-step {
+      background: var(--white);
+      border-radius: 0.6vw;
+      padding: 4vh 1.4vw 2.8vh;
+      border: 1px solid var(--line);
+      position: relative;
+      min-height: 28vh;
+    }
+    .s6-step.user    { background: var(--R-bg); border-color: var(--R); }
+    .s6-step.system  { background: var(--L-bg); border-color: var(--L); }
+    .s6-step.ai      {
+      background: var(--E-bg);
+      border-color: var(--E);
+      box-shadow: 0 0 0 2px rgba(139,92,246,0.18), 0 1vh 2.5vh rgba(139,92,246,0.1);
+    }
+
+    .s6-step-n {
+      position: absolute;
+      top: -1.2vh; left: 1vw;
+      width: 2.4vw; height: 2.4vw;
+      border-radius: 50%;
+      color: var(--white);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.3vw;
+      letter-spacing: 0.1vw;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0.4vh 0.8vh rgba(0,0,0,0.15);
+    }
+    .s6-step.user .s6-step-n   { background: var(--R); }
+    .s6-step.system .s6-step-n { background: var(--L); }
+    .s6-step.ai .s6-step-n     { background: var(--E); }
+
+    .s6-icon { font-size: 3.1vw; margin: 1vh 0 0.5vh; }
+    .s6-name {
+      font-size: 1.45vw;
+      font-weight: 800;
+      letter-spacing: -0.03vw;
+      margin-bottom: 0.8vh;
+      color: var(--ink-1);
+    }
+    .s6-detail {
+      font-size: 0.95vw;
+      color: var(--ink-2);
+      line-height: 1.55;
+    }
+    .s6-detail b { color: var(--ink-1); }
+    .s6-pill {
+      display: inline-block;
+      margin-top: 1vh;
+      padding: 0.2vh 0.6vw;
+      color: var(--white);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6vw;
+      letter-spacing: 0.1vw;
+      border-radius: 0.2vw;
+      font-weight: 700;
+    }
+    .s6-step.user .s6-pill   { background: var(--R); }
+    .s6-step.system .s6-pill { background: var(--L); }
+    .s6-step.ai .s6-pill     { background: var(--E); }
+
+    .s6-banner {
+      margin-top: 3vh;
+      padding: 2vh 2vw;
+      background: var(--ink-1);
+      color: var(--white);
+      border-radius: 0.4vw;
+      text-align: center;
+      font-size: 1.2vw;
+      font-weight: 600;
+      letter-spacing: -0.03vw;
+    }
+    .s6-banner em {
+      font-style: normal;
+      color: var(--hi);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.85vw;
+      letter-spacing: 0.25vw;
+      margin-right: 0.6vw;
+      font-weight: 700;
+    }
+    .s6-banner span { color: var(--hi); font-weight: 800; }
+
+    /* ╔════════════════════════════════════════╗
+       ║  S7 — DEMO (Black, Stage)
+       ╚════════════════════════════════════════╝ */
+    .s7 {
+      padding: 7vh 3vw 9vh;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 1vh;
+    }
+    .s7-eyebrow {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1vw;
+      letter-spacing: 0.4vw;
+      color: var(--hi);
+    }
+    .s7-eyebrow::before { content: '— '; }
+    .s7-eyebrow::after  { content: ' —'; }
+
+    .s7-title {
+      font-family: 'Pretendard', sans-serif;
+      font-weight: 900;
+      font-size: 5.5vw;
+      letter-spacing: -0.15vw;
+      color: var(--white);
+      margin-top: 1vh;
+      text-align: center;
+    }
+    .s7-sub {
+      font-size: 1.45vw;
+      color: rgba(255,255,255,0.65);
+      margin-top: 1.5vh;
+      text-align: center;
+      letter-spacing: -0.03vw;
+    }
+    .s7-sub b { color: var(--hi); }
+
+    .s7-row {
+      display: flex;
+      gap: 3vw;
+      margin-top: 3vh;
+    }
+    .s7-phone-wrap { text-align: center; }
+    .s7-phone-lbl {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1vw;
+      letter-spacing: 0.25vw;
+      color: var(--hi);
+      margin-bottom: 1.5vh;
+    }
+    .s7-phone {
+      width: 16vw; height: 32vw;
+      background: linear-gradient(145deg, #2A2A2A, #0A0A0A);
+      border-radius: 2.2vw;
+      padding: 0.4vw;
+      box-shadow:
+        0 0 4vh rgba(255,212,0,0.12),
+        0 3vh 6vh rgba(0,0,0,0.7);
+    }
+    .s7-screen {
+      width: 100%; height: 100%;
+      border-radius: 2vw;
+      background: var(--paper);
+      overflow: hidden;
+      position: relative;
+      padding: 2vh 1vw;
+      color: var(--ink-1);
+    }
+    .s7-tagline {
+      font-size: 1.15vw;
+      color: rgba(255,255,255,0.7);
+      margin-top: 2vh;
+      max-width: 18vw;
+      line-height: 1.4;
+    }
+    .s7-tagline b { color: var(--hi); }
+
+    /* mini screens */
+    .demo1-logo { font-family: 'Pretendard', sans-serif; font-weight: 900; font-size: 1.7vw; letter-spacing: 0.3vw; text-align: center; margin-bottom: 0.3vh; }
+    .demo1-sub { font-family: 'Space Mono', monospace; font-size: 0.5vw; letter-spacing: 0.15vw; color: var(--accent); text-align: center; margin-bottom: 3vh; }
+    .demo1-aperture { width: 10vw; height: 10vw; margin: 0 auto; border-radius: 50%; border: 0.2vw solid var(--ink-1); display: flex; align-items: center; justify-content: center; }
+    .demo1-core { width: 7vw; height: 7vw; border-radius: 50%; background: var(--white); display: flex; align-items: center; justify-content: center; font-size: 3vw; border: 1px solid var(--line); }
+    .demo1-tagline { font-size: 1.2vw; font-weight: 800; text-align: center; margin-top: 2vh; letter-spacing: -0.04vw; }
+    .demo1-stats { margin-top: 1.5vh; padding: 1vh; background: var(--white); border-radius: 0.4vw; border: 1px solid var(--line); display: flex; justify-content: space-around; }
+    .demo1-stat-n { font-family: 'Pretendard', sans-serif; font-size: 1vw; font-weight: 800; color: var(--ink-1); }
+    .demo1-stat-l { font-size: 0.55vw; color: var(--ink-3); }
+    .demo1-btn { margin-top: 1vh; width: 100%; padding: 0.8vh; background: var(--ink-1); color: var(--white); border: none; border-radius: 0.4vw; font-family: 'Pretendard', sans-serif; font-size: 0.8vw; font-weight: 700; letter-spacing: 0.1vw; }
+
+    .demo2-card { background: var(--white); border-radius: 0.7vw; overflow: hidden; box-shadow: 0 0 0 0.13vw var(--R), 0 1vh 2vh rgba(37,99,235,0.18); }
+    .demo2-photo-wrap { position: relative; }
+    .demo2-photo { height: 11vw; width: 100%; object-fit: cover; display: block; }
+    .demo2-pill { position: absolute; top: 0.6vh; padding: 0.2vh 0.5vw; border-radius: 0.8vw; font-family: 'Space Mono', monospace; font-size: 0.55vw; font-weight: 700; letter-spacing: 0.08vw; background: rgba(255,255,255,0.95); }
+    .demo2-pill.l { left: 0.5vw; color: var(--R); border: 1px solid var(--R); }
+    .demo2-pill.r { right: 0.5vw; color: var(--U); border: 1px solid var(--U); }
+    .demo2-body { padding: 1vh 0.8vw; }
+    .demo2-name { font-family: 'Pretendard', sans-serif; font-size: 1.2vw; font-weight: 900; }
+    .demo2-sci { font-family: 'Space Mono', monospace; font-style: italic; font-size: 0.55vw; color: var(--ink-3); margin-top: 0.3vh; }
+    .demo2-conf { margin-top: 0.6vh; padding: 0.5vh 0.6vw; background: var(--paper); border-radius: 0.3vw; display: flex; align-items: center; gap: 0.4vw; }
+    .demo2-conf-l { font-family: 'Space Mono', monospace; font-size: 0.5vw; color: var(--ink-3); font-weight: 700; }
+    .demo2-conf-bar { flex: 1; height: 0.3vh; background: rgba(0,0,0,0.05); border-radius: 0.15vh; overflow: hidden; }
+    .demo2-conf-bar div { width: 91%; height: 100%; background: var(--R); }
+    .demo2-conf-pct { font-family: 'Space Mono', monospace; font-size: 0.65vw; font-weight: 700; color: var(--R); }
+    .demo2-eco { margin-top: 0.6vh; font-size: 0.62vw; color: var(--ink-2); line-height: 1.5; }
+    .demo2-add { margin-top: 0.8vh; width: 100%; padding: 0.7vh; background: var(--R); color: #fff; border: none; border-radius: 0.4vw; font-family: 'Pretendard', sans-serif; font-size: 0.7vw; font-weight: 800; letter-spacing: 0.1vw; }
+
+    .demo3-title { font-family: 'Pretendard', sans-serif; font-size: 1.2vw; font-weight: 900; letter-spacing: 0.05vw; margin-bottom: 0.3vh; }
+    .demo3-sub { font-size: 0.55vw; color: var(--ink-3); margin-bottom: 1vh; }
+    .demo3-total { padding: 0.8vh 0.8vw; background: var(--white); border: 1px solid var(--line); border-radius: 0.5vw; display: flex; justify-content: space-between; align-items: center; margin-bottom: 1vh; }
+    .demo3-total-n { font-family: 'Pretendard', sans-serif; font-size: 1.5vw; font-weight: 900; color: var(--ink-1); line-height: 1; }
+    .demo3-total-lbl { font-size: 0.5vw; color: var(--ink-3); margin-top: 0.3vh; }
+    .demo3-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 0.3vw; }
+    .demo3-cell { aspect-ratio: 1; border-radius: 0.4vw; overflow: hidden; position: relative; background: var(--white); }
+    .demo3-cell img { width: 100%; height: 100%; object-fit: cover; }
+    .demo3-cell.found.l { box-shadow: 0 0 0 0.13vw rgba(201,146,39,0.55); }
+    .demo3-cell.found.e { box-shadow: 0 0 0 0.13vw rgba(139,92,246,0.55); }
+    .demo3-cell.found.r { box-shadow: 0 0 0 0.13vw rgba(37,99,235,0.5); }
+    .demo3-cell.found.u { box-shadow: 0 0 0 0.13vw rgba(0,168,107,0.4); }
+    .demo3-cell.nf img { filter: grayscale(1) brightness(1.1); opacity: 0.18; }
+    .demo3-cell.nf::after { content: '?'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: 'Pretendard', sans-serif; font-weight: 900; font-size: 1.2vw; color: var(--ink-4); }
+    .demo3-badge { position: absolute; top: 0.15vh; left: 0.15vw; width: 0.9vw; height: 0.9vw; border-radius: 0.2vw; font-family: 'Space Mono', monospace; font-size: 0.45vw; font-weight: 700; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.95); }
+    .demo3-badge.L { color: var(--L); border: 1px solid var(--L); }
+    .demo3-badge.E { color: var(--E); border: 1px solid var(--E); }
+    .demo3-badge.R { color: var(--R); border: 1px solid var(--R); }
+    .demo3-badge.U { color: var(--U); border: 1px solid var(--U); }
+    .demo3-badge.C { color: var(--C); border: 1px solid var(--C); }
+
+    /* ╔════════════════════════════════════════╗
+       ║  S8 — DIFFERENTIATION (White Editorial)
+       ╚════════════════════════════════════════╝ */
+    .s8 {
+      padding: 9vh 5vw 9vh;
+      justify-content: flex-start;
+      gap: 4vh;
+    }
+    .s8-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 3vh 5vw;
+      align-content: start;
+    }
+    .s8-row {
+      display: grid;
+      grid-template-columns: 5vw 1fr;
+      gap: 1.5vw;
+      padding: 2.5vh 0;
+      border-top: 1px solid var(--line-2);
+    }
+    .s8-row.hi {
+      background: var(--paper);
+      padding: 2.5vh 1.5vw;
+      margin: 0 -1.5vw;
+      border-top: 2px solid var(--accent);
+    }
+    .s8-num {
+      font-family: 'Pretendard', sans-serif;
+      font-weight: 900;
+      font-size: 5vw;
+      line-height: 0.85;
+      color: var(--ink-1);
+      letter-spacing: -0.2vw;
+    }
+    .s8-row.hi .s8-num { color: var(--accent); }
+    .s8-name {
+      font-size: 2.1vw;
+      font-weight: 800;
+      letter-spacing: -0.05vw;
+      color: var(--ink-1);
+      margin-bottom: 1vh;
+    }
+    .s8-desc {
+      font-size: 1.15vw;
+      color: var(--ink-2);
+      line-height: 1.6;
+    }
+    .s8-desc b { color: var(--accent); font-weight: 700; }
+
+    /* ╔════════════════════════════════════════╗
+       ║  S9 — DATA + AI MODEL (Black, Required)
+       ╚════════════════════════════════════════╝ */
+    .s9 {
+      padding: 9vh 5vw 9vh;
+      justify-content: flex-start;
+      gap: 2.5vh;
+    }
+    .s9-eyebrow {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1vw;
+      letter-spacing: 0.4vw;
+      color: var(--hi);
+      text-align: center;
+    }
+    .s9-eyebrow::before { content: '— '; }
+    .s9-eyebrow::after  { content: ' —'; }
+
+    .s9-title {
+      font-family: 'Pretendard', sans-serif;
+      font-weight: 900;
+      font-size: 4.8vw;
+      letter-spacing: -0.15vw;
+      color: var(--white);
+      text-align: center;
+      margin-top: 1vh;
+      line-height: 1;
+    }
+
+    .s9-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2vw;
+      margin-top: 3vh;
+    }
+    .s9-panel {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 0.6vw;
+      padding: 3vh 2.5vw;
+    }
+    .s9-panel.ai {
+      border-color: rgba(139,92,246,0.4);
+      background: linear-gradient(180deg, rgba(139,92,246,0.06), rgba(139,92,246,0.01));
+      box-shadow: 0 0 4vh rgba(139,92,246,0.12);
+    }
+    .s9-panel-head {
+      display: flex;
+      align-items: center;
+      gap: 1vw;
+      margin-bottom: 2vh;
+      padding-bottom: 1.5vh;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .s9-panel-icon {
+      width: 3vw; height: 3vw;
+      border-radius: 0.5vw;
+      background: rgba(255,212,0,0.1);
+      border: 1px solid var(--hi);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5vw;
+    }
+    .s9-panel.ai .s9-panel-icon {
+      background: rgba(139,92,246,0.15);
+      border-color: rgba(139,92,246,0.5);
+    }
+    .s9-eyebrow-sm {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.8vw;
+      letter-spacing: 0.25vw;
+      color: var(--hi);
+    }
+    .s9-panel.ai .s9-eyebrow-sm { color: #C084FC; }
+    .s9-panel-name {
+      font-size: 1.8vw;
+      font-weight: 800;
+      letter-spacing: -0.05vw;
+      margin-top: 0.3vh;
+      color: var(--white);
+    }
+    .s9-data-item {
+      padding: 1vh 1vw;
+      margin-bottom: 0.8vh;
+      background: rgba(255,255,255,0.03);
+      border-left: 0.2vw solid var(--hi);
+      border-radius: 0.2vw;
+    }
+    .s9-data-name {
+      font-size: 1.2vw;
+      font-weight: 700;
+      color: var(--white);
+    }
+    .s9-data-meta {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.88vw;
+      color: rgba(255,255,255,0.55);
+      margin-top: 0.3vh;
+      letter-spacing: 0.05vw;
+    }
+    .s9-rationale {
+      padding: 0.8vh 1vw;
+      background: rgba(139,92,246,0.18);
+      border-radius: 0.3vw;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.8vw;
+      letter-spacing: 0.25vw;
+      color: #C084FC;
+      margin-bottom: 1vh;
+    }
+    .s9-reason {
+      display: flex;
+      gap: 0.7vw;
+      align-items: flex-start;
+      padding: 0.5vh 0;
+    }
+    .s9-reason-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4vw;
+      color: #C084FC;
+      flex-shrink: 0;
+      width: 1.5vw;
+      line-height: 1;
+    }
+    .s9-reason-text {
+      font-size: 1.05vw;
+      color: rgba(255,255,255,0.78);
+      line-height: 1.5;
+    }
+    .s9-reason-text b { color: var(--white); }
+
+    .s9-thr-row {
+      margin-top: 2.5vh;
+      background: linear-gradient(180deg, rgba(255,255,255,0.04), transparent);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 0.6vw;
+      padding: 2vh 2vw;
+      display: grid;
+      grid-template-columns: auto 1fr 1fr 1fr;
+      gap: 1.5vw;
+      align-items: center;
+    }
+    .s9-thr-head { padding-right: 1.5vw; border-right: 1px solid rgba(255,255,255,0.15); }
+    .s9-thr-head-eb {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.7vw;
+      color: var(--hi);
+      letter-spacing: 0.25vw;
+    }
+    .s9-thr-head-t {
+      font-size: 1.4vw;
+      font-weight: 800;
+      letter-spacing: -0.04vw;
+      margin-top: 0.3vh;
+      color: var(--white);
+    }
+    .s9-thr {
+      text-align: center;
+      padding: 1.2vh 1vw;
+      border-radius: 0.4vw;
+    }
+    .s9-thr.ok { background: rgba(0,168,107,0.12); border: 1px solid rgba(0,168,107,0.45); }
+    .s9-thr.warn { background: rgba(255,212,0,0.12); border: 1px solid rgba(255,212,0,0.45); }
+    .s9-thr.bad { background: rgba(229,57,53,0.12); border: 1px solid rgba(229,57,53,0.45); }
+    .s9-thr-n {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8vw;
+      letter-spacing: 0.05vw;
+      line-height: 1;
+    }
+    .s9-thr.ok .s9-thr-n   { color: #4ADE80; }
+    .s9-thr.warn .s9-thr-n { color: var(--hi); }
+    .s9-thr.bad .s9-thr-n  { color: #FCA5A5; }
+    .s9-thr-l {
+      font-size: 0.75vw;
+      color: rgba(255,255,255,0.85);
+      margin-top: 0.4vh;
+      line-height: 1.4;
+    }
+
+    .s9-pills {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.6vw;
+      margin-top: 2vh;
+    }
+    .s9-pill {
+      padding: 0.5vh 1vw;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 2vw;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7vw;
+      color: rgba(255,255,255,0.85);
+      letter-spacing: 0.1vw;
+    }
+    .s9-pill em {
+      color: var(--hi);
+      font-style: normal;
+      font-weight: 700;
+      margin-right: 0.4vw;
+    }
+
+    /* ╔════════════════════════════════════════╗
+       ║  S10 — ETHICS (White Trust)
+       ╚════════════════════════════════════════╝ */
+    .s10 {
+      padding: 9vh 5vw 9vh;
+      justify-content: flex-start;
+      gap: 4vh;
+    }
+    .s10-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2vw;
+    }
+    .s10-card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 0.6vw;
+      padding: 3.5vh 2.5vw;
+      position: relative;
+    }
+    .s10-shield {
+      width: 3.5vw; height: 3.5vw;
+      border-radius: 0.5vw;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2vw;
+      margin-bottom: 1.5vh;
+    }
+    .s10-shield.green { background: rgba(0,168,107,0.12); color: var(--accent); border: 1px solid var(--accent); }
+    .s10-shield.blue  { background: rgba(37,99,235,0.12); color: var(--blue);   border: 1px solid var(--blue); }
+    .s10-shield.warn  { background: rgba(229,57,53,0.12); color: var(--warn);   border: 1px solid var(--warn); }
+    .s10-name {
+      font-size: 1.9vw;
+      font-weight: 800;
+      letter-spacing: -0.05vw;
+      margin-bottom: 1.5vh;
+      color: var(--ink-1);
+    }
+    .s10-list { list-style: none; padding: 0; }
+    .s10-list li {
+      font-size: 1.1vw;
+      color: var(--ink-2);
+      padding: 0.6vh 0 0.6vh 1.4vw;
+      position: relative;
+      line-height: 1.5;
+      border-bottom: 1px solid var(--line);
+    }
+    .s10-list li:last-child { border-bottom: none; }
+    .s10-list li::before {
+      content: '✓';
+      position: absolute; left: 0;
+      color: var(--accent);
+      font-weight: 800;
+    }
+
+    /* ╔════════════════════════════════════════╗
+       ║  S11 — IMPACT (White → quote)
+       ╚════════════════════════════════════════╝ */
+    .s11 {
+      padding: 9vh 5vw 11vh;
+      justify-content: flex-start;
+      gap: 3.5vh;
+    }
+    .s11-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2vw;
+      margin-bottom: 4vh;
+    }
+    .s11-card {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 0.6vw;
+      padding: 3.5vh 2.5vw;
+      position: relative;
+    }
+    .s11-stage {
+      position: absolute;
+      top: -1.2vh; left: 1.5vw;
+      padding: 0.3vh 0.8vw;
+      background: var(--ink-1);
+      color: var(--white);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.85vw;
+      letter-spacing: 0.2vw;
+      border-radius: 0.2vw;
+    }
+    .s11-icon { font-size: 3vw; margin-bottom: 1.5vh; }
+    .s11-name {
+      font-size: 2vw;
+      font-weight: 800;
+      letter-spacing: -0.05vw;
+      margin-bottom: 1vh;
+      color: var(--ink-1);
+    }
+    .s11-desc {
+      font-size: 1.15vw;
+      color: var(--ink-2);
+      line-height: 1.6;
+    }
+    .s11-desc b { color: var(--ink-1); font-weight: 700; }
+
+    .s11-quote {
+      padding: 4vh 5vw;
+      background: var(--ink-1);
+      color: var(--white);
+      border-radius: 0.6vw;
+      text-align: center;
+    }
+    .s11-quote-text {
+      font-family: 'Pretendard', sans-serif;
+      font-weight: 800;
+      font-size: 2.6vw;
+      letter-spacing: -0.08vw;
+      line-height: 1.4;
+    }
+    .s11-quote-text em {
+      font-style: normal;
+      color: var(--accent);
+      font-weight: 900;
+    }
+
+    /* ╔════════════════════════════════════════╗
+       ║  S12 — PARTNERSHIP (White Editorial)
+       ╚════════════════════════════════════════╝ */
+    .s12 {
+      padding: 8vh 5vw 8vh;
+      justify-content: flex-start;
+      gap: 3vh;
+    }
+    .sp-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2vw;
+    }
+    .sp-card {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 0.6vw;
+      padding: 2.5vh 1.8vw;
+      position: relative;
+    }
+    .sp-card.hi {
+      border-color: var(--accent);
+      background: linear-gradient(135deg, #f0faf5 0%, #ffffff 60%);
+    }
+    .sp-tag {
+      position: absolute;
+      top: -1.2vh; left: 1.5vw;
+      padding: 0.3vh 0.8vw;
+      background: var(--ink-1);
+      color: var(--white);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.82vw;
+      letter-spacing: 0.2vw;
+      border-radius: 0.2vw;
+    }
+    .sp-card.hi .sp-tag { background: var(--accent); }
+    .sp-icon { font-size: 2.5vw; margin-bottom: 1.5vh; }
+    .sp-name {
+      font-size: 1.55vw;
+      font-weight: 800;
+      letter-spacing: -0.04vw;
+      color: var(--ink-1);
+      margin-bottom: 1.2vh;
+    }
+    .sp-list { list-style: none; padding: 0; }
+    .sp-list li {
+      font-size: 0.88vw;
+      color: var(--ink-2);
+      padding: 0.55vh 0 0.55vh 1.3vw;
+      position: relative;
+      line-height: 1.45;
+      border-bottom: 1px solid var(--line);
+    }
+    .sp-list li:last-child { border-bottom: none; }
+    .sp-list li::before {
+      content: '→';
+      position: absolute; left: 0;
+      color: var(--accent);
+      font-weight: 700;
+    }
+    .sp-highlight {
+      margin-top: 1vh;
+      padding: 2.2vh 3vw;
+      background: var(--ink-1);
+      border-radius: 0.5vw;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2vw;
+    }
+    .sp-hl-left {
+      display: flex;
+      align-items: center;
+      gap: 1.2vw;
+    }
+    .sp-hl-badge {
+      background: var(--accent);
+      color: var(--white);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.82vw;
+      letter-spacing: 0.2vw;
+      padding: 0.5vh 0.8vw;
+      border-radius: 0.25vw;
+      white-space: nowrap;
+    }
+    .sp-hl-text {
+      font-size: 1.15vw;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: -0.03vw;
+    }
+    .sp-hl-text em {
+      font-style: normal;
+      color: var(--hi);
+    }
+    .sp-hl-right {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7vw;
+      color: rgba(255,255,255,0.55);
+      letter-spacing: 0.15vw;
+      text-align: right;
+      white-space: nowrap;
+    }
+    .sp-hl-right strong { color: var(--accent); display: block; }
+
+    /* ── BIZ MODEL v2 — 플라이휠 레이아웃 ── */
+    .bm2-layout {
+      display: grid;
+      grid-template-columns: 1fr 1.6fr;
+      gap: 2.5vw;
+      margin-top: 1.5vh;
+      flex: 1;
+    }
+    .bm2-flywheel {
+      background: var(--paper);
+      border: 1.5px solid var(--line);
+      border-radius: 0.8vw;
+      padding: 1.8vw;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6vh;
+    }
+    .bm2-fw-title {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.88vw;
+      letter-spacing: 0.15vw;
+      color: var(--ink-4);
+      text-transform: uppercase;
+      margin-bottom: 0.4vh;
+    }
+    .bm2-fw-step {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 0.5vw;
+      padding: 1vh 1.2vw;
+      font-size: 1vw;
+      font-weight: 700;
+      color: var(--ink-1);
+      line-height: 1.4;
+    }
+    .bm2-fw-step small {
+      display: block;
+      font-weight: 400;
+      font-size: 0.88vw;
+      color: var(--ink-3);
+      margin-top: 0.2vh;
+    }
+    .bm2-fw-step.accent { border-color: var(--accent); background: #f0faf5; }
+    .bm2-fw-step.revenue { border-color: var(--blue); background: #f0f4ff; }
+    .bm2-fw-arrow {
+      text-align: center;
+      font-size: 1vw;
+      color: var(--ink-4);
+      line-height: 1;
+    }
+    .bm2-revenues {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2vh;
+    }
+    .bm2-rev-card {
+      background: var(--white);
+      border: 1.5px solid var(--line);
+      border-radius: 0.8vw;
+      padding: 1.6vh 2vw;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 1.2vw;
+      flex: 1;
+    }
+    .bm2-rev-card.hi { border-color: var(--accent); }
+    .bm2-rev-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.8vw;
+      color: var(--line);
+      line-height: 1;
+    }
+    .bm2-rev-card.hi .bm2-rev-num { color: var(--accent); }
+    .bm2-rev-title {
+      font-size: 1.4vw;
+      font-weight: 800;
+      color: var(--ink-1);
+      letter-spacing: -0.03vw;
+    }
+    .bm2-rev-desc {
+      font-size: 0.95vw;
+      color: var(--ink-3);
+      margin-top: 0.3vh;
+      line-height: 1.5;
+    }
+    .bm2-rev-who {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.82vw;
+      color: var(--ink-4);
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    /* ── BIZ MODEL flow bar (legacy) ── */
+    .bm-flow {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 0.6vw;
+      padding: 1.6vh 2vw;
+      margin-bottom: 0.5vh;
+    }
+    .bm-step {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5vh;
+    }
+    .bm-step-icon { font-size: 1.6vw; line-height: 1; }
+    .bm-step-label {
+      font-size: 0.8vw;
+      font-weight: 700;
+      color: var(--ink-2);
+      text-align: center;
+      letter-spacing: -0.02vw;
+    }
+    .bm-step.accent .bm-step-label { color: var(--accent); }
+    .bm-step.revenue .bm-step-label { color: var(--blue); }
+    .bm-step.accent .bm-step-icon,
+    .bm-step.revenue .bm-step-icon { filter: saturate(1.4); }
+    .bm-arrow {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4vw;
+      color: var(--ink-4);
+      padding: 0 0.6vw;
+      flex-shrink: 0;
+    }
+
+    /* ╔════════════════════════════════════════╗
+       ║  S13 — CLOSING (Black, Big)
+       ╚════════════════════════════════════════╝ */
+    .s13 {
+      padding: 5vh 5vw;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .s13-thanks {
+      font-family: 'Pretendard', sans-serif;
+      font-weight: 900;
+      font-size: 16vw;
+      line-height: 0.9;
+      letter-spacing: -0.5vw;
+      color: var(--white);
+      text-align: center;
+    }
+    .s13-thanks em {
+      font-style: normal;
+      color: var(--accent);
+    }
+
+    .s13-cta {
+      font-family: 'Pretendard', sans-serif;
+      font-weight: 600;
+      font-size: 2vw;
+      color: rgba(255,255,255,0.85);
+      text-align: center;
+      letter-spacing: -0.05vw;
+      margin-top: 2vh;
+    }
+    .s13-cta b { color: var(--hi); font-weight: 800; }
+
+    .s13-team {
+      display: flex;
+      gap: 2vw;
+      justify-content: center;
+      margin-top: 4vh;
+    }
+    .s13-member {
+      text-align: center;
+      padding: 2vh 2vw;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 0.5vw;
+      min-width: 12vw;
+    }
+    .s13-member.lead { border-color: var(--accent); background: rgba(0,168,107,0.06); }
+    .s13-avatar {
+      width: 3.5vw; height: 3.5vw;
+      border-radius: 50%;
+      background: var(--white);
+      color: var(--ink-1);
+      font-family: 'Pretendard', sans-serif;
+      font-weight: 900;
+      font-size: 1.7vw;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1vh;
+    }
+    .s13-member.lead .s13-avatar { background: var(--accent); color: var(--white); }
+    .s13-name { font-size: 1.3vw; font-weight: 800; letter-spacing: -0.04vw; color: var(--white); }
+    .s13-role { font-family: 'Space Mono', monospace; font-size: 0.7vw; letter-spacing: 0.15vw; color: rgba(255,255,255,0.55); margin-top: 0.4vh; }
+
+    .s13-foot-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      width: 100%;
+      border-top: 1px solid rgba(255,255,255,0.15);
+      padding-top: 2vh;
+    }
+    .s13-mark {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75vw;
+      letter-spacing: 0.2vw;
+      color: rgba(255,255,255,0.5);
+      line-height: 1.6;
+    }
+    .s13-mark strong { color: var(--white); display: block; }
+
+    /* ═══ NAV ═══ */
+    .nav {
+      display: none;
+    }
+    .nav-btn {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.25);
+      color: var(--white);
+      width: 2vw; height: 2vw;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 0.85vw;
+      font-family: 'Space Mono', monospace;
+    }
+    .nav-counter {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75vw;
+      color: var(--white);
+      letter-spacing: 0.15vw;
+      min-width: 5vw;
+      text-align: center;
+    }
+    .nav-help {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6vw;
+      color: rgba(255,255,255,0.5);
+      letter-spacing: 0.1vw;
+      margin-left: 0.8vw;
+    }
+
+    .progress {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: rgba(0,0,0,0.4);
+      z-index: 1001;
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--accent);
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+  </style>
+</head>
+<body>
+
+<div class="progress"><div class="progress-fill" id="prog"></div></div>
+
+<div class="deck" id="deck">
+
+  <!-- ╔═══ S1: COVER (Black) ═══╗ -->
+  <section class="slide s1 theme-black active" data-i="1">
+    <div class="grid-bg"></div>
+
+    <div class="s1-top">
+      <div class="s1-mark">
+        <strong>한반도감</strong>
+        TEAM POPO · 2026.05.16
+      </div>
+      <div class="s1-num">14 SLIDES · 5 MIN</div>
+    </div>
+
+    <div class="s1-mid">
+      <h1 class="s1-title">한반도감<em>.</em></h1>
+    </div>
+
+    <div class="s1-bottom">
+      <div>
+        <div class="s1-title-en">KOREAN SPECIES FIELD GUIDE</div>
+        <div class="s1-tagline" style="margin-top:1.5vh">
+          사진 한 장으로,<br><em>한국 토종을 만나다.</em>
+        </div>
+      </div>
+      <div class="s1-info">
+        <div>
+          TEAM
+          <strong>포포 · POPO</strong>
+        </div>
+        <div>
+          CATEGORY
+          <strong>디지털 교육</strong>
+        </div>
+        <div>
+          EVENT
+          <strong>AI HACK CAMP 2026</strong>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ╔═══ S2: PROBLEM (White) ═══╗ -->
+  <section class="slide s2 theme-white" data-i="2">
+    <div class="meta meta-light">
+      <div><strong>한반도감</strong></div>
+      <div>02 / 14 · PROBLEM</div>
+    </div>
+
+    <div style="text-align:center; margin-top:4vh">
+      <div class="section-tag" style="text-align:center;display:block;color:var(--warn)">WHAT WE'VE ALREADY LOST</div>
+      <h2 class="s2-q" style="font-size:5vw; margin-top:1vh">몰라서 <em>사라진</em> 것들</h2>
+    </div>
+
+    <div class="s2-hero-layout">
+
+      <!-- 히어로: 미선나무 실사 -->
+      <div class="s2-hero-panel">
+        <img
+          class="s2-hero-img"
+          src="https://upload.wikimedia.org/wikipedia/commons/e/ec/Flower%2C_White_forsythia_-_Flickr_-_nekonomania.jpg"
+          alt="미선나무 (Abeliophyllum distichum) — 전 세계 유일 한국 특산 1속 1종"
+        />
+        <div class="s2-hero-overlay">
+          <div class="s2-loss-badge critical" style="margin-bottom:0.8vh">멸종위기 II급</div>
+          <div class="s2-hero-name">미선나무</div>
+          <div class="s2-hero-sci-name">Abeliophyllum distichum</div>
+          <div class="s2-hero-quote">전 세계에서 한국에만 자생하는<br>1속 1종 — 사라지면 속 자체가 없어집니다</div>
+        </div>
+        <div class="s2-hero-credit">© nekonomania / Wikimedia Commons CC BY 2.0</div>
+      </div>
+
+      <!-- 사이드: 광릉요강꽃 실사 -->
+      <div class="s2-hero-panel">
+        <img
+          class="s2-hero-img"
+          src="https://upload.wikimedia.org/wikipedia/commons/1/1d/Cypripedium_japonicum_%28flower_s4%29.jpg"
+          alt="광릉요강꽃 (Cypripedium japonicum) — 멸종위기 I급"
+          style="object-position: center 40%;"
+        />
+        <div class="s2-hero-overlay">
+          <div class="s2-loss-badge critical" style="margin-bottom:0.8vh">멸종위기 I급</div>
+          <div class="s2-hero-name" style="font-size:2.8vw">광릉요강꽃</div>
+          <div class="s2-hero-sci-name">Cypripedium japonicum</div>
+          <div class="s2-hero-quote">한국 자생 희귀 난초인 줄 모르고<br>채취됐습니다</div>
+        </div>
+        <div class="s2-hero-credit">© Alpsdake / Wikimedia Commons CC BY-SA 4.0</div>
+      </div>
+    </div>
+
+    <div class="s2-loss-cta" style="margin-top:2.5vh">
+      알아볼 수 있었다면, <em>지킬 수 있었습니다.</em>
+    </div>
+
+    <div class="foot meta-light">
+      <div>HANBANDO-DEX</div>
+      <div>TEAM 포포 · 02</div>
+    </div>
+  </section>
+
+  <!-- ╔═══ S3: CRISIS (Black) ═══╗ -->
+  <section class="slide s3 theme-black" data-i="3">
+    <div class="meta meta-dark">
+      <div><strong>한반도감</strong></div>
+      <div>03 / 14 · CRISIS</div>
+    </div>
+
+    <div>
+      <div class="s3-eyebrow">KOREAN ECOSYSTEM IN CRISIS</div>
+      <h2 class="s3-head">한반도 생태계가<br><em>침식</em>당하고 있습니다.</h2>
+    </div>
+
+    <div class="s3-grid">
+      <div class="s3-card">
+        <div class="s3-card-tag">01 · INVASION</div>
+        <div style="white-space:nowrap"><span class="s3-n">2,653</span><span class="s3-unit">종</span></div>
+        <div class="s3-label">국내 유입 외래생물</div>
+        <div class="s3-source">2009년 894종 → 2021년 2,653종 (3배 증가)<br>국립생태원 KIAS · 환경일보</div>
+      </div>
+      <div class="s3-card green">
+        <div class="s3-card-tag">02 · ENDANGERED</div>
+        <div style="white-space:nowrap"><span class="s3-n">282</span><span class="s3-unit">종</span></div>
+        <div class="s3-label">멸종위기 야생생물</div>
+        <div class="s3-source">I급 68종 + II급 214종 (환경부 지정)<br>e-나라지표 환경부</div>
+      </div>
+      <div class="s3-card amber">
+        <div class="s3-card-tag">03 · ECONOMIC LOSS</div>
+        <div style="white-space:nowrap"><span class="s3-n">1,750</span><span class="s3-unit">억</span></div>
+        <div class="s3-label">연간 경제 피해</div>
+        <div class="s3-source"><b style="color:var(--hi)">단 1종</b>(등검은말벌) 피해만으로도<br>환경부·농식품부 제출자료 (2018)</div>
+      </div>
+    </div>
+
+    <div class="foot meta-dark">
+      <div>HANBANDO-DEX</div>
+      <div>TEAM 포포 · 03</div>
+    </div>
+  </section>
+
+  <!-- ╔═══ S4: GAP (White) ═══╗ -->
+  <section class="slide s4 theme-white" data-i="4">
+    <div class="meta meta-light">
+      <div><strong>한반도감</strong></div>
+      <div>04 / 14 · GAP</div>
+    </div>
+
+    <div class="head-row">
+      <div>
+        <div class="section-tag">EXISTING TOOLS</div>
+        <h2 class="head-title">시민이 알 방법이 <em>없습니다</em></h2>
+      </div>
+      <div class="head-meta">
+        EXISTING<br>TOOLS<br>04 / 14
+      </div>
+    </div>
+
+    <div class="s4-grid">
+      <div class="s4-row">
+        <div class="s4-x">×</div>
+        <div>
+          <div class="s4-row-name">국립생물자원관 · 국립수목원</div>
+          <div class="s4-row-desc">전문가용 인터페이스, <b>학명 검색</b>이 있어야 사용 가능</div>
+        </div>
+      </div>
+      <div class="s4-row">
+        <div class="s4-x">×</div>
+        <div>
+          <div class="s4-row-name">PictureThis 등 식물 AI 앱</div>
+          <div class="s4-row-desc">외국 서비스 — <b>한국 토종/외래 판별 기능 없음</b></div>
+        </div>
+      </div>
+      <div class="s4-row">
+        <div class="s4-x">×</div>
+        <div>
+          <div class="s4-row-name">포털 이미지 검색</div>
+          <div class="s4-row-desc">토종/외래 정보 누락, <b>정확도 낮음</b></div>
+        </div>
+      </div>
+      <div class="s4-row">
+        <div class="s4-x">×</div>
+        <div>
+          <div class="s4-row-name">현장 전문가 문의</div>
+          <div class="s4-row-desc">즉각 대응 불가, <b>접근성 매우 낮음</b></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="s4-bottom">
+      "이 꽃이 한국 토종인가요?"<br>
+      → 시민이 <em>3초 만에 답을 얻을 방법</em>이 필요합니다.
+    </div>
+
+    <div class="foot meta-light">
+      <div>HANBANDO-DEX</div>
+      <div>TEAM 포포 · 04</div>
+    </div>
+  </section>
+
+  <!-- ╔═══ S5: SOLUTION (White) ═══╗ -->
+  <section class="slide s5 theme-paper" data-i="5">
+    <div class="meta meta-light">
+      <div><strong>한반도감</strong></div>
+      <div>05 / 14 · SOLUTION</div>
+    </div>
+
+    <div class="s5-section">— OUR SOLUTION —</div>
+    <h1 class="s5-title">한반도감</h1>
+    <div class="s5-sub">"포켓몬 도감처럼 — 찍으면 채워지는 <b>한국 토종 AI 도감</b>"</div>
+
+    <div class="s5-flow">
+      <div class="s5-step">
+        <div class="s5-step-n">STEP 01</div>
+        <div class="s5-emoji">📷</div>
+        <div class="s5-step-name">찍는다</div>
+        <div class="s5-step-desc">3초, 사진 한 장</div>
+      </div>
+      <div class="s5-arrow">→</div>
+      <div class="s5-step">
+        <div class="s5-step-n">STEP 02</div>
+        <div class="s5-emoji">🤖</div>
+        <div class="s5-step-name">판별한다</div>
+        <div class="s5-step-desc">AI + 공공 DB</div>
+      </div>
+      <div class="s5-arrow">→</div>
+      <div class="s5-step">
+        <div class="s5-step-n">STEP 03</div>
+        <div class="s5-emoji">📚</div>
+        <div class="s5-step-name">수집한다</div>
+        <div class="s5-step-desc">내 도감 +1</div>
+      </div>
+    </div>
+
+    <div class="foot meta-light">
+      <div>HANBANDO-DEX</div>
+      <div>TEAM 포포 · 05</div>
+    </div>
+  </section>
+
+  <!-- ╔═══ S6: SERVICE FLOW (White, 필수①) ═══╗ -->
+  <section class="slide s6 theme-white" data-i="6">
+    <div class="meta meta-light">
+      <div><strong>한반도감</strong></div>
+      <div>06 / 14 · SERVICE FLOW</div>
+    </div>
+
+    <div class="head-row" style="margin-bottom:0;border-bottom:none;padding-bottom:0">
+      <div>
+        <div class="section-tag" style="color:var(--accent)">REQUIRED ① — 서비스 흐름도</div>
+        <h2 class="head-title">서비스 흐름도</h2>
+      </div>
+      <div class="head-meta">
+        AI 개입 vs<br>USER 판단<br>구분 표시
+      </div>
+    </div>
+
+    <div class="s6-legend">
+      <div class="s6-legend-item">
+        <div class="s6-leg-dot leg-user"></div>
+        사용자 행동 / 판단
+      </div>
+      <div class="s6-legend-item">
+        <div class="s6-leg-dot leg-ai"></div>
+        AI 자동 처리
+      </div>
+      <div class="s6-legend-item">
+        <div class="s6-leg-dot leg-system"></div>
+        시스템 처리
+      </div>
+    </div>
+
+    <div class="s6-flow">
+      <div class="s6-step user">
+        <div class="s6-step-n">1</div>
+        <div class="s6-icon">📸</div>
+        <div class="s6-name">사진 촬영</div>
+        <div class="s6-detail">시민이 등산·산책 중<br>식물·생물 촬영</div>
+        <div class="s6-pill">USER</div>
+      </div>
+      <div class="s6-step system">
+        <div class="s6-step-n">2</div>
+        <div class="s6-icon">🛡️</div>
+        <div class="s6-name">전처리</div>
+        <div class="s6-detail"><b>EXIF 위치 암호화</b><br>1024px 리사이즈<br>base64 인코딩</div>
+        <div class="s6-pill">SYSTEM</div>
+      </div>
+      <div class="s6-step ai">
+        <div class="s6-step-n">3</div>
+        <div class="s6-icon">🤖</div>
+        <div class="s6-name">AI 분석</div>
+        <div class="s6-detail"><b>Claude Vision</b><br>종명·토종여부<br>신뢰도·형태근거</div>
+        <div class="s6-pill">★ AI CORE</div>
+      </div>
+      <div class="s6-step system">
+        <div class="s6-step-n">4</div>
+        <div class="s6-icon">📡</div>
+        <div class="s6-name">교차검증</div>
+        <div class="s6-detail"><b>공공 데이터 3종</b><br>GBIF·KNA 이미지<br>KNA 기준표본</div>
+        <div class="s6-pill">SYSTEM</div>
+      </div>
+      <div class="s6-step ai">
+        <div class="s6-step-n">5</div>
+        <div class="s6-icon">📊</div>
+        <div class="s6-name">임계값 판단</div>
+        <div class="s6-detail"><b>≥60%</b> 발급<br><b>&lt;60%</b> 재촬영<br><b>판별 불가</b> 전문가</div>
+        <div class="s6-pill">THRESHOLD</div>
+      </div>
+      <div class="s6-step user">
+        <div class="s6-step-n">6</div>
+        <div class="s6-icon">📚</div>
+        <div class="s6-name">수집 결정</div>
+        <div class="s6-detail">사용자 판단:<br>도감 추가 / 폐기 /<br>오판 신고</div>
+        <div class="s6-pill">USER</div>
+      </div>
+    </div>
+
+    <div class="foot meta-light">
+      <div>HANBANDO-DEX</div>
+      <div>TEAM 포포 · 06</div>
+    </div>
+  </section>
+
+  <!-- ╔═══ S7: DATA + AI MODEL (Black, 필수②) ═══╗ -->
+  <section class="slide s9 theme-black" data-i="7">
+    <div class="meta meta-dark">
+      <div><strong>한반도감</strong></div>
+      <div>07 / 14 · DATA + AI MODEL</div>
+    </div>
+
+    <div>
+      <div class="s9-eyebrow">REQUIRED ② — 데이터 활용 + AI 모델 설계</div>
+      <h2 class="s9-title">왜 이 데이터, 왜 이 모델인가?</h2>
+    </div>
+
+    <div class="s9-grid">
+      <div class="s9-panel">
+        <div class="s9-panel-head">
+          <div class="s9-panel-icon">📡</div>
+          <div>
+            <div class="s9-eyebrow-sm">DATA · 활용 데이터</div>
+            <div class="s9-panel-name">공공 데이터 3종</div>
+          </div>
+        </div>
+        <div class="s9-data-item">
+          <div class="s9-data-name">KNA 표준식물목록 이미지정보서비스</div>
+          <div class="s9-data-meta">data.go.kr/15116414 · 학명·국명·이미지종류·이미지파일경로</div>
+        </div>
+        <div class="s9-data-item">
+          <div class="s9-data-name">KNA 표준식물목록 기준표본정보서비스</div>
+          <div class="s9-data-meta">data.go.kr/15116413 · 학명·국명·기준표본타입·기준표본내용</div>
+        </div>
+        <div class="s9-data-item">
+          <div class="s9-data-name">GBIF 생물다양성 데이터</div>
+          <div class="s9-data-meta">gbif.org · 학명 교차검증</div>
+        </div>
+      </div>
+
+      <div class="s9-panel ai">
+        <div class="s9-panel-head">
+          <div class="s9-panel-icon">🤖</div>
+          <div>
+            <div class="s9-eyebrow-sm">MODEL · Claude Vision 4.6 + Upstage Solar Pro 2</div>
+            <div class="s9-panel-name">하이브리드 AI 파이프라인</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:0.6vw;margin:0.8vh 0 1.2vh;flex-wrap:wrap">
+          <span style="background:rgba(139,92,246,0.2);border:1px solid var(--E);color:var(--E);font-family:'Space Mono',monospace;font-size:0.65vw;padding:0.3vh 0.7vw;border-radius:0.2vw;letter-spacing:0.1vw">VISION · Claude Sonnet 4.6</span>
+          <span style="background:rgba(0,168,107,0.15);border:1px solid var(--accent);color:var(--accent);font-family:'Space Mono',monospace;font-size:0.65vw;padding:0.3vh 0.7vw;border-radius:0.2vw;letter-spacing:0.1vw">TEXT · Upstage Solar Pro 2</span>
+        </div>
+        <div class="s9-rationale">★ 모델 선정 근거</div>
+        <div class="s9-reason">
+          <div class="s9-reason-num">①</div>
+          <div class="s9-reason-text"><b>GPT-4o·Gemini Vision 대비 구조화 출력 안정성</b> — 학명·신뢰도·형태근거 7필드 JSON, hallucination 억제 우위</div>
+        </div>
+        <div class="s9-reason">
+          <div class="s9-reason-num">②</div>
+          <div class="s9-reason-text"><b>한국 토종/외래 도메인 즉시 대응</b> — fine-tuning 없이 PoC 통과, GBIF 공공DB 교차검증 파이프라인 통합 용이</div>
+        </div>
+        <div class="s9-reason">
+          <div class="s9-reason-num">③</div>
+          <div class="s9-reason-text"><b>Solar Pro 2 병렬 조합</b> — Claude 단독 대비 한국어 생태 설명 품질 ↑, 국내 최고 한국어 모델로 사용자 가독성 확보</div>
+        </div>
+        <div style="margin-top:1.2vh;padding:1vh 0.8vw;background:rgba(0,168,107,0.08);border-left:2px solid var(--accent);font-size:0.85vw;color:rgba(255,255,255,0.75);line-height:1.5">
+          <b style="color:var(--accent)">Solar Pro 2 역할</b> — Claude의 ecology_summary를 자연스러운 한국어로 후처리. 장애 시 Claude 원문 그대로 사용 (graceful fallback).
+        </div>
+
+        <!-- ★ 검증 결과 박스 -->
+        <div style="margin-top:1.8vh;padding:1.2vh 1.2vw;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.18);border-radius:0.4vw;display:flex;align-items:center;justify-content:space-between;">
+          <div style="font-size:0.95vw;color:rgba(255,255,255,0.8);">★ 검증 결과 · 신뢰도 60% 이상 비율</div>
+          <div style="font-size:2.2vw;font-weight:900;color:var(--accent);font-family:'Bebas Neue',sans-serif;letter-spacing:0.05vw;">84%</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="foot meta-dark">
+      <div>HANBANDO-DEX</div>
+      <div>TEAM 포포 · 07</div>
+    </div>
+  </section>
+
+  <!-- ╔═══ S8: LIVE DEMO (Black) ═══╗ -->
+  <section class="slide s8-demo theme-black" data-i="8">
+    <div class="meta meta-dark">
+      <div><strong>한반도감</strong></div>
+      <div>08 / 14 · DEMO</div>
+    </div>
+
+    <div style="flex:1;display:flex;flex-direction:row;align-items:center;justify-content:center;gap:6vw">
+      <!-- 좌측: 텍스트 -->
+      <div style="display:flex;flex-direction:column;align-items:flex-start;gap:3vh">
+        <div style="font-family:'Space Mono',monospace;font-size:0.9vw;letter-spacing:0.4vw;color:var(--accent)">— LIVE DEMONSTRATION —</div>
+        <div style="font-family:'Pretendard',sans-serif;font-weight:900;font-size:9vw;line-height:0.9;letter-spacing:-0.3vw;color:var(--white)">
+          지금<br>직접<br><em style="color:var(--accent)">봅니다.</em>
+        </div>
+        <div style="display:flex;gap:1.5vw;margin-top:1vh">
+          <div style="text-align:center;font-family:'Space Mono',monospace;font-size:0.75vw;color:rgba(255,255,255,0.5);letter-spacing:0.15vw">
+            <div style="font-size:2vw;margin-bottom:0.8vh">📷</div>
+            사진 업로드
+          </div>
+          <div style="font-size:1.5vw;color:rgba(255,255,255,0.3);display:flex;align-items:center">→</div>
+          <div style="text-align:center;font-family:'Space Mono',monospace;font-size:0.75vw;color:rgba(255,255,255,0.5);letter-spacing:0.15vw">
+            <div style="font-size:2vw;margin-bottom:0.8vh">🤖</div>
+            AI 판별
+          </div>
+          <div style="font-size:1.5vw;color:rgba(255,255,255,0.3);display:flex;align-items:center">→</div>
+          <div style="text-align:center;font-family:'Space Mono',monospace;font-size:0.75vw;color:rgba(255,255,255,0.5);letter-spacing:0.15vw">
+            <div style="font-size:2vw;margin-bottom:0.8vh">📚</div>
+            도감 수집
+          </div>
+        </div>
+      </div>
+      <!-- 우측: QR 코드 -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:1.5vh">
+        <img src="data:image/png;base64,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" alt="QR" style="width:18vw;height:18vw;border-radius:1vw;background:#fff;padding:0.8vw;box-shadow:0 0 0 1px rgba(255,255,255,0.1)">
+        <div style="font-family:'Space Mono',monospace;font-size:0.7vw;color:rgba(255,255,255,0.45);letter-spacing:0.15vw;text-align:center">QR 스캔 · 직접 사용해보세요<br><span style="color:var(--accent)">hanban-do.com</span></div>
+      </div>
+    </div>
+
+    <div class="foot meta-dark">
+      <div>HANBANDO-DEX</div>
+      <div>TEAM 포포 · 08</div>
+    </div>
+  </section>
+
+  <!-- ╔═══ S9: UI/UX (Black, 필수③) ═══╗ -->
+  <section class="slide s7 theme-black" data-i="9">
+    <div class="meta meta-dark">
+      <div><strong>한반도감</strong></div>
+      <div>09 / 14 · UI / UX</div>
+    </div>
+
+    <div>
+      <div class="s7-eyebrow">REQUIRED ③ — 프로토타입 UI/UX</div>
+      <h2 class="s7-title">프로토타입 UI/UX</h2>
+      <div class="s7-sub">기능 나열이 아닌 — <b>사용자 행동 중심</b> 설계</div>
+    </div>
+
+    <div style="display:flex;align-items:center;justify-content:center;gap:4vw;flex:1;margin-top:1vh">
+
+      <!-- 폰 프레임 + 영상 -->
+      <div class="s7-phone" style="flex-shrink:0;width:22vw;height:44vw;max-height:72vh;">
+        <div class="s7-screen" style="padding:0;overflow:hidden;border-radius:inherit;">
+          <video
+            src="screenshots/demo.mp4"
+            autoplay muted loop playsinline
+            style="width:100%;height:100%;object-fit:cover;display:block;"
+          ></video>
+        </div>
+      </div>
+
+      <!-- 사이드 설명 -->
+      <div style="display:flex;flex-direction:column;gap:2.4vh;">
+        <div style="display:flex;align-items:flex-start;gap:1.2vw;">
+          <div style="font-family:'Space Mono',monospace;font-size:1.4vw;font-weight:700;color:var(--hi);flex-shrink:0;margin-top:0.2vh;">①</div>
+          <div>
+            <div style="font-family:'Black Han Sans',sans-serif;font-size:1.3vw;color:#fff;margin-bottom:0.4vh;">발견 → 촬영</div>
+            <div style="font-size:0.85vw;color:rgba(255,255,255,0.55);line-height:1.5;"><b style="color:rgba(255,255,255,0.85)">이벤트·미션</b>으로 재방문 유도</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:1.2vw;">
+          <div style="font-family:'Space Mono',monospace;font-size:1.4vw;font-weight:700;color:var(--hi);flex-shrink:0;margin-top:0.2vh;">②</div>
+          <div>
+            <div style="font-family:'Black Han Sans',sans-serif;font-size:1.3vw;color:#fff;margin-bottom:0.4vh;">AI 응답 → 판단</div>
+            <div style="font-size:0.85vw;color:rgba(255,255,255,0.55);line-height:1.5;"><b style="color:rgba(255,255,255,0.85)">LEGENDARY</b> 94% — 다시찍기·오류신고</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:1.2vw;">
+          <div style="font-family:'Space Mono',monospace;font-size:1.4vw;font-weight:700;color:var(--hi);flex-shrink:0;margin-top:0.2vh;">③</div>
+          <div>
+            <div style="font-family:'Black Han Sans',sans-serif;font-size:1.3vw;color:#fff;margin-bottom:0.4vh;">수집 → 재방문</div>
+            <div style="font-size:0.85vw;color:rgba(255,255,255,0.55);line-height:1.5;"><b style="color:rgba(255,255,255,0.85)">27종 · Lv.4</b> 포인트·등급 수집 동기</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="foot meta-dark">
+      <div>HANBANDO-DEX</div>
+      <div>TEAM 포포 · 09</div>
+    </div>
+  </section>
+
+  <!-- ╔═══ S10: DIFFERENTIATION (White Editorial) ═══╗ -->
+  <section class="slide s8 theme-white" data-i="10">
+    <div class="meta meta-light">
+      <div><strong>한반도감</strong></div>
+      <div>10 / 14 · UNIQUE</div>
+    </div>
+
+    <div class="head-row">
+      <div>
+        <div class="section-tag">UNIQUE VALUE</div>
+        <h2 class="head-title">우리만의 차별점</h2>
+      </div>
+      <div class="head-meta">
+        03 POINTS<br>SINCE 2026<br>SEOUL · KOREA
+      </div>
+    </div>
+
+    <div class="s8-grid">
+      <div class="s8-row hi">
+        <div class="s8-num">01</div>
+        <div>
+          <div class="s8-name">한국 토종 vs 외래 명확 판별</div>
+          <div class="s8-desc">기존 AI는 단순 종명만 알려주지만, 한반도감은 <b>"한국 토종인지" 판별 + 형태적 근거</b>를 함께 제공합니다.</div>
+        </div>
+      </div>
+
+      <div class="s8-row hi">
+        <div class="s8-num">02</div>
+        <div>
+          <div class="s8-name">5단계 희귀도 게임화</div>
+          <div class="s8-desc">Common · Uncommon · Rare · Epic · <b>Legendary</b> — 멸종위기·특산종일수록 희귀 카드로 자동 분류.</div>
+        </div>
+      </div>
+
+      <div class="s8-row">
+        <div class="s8-num">03</div>
+        <div>
+          <div class="s8-name">투명한 AI 판단 근거</div>
+          <div class="s8-desc">"왜 그렇게 판별했는가" — <b>형태적 단서·신뢰도·출처</b>를 모두 공개. AI 판정은 "참고용" 명시.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="foot meta-light">
+      <div>HANBANDO-DEX</div>
+      <div>TEAM 포포 · 10</div>
+    </div>
+  </section>
+
+  <!-- ╔═══ S11: ETHICS (White Trust) ═══╗ -->
+  <section class="slide s10 theme-white" data-i="11">
+    <div class="meta meta-light">
+      <div><strong>한반도감</strong></div>
+      <div>11 / 14 · TRUST</div>
+    </div>
+
+    <div class="head-row">
+      <div>
+        <div class="section-tag">AI ETHICS & SAFETY</div>
+        <h2 class="head-title">신뢰를 설계합니다</h2>
+      </div>
+      <div class="head-meta">
+        SAFETY 20PT<br>3 PILLARS<br>11 / 14
+      </div>
+    </div>
+
+    <div class="s10-grid">
+      <div class="s10-card">
+        <div class="s10-shield green">🛡️</div>
+        <div class="s10-name">개인정보 보호</div>
+        <ul class="s10-list">
+          <li>EXIF 위치정보 암호화 <small style="color:var(--ink-3)">(S3 SSE)</small></li>
+          <li>TLS 1.3 전송 암호화</li>
+          <li><b>멸종위기 I급 서식지 — 도(광역)단위 익명화</b></li>
+        </ul>
+      </div>
+      <div class="s10-card">
+        <div class="s10-shield blue">🔍</div>
+        <div class="s10-name">투명성</div>
+        <ul class="s10-list">
+          <li>판별 근거 (형태적 특징) 공개</li>
+          <li>신뢰도 % 명시</li>
+          <li>데이터 출처 카드에 표시</li>
+          <li>AI 판정 "참고용" 명시</li>
+        </ul>
+      </div>
+      <div class="s10-card">
+        <div class="s10-shield warn">⚠️</div>
+        <div class="s10-name">오남용 방지</div>
+        <ul class="s10-list">
+          <li>신뢰도 60% 미만 → 재촬영 요청</li>
+          <li>판별 불가 → 전문가 확인 권장</li>
+          <li>"법적 판단 근거 X" 강제 명시</li>
+          <li>오판 신고 → 데이터 개선 피드백</li>
+          <li><b>AI 오판별이 잘못된 행동으로 이어지지 않도록</b></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="foot meta-light">
+      <div>HANBANDO-DEX</div>
+      <div>TEAM 포포 · 11</div>
+    </div>
+  </section>
+
+  <!-- ╔═══ S12: IMPACT (White → Quote) ═══╗ -->
+  <section class="slide s11 theme-paper" data-i="12">
+    <div class="meta meta-light">
+      <div><strong>한반도감</strong></div>
+      <div>12 / 14 · IMPACT</div>
+    </div>
+
+    <div class="head-row">
+      <div>
+        <div class="section-tag">IMPACT & ROADMAP</div>
+        <h2 class="head-title">시민과학으로 확장합니다</h2>
+      </div>
+      <div class="head-meta">
+        3 PHASES<br>MVP → DATA<br>12 / 14
+      </div>
+    </div>
+
+    <div class="s11-row">
+      <div class="s11-card">
+        <div class="s11-stage">PHASE 01 · MVP</div>
+        <div class="s11-icon">🎯</div>
+        <div class="s11-name">시민 참여형 도감</div>
+        <div class="s11-desc"><b>다른 사용자 대비 수집률</b> 공개 + <b>미션 부여</b>로 재방문 동기 강화. 경쟁심과 목표 달성이 <b>참여 의지</b>를 높입니다.</div>
+      </div>
+      <div class="s11-card">
+        <div class="s11-stage">PHASE 02 · EDU</div>
+        <div class="s11-icon">🏛️</div>
+        <div class="s11-name">국립중앙과학관 연계</div>
+        <div class="s11-desc">전시 QR 스캔, <b>학교 단체 생태 교육</b> 미션. 박물관 생물다양성 미션과 직결.</div>
+      </div>
+      <div class="s11-card">
+        <div class="s11-stage">PHASE 03 · DATA</div>
+        <div class="s11-icon">📊</div>
+        <div class="s11-name">국가 생태 빅데이터</div>
+        <div class="s11-desc">누적 관찰 → <b>멸종위기종 분포 지도</b>. 환경부·산림청 정책 결정 자료 활용.</div>
+      </div>
+    </div>
+
+    <div class="foot meta-light">
+      <div>HANBANDO-DEX</div>
+      <div>TEAM 포포 · 12</div>
+    </div>
+  </section>
+
+  <!-- ╔═══ S13: BUSINESS MODEL v2 (White) ═══╗ -->
+  <section class="slide s12 theme-white" data-i="13">
+    <div class="meta meta-light">
+      <div><strong>한반도감</strong></div>
+      <div>13 / 14 · BUSINESS MODEL</div>
+    </div>
+
+    <div class="head-row">
+      <div>
+        <div class="section-tag">BUSINESS MODEL · DATA ENGINE</div>
+        <h2 class="head-title">앱은 껍데기, <em>데이터 엔진</em>이 진짜입니다</h2>
+      </div>
+      <div class="head-meta">
+        기관협업 · SaaS<br>레이블링 플랫폼<br>13 / 14
+      </div>
+    </div>
+
+    <div class="bm2-layout">
+
+      <!-- 좌측: 리텐션 플라이휠 -->
+      <div class="bm2-flywheel">
+        <div class="bm2-fw-title">리텐션 플라이휠</div>
+
+        <div class="bm2-fw-step accent">
+          📋 일일 미션 발행
+          <small>"흰색+초록 식물을 찍어보세요!" → 사용자 모르게 타겟 종 수집</small>
+        </div>
+        <div class="bm2-fw-arrow">↓</div>
+        <div class="bm2-fw-step">
+          📸 시민 촬영 · AI 식별
+          <small>희귀종일 경우 즉시 알림 — 발견 흥분감 극대화</small>
+        </div>
+        <div class="bm2-fw-arrow">↓</div>
+        <div class="bm2-fw-step">
+          🏆 희귀도 공개 · 자랑
+          <small>"이 종은 앱 사용자 상위 <b>3%</b>만 발견했어요" → 카카오톡·인스타 공유</small>
+        </div>
+        <div class="bm2-fw-arrow">↓</div>
+        <div class="bm2-fw-step revenue">
+          👥 바이럴 신규 유입
+          <small>공유 → 신규 유저 → 더 많은 미션 데이터 수집 → 순환</small>
+        </div>
+      </div>
+
+      <!-- 우측: 수익 3층 -->
+      <div class="bm2-revenues">
+
+        <div class="bm2-rev-card hi">
+          <div class="bm2-rev-num">01</div>
+          <div>
+            <div class="bm2-rev-title">🏛️ 기관 협업</div>
+            <div class="bm2-rev-desc">환경부·국립생물자원관 공동연구 MOU<br>데이터 플랫폼 제공 → 연구비·정책 연계<br><b style="color:var(--blue)">로드맵:</b> GBIF/KBIF 퍼블리셔 → K-BON 데이터 노드 → 환경부 외래종 전략 도구</div>
+          </div>
+          <div class="bm2-rev-who">환경부<br>국립생물자원관</div>
+        </div>
+
+        <div class="bm2-rev-card hi">
+          <div class="bm2-rev-num">02</div>
+          <div>
+            <div class="bm2-rev-title">🏷️ 레이블링 SaaS</div>
+            <div class="bm2-rev-desc">미션으로 타겟 수집 → AI 1차 레이블 → 완성 데이터셋 납품<br>1회성 판매 아닌 <b>지속 갱신 구독</b></div>
+          </div>
+          <div class="bm2-rev-who">AI 기업<br>연구기관</div>
+        </div>
+
+        <div class="bm2-rev-card">
+          <div class="bm2-rev-num">03</div>
+          <div>
+            <div class="bm2-rev-title">🔌 화이트라벨 확장</div>
+            <div class="bm2-rev-desc">동일 엔진 → 조류 · 어류 · 곤충 앱<br>수집 플랫폼 자체를 라이선싱</div>
+          </div>
+          <div class="bm2-rev-who">타 도메인<br>기업·지자체</div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="foot meta-light">
+      <div>HANBANDO-DEX</div>
+      <div>TEAM 포포 · 13</div>
+    </div>
+  </section>
+
+  <!-- ╔═══ S14: CLOSING (Black) ═══╗ -->
+  <section class="slide s13 theme-black" data-i="14">
+    <div class="meta meta-dark">
+      <div><strong>한반도감</strong></div>
+      <div>14 / 14 · CLOSING</div>
+    </div>
+
+    <div></div>
+
+    <div>
+      <div class="s13-thanks">감사합니다<em>.</em></div>
+      <div class="s13-cta">사진 한 장으로, <b>한국 토종을 만나다.</b></div>
+
+      <div class="s13-team">
+        <div class="s13-member">
+          <div class="s13-avatar">민</div>
+          <div class="s13-name">민상</div>
+          <div class="s13-role">BACKEND · QA</div>
+        </div>
+        <div class="s13-member lead">
+          <div class="s13-avatar">찬</div>
+          <div class="s13-name">찬영</div>
+          <div class="s13-role">CLOUD · PM · AI</div>
+        </div>
+        <div class="s13-member">
+          <div class="s13-avatar">가</div>
+          <div class="s13-name">가희</div>
+          <div class="s13-role">FRONTEND · UI</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="s13-foot-row">
+      <div class="s13-mark">
+        <strong>HANBANDO-DEX</strong>
+        한반도감
+      </div>
+      <div class="s13-mark" style="text-align:right">
+        <strong>AI HACK CAMP 2026</strong>
+        TEAM 포포 · 본선 발표
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- 네비게이션 -->
+<div class="nav">
+  <button class="nav-btn" onclick="goPrev()">‹</button>
+  <div class="nav-counter" id="counter">01 / 14</div>
+  <button class="nav-btn" onclick="goNext()">›</button>
+  <span class="nav-help">← → SPACE · F=전체화면</span>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let cur = 0;
+
+  function go(i) {
+    if (i < 0 || i >= total) return;
+    slides[cur].classList.remove('active');
+    cur = i;
+    slides[cur].classList.add('active');
+    document.getElementById('counter').textContent =
+      String(cur+1).padStart(2,'0') + ' / ' + String(total).padStart(2,'0');
+    document.getElementById('prog').style.width = ((cur+1)/total*100) + '%';
+  }
+  function goNext() { go(cur + 1); }
+  function goPrev() { go(cur - 1); }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); goNext(); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); goPrev(); }
+    else if (e.key === 'Home') go(0);
+    else if (e.key === 'End') go(total - 1);
+    else if (e.key === 'f' || e.key === 'F') {
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+      else document.exitFullscreen();
+    }
+  });
+  go(0);
+</script>
+</body>
+</html>

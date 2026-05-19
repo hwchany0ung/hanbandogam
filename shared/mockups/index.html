@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>한반도감 UI 목업 — 포포팀 FE 레퍼런스</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans KR', sans-serif;
+      background: #1a1a2e;
+      color: #e0e0e0;
+      padding: 32px 24px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #a8d5a2;
+      letter-spacing: -0.5px;
+    }
+    header p {
+      margin-top: 8px;
+      color: #888;
+      font-size: 0.9rem;
+    }
+    header .badge {
+      display: inline-block;
+      margin-top: 12px;
+      background: #2d4a3e;
+      color: #a8d5a2;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 32px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: #16213e;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid #2a2a4a;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+    }
+
+    .card-header {
+      padding: 16px 20px 12px;
+      border-bottom: 1px solid #2a2a4a;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .screen-num {
+      background: #2d4a3e;
+      color: #a8d5a2;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .card-title {
+      font-weight: 600;
+      font-size: 1rem;
+      color: #d0d0e0;
+    }
+    .card-subtitle {
+      font-size: 0.78rem;
+      color: #667;
+      margin-top: 2px;
+    }
+
+    .card-img {
+      width: 100%;
+      display: block;
+      cursor: zoom-in;
+    }
+
+    .card-footer {
+      padding: 12px 20px;
+      background: #0f0f23;
+    }
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .tag {
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+    .tag-comp { background: #1e3a5f; color: #7ab3e0; }
+    .tag-state { background: #3a2a1e; color: #e0a06a; }
+    .tag-note { background: #2a1e3a; color: #b07ae0; }
+
+    .note-box {
+      margin-top: 32px;
+      max-width: 1400px;
+      margin-left: auto;
+      margin-right: auto;
+      background: #16213e;
+      border: 1px solid #2a3060;
+      border-radius: 12px;
+      padding: 20px 24px;
+    }
+    .note-box h3 {
+      color: #a8d5a2;
+      font-size: 0.95rem;
+      margin-bottom: 12px;
+    }
+    .note-box ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .note-box li {
+      font-size: 0.85rem;
+      color: #99a;
+      padding-left: 16px;
+      position: relative;
+    }
+    .note-box li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: #4a6;
+    }
+    .note-box li code {
+      background: #1a1a3e;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 0.82rem;
+      color: #a8d5a2;
+    }
+
+    /* lightbox */
+    #lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+      cursor: zoom-out;
+    }
+    #lightbox.open { display: flex; }
+    #lightbox img {
+      max-width: 90vw;
+      max-height: 90vh;
+      border-radius: 8px;
+      box-shadow: 0 20px 80px rgba(0,0,0,0.7);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>한반도감 UI 목업</h1>
+  <p>FE 구현 레퍼런스 — 포포팀 내부 공유용</p>
+  <span class="badge">D-Day 2026-05-16</span>
+</header>
+
+<div class="grid">
+
+  <div class="card">
+    <div class="card-header">
+      <div class="screen-num">1</div>
+      <div>
+        <div class="card-title">메인 업로드 화면</div>
+        <div class="card-subtitle">사진 선택 전 초기 상태</div>
+      </div>
+    </div>
+    <img class="card-img" src="01_upload_empty.png" alt="메인 업로드 화면" onclick="openLightbox(this)" />
+    <div class="card-footer">
+      <div class="tag-row">
+        <span class="tag tag-comp">UploadView.jsx</span>
+        <span class="tag tag-comp">App.jsx</span>
+        <span class="tag tag-state">state: idle</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="screen-num">2</div>
+      <div>
+        <div class="card-title">사진 선택 후</div>
+        <div class="card-subtitle">미리보기 + 식별하기 버튼 활성화</div>
+      </div>
+    </div>
+    <img class="card-img" src="02_upload_selected.png" alt="사진 선택 후 화면" onclick="openLightbox(this)" />
+    <div class="card-footer">
+      <div class="tag-row">
+        <span class="tag tag-comp">UploadView.jsx</span>
+        <span class="tag tag-state">state: fileSelected</span>
+        <span class="tag tag-note">보라색 = 사진 미리보기</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="screen-num">3</div>
+      <div>
+        <div class="card-title">식별 결과 카드</div>
+        <div class="card-subtitle">종명·신뢰도·배지·수묵화 플립</div>
+      </div>
+    </div>
+    <img class="card-img" src="03_result_card.png" alt="식별 결과 카드" onclick="openLightbox(this)" />
+    <div class="card-footer">
+      <div class="tag-row">
+        <span class="tag tag-comp">ResultCard.jsx</span>
+        <span class="tag tag-state">state: result</span>
+        <span class="tag tag-note">뒷면 = 수묵화 (플립)</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="screen-num">4</div>
+      <div>
+        <div class="card-title">내 도감 뷰</div>
+        <div class="card-subtitle">3열 그리드 · 수집률 · 희귀도 배지</div>
+      </div>
+    </div>
+    <img class="card-img" src="04_collection_view.png" alt="내 도감 뷰" onclick="openLightbox(this)" />
+    <div class="card-footer">
+      <div class="tag-row">
+        <span class="tag tag-comp">CollectionView.jsx</span>
+        <span class="tag tag-comp">CollectionCard.jsx</span>
+        <span class="tag tag-state">state: collection</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="note-box" style="margin-top: 32px;">
+  <h3>FE 구현 핵심 메모</h3>
+  <ul>
+    <li>하단 탭: <code>BottomTabs</code> 컴포넌트 — 📷 찍기 / 📚 내도감, <code>fixed bottom-0</code></li>
+    <li>저장 완료 시 <code>Toast</code> 1.2초 + <code>SuccessPopup</code> 1.8초 자동 소멸</li>
+    <li>도감 그리드: <code>grid-cols-3</code>, 수묵화 이미지 우선 → photo_url → 🌿 폴백</li>
+    <li>결과 카드 이미지 영역: 앞면=업로드 사진, 뒷면=수묵화 (<code>perspective:800px, rotateY(180deg)</code>, 0.55s)</li>
+    <li>API 베이스: <code>/api</code> — <code>lib/api.js</code> 참고, AbortController 30초 타임아웃</li>
+    <li>DEMO_MODE: <code>APP_DEMO_MODE=1</code>이면 mock 배지 표시 (현재 서버 기본값)</li>
+    <li>수묵화 매핑: <code>window.HANBANDO_MANIFEST</code> (manifest.json IIFE 로드)</li>
+  </ul>
+</div>
+
+<div id="lightbox" onclick="closeLightbox()">
+  <img id="lightbox-img" src="" alt="" />
+</div>
+
+<script>
+  function openLightbox(img) {
+    document.getElementById('lightbox-img').src = img.src;
+    document.getElementById('lightbox').classList.add('open');
+  }
+  function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('open');
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeLightbox();
+  });
+</script>
+
+</body>
+</html>
